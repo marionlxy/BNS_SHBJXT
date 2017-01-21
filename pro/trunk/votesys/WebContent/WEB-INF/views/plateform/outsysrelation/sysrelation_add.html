@@ -1,0 +1,129 @@
+<div class="layer">
+  <form id="plateform" class="plateform" method="post" action="${ctxPath!}/pt/relate/saveOutCommission" enctype="multipart/form-data">
+    <input type="hidden" value="" name="id" />
+    <table class="EditTable" width="100%"  >
+    		<tbody>
+    		<tr class="FormData">   			
+    						
+			</tr>
+    		<tr class="FormData">   			
+    			<td class="CaptionTD" colspan="4" style="text-align: left;background-color: #d5e2f3"><h4 class="panel-title">基本信息</h4></td>			
+			</tr>
+    		<tr class="FormData">
+				<td class="CaptionTD">委员会名称:</td>
+				<td class="" height="30"  colspan="3">
+				<select class="voteFlag" name="code" datatype="*"  nullmsg="必须选择委员会！" style="font-size:12px;width:300px;">
+						@for(commission in list!){
+							<option value="${commission.code!}">
+							  ${commission.sysTitle!}
+							</option>
+						@}
+	              </select>
+	        </tr>
+			<tr class="FormData">
+				<td class="CaptionTD">关联系统编码:</td>
+				<td class="DataTD"><input type="text" name="relationCode" class="inputxt" datatype="/^[a-zA-Z]{4}$/g" errormsg="系统编码长度为4位字符！" value=""></td>
+			</tr>
+			<tr class="FormData">
+				<td class="CaptionTD">关联系统简称:</td>
+				<td class="DataTD"><input type="text" name="relationName" datatype="*" nullmsg="请输入系统简称！" ajaxurl="" value="" style="width:100%;"></td>
+			</tr>
+		
+	        <tr class="FormData">
+				<td class="CaptionTD">通知Servlet地址:</td>
+				<td class="DataTD"><input type="text" name="notifyAddr" datatype="*" nullmsg="请输入系统简称！" ajaxurl="" value="" style="width:100%;"></td>
+			</tr>
+			<tr>
+				<td> 
+					<div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+						<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="model-save-form" value="确定"/>&nbsp;&nbsp;
+						<input type="reset" class="btn btn-primary btn-sm bigger-110" id="model-save-cancel" value="取消"/>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+    </table>
+  </form>   
+</div>
+<script type="text/javascript">
+
+$(function(){
+	
+	var index = layer.index;
+     $("#voteFlag").click(function(){	
+     		var rows=$("input[name='voteFlag']:checked");
+           	if(rows.length>0){
+                  //$('#btnAddMoney').addClass('disabled'); // Disables visually
+               	$('.voteFlag').prop('disabled', false); 
+                }else{
+                	// $('#btnAddMoney').addClass('disabled'); // Disables visually
+                	$('.voteFlag').prop('disabled', true); // Disables visually + functionally	
+ 
+                }
+
+     	  });     
+    
+   $("#plateform").Validform({
+	    postonce:true,
+		ajaxPost:true,
+		datatype:{
+			"validimg":function(gets,obj,curform,regxp){
+				//参数gets是获取到的表单元素值，obj为当前表单元素，curform为当前验证的表单，regxp为内置的一些正则表达式的引用;
+				var extStart=gets.lastIndexOf(".");
+				var ext=gets.substring(extStart,gets.length).toUpperCase();
+				if(ext!=".BMP"&&ext!=".PNG"&&ext!=".JPG"&&ext!=".JPEG"){
+					return false;
+				}
+				return true;
+				//注意return可以返回true 或 false 或 字符串文字，true表示验证通过，返回字符串表示验证失败，字符串作为错误提示显示，返回false则用errmsg或默认的错误提示;
+			}
+		},
+        beforeSubmit:function(curform){
+            var loadi = layer.load(5,2);
+            $("#plateform").data('loadi',loadi);
+            curform.ajaxSubmit({
+            	dataType:'json',
+            	type:'post',
+            	url:'${ctxPath!}/pt/relate/saveOutCommission',
+            	success:function(data){
+            		var obj={};
+            		if(document.all){
+            			obj = eval('(' + data + ')');
+            		}else{
+            			obj=data;
+            		}
+            		
+            		if(obj.code==1){
+        				layer.msg(obj.msg, 1, 1);
+        				layer.closeAll('page'); 
+        				$("#tableysxm").bootstrapTable('refresh');
+        			}else{
+        				layer.msg(obj.msg,3,1);
+        			}
+            	},
+            	error:function(){
+            		layer.msg("新增失败，可能发生网络异常！",3,1);
+            	}
+            });
+            return false;
+        },
+        tiptype : function(msg, o, cssctl) {
+            if (!o.obj.is("form")) {
+                if (o.type != 2) {
+                    tip.errorTip(msg,o.obj);
+                }
+            }
+        },
+        tipSweep : true
+    });
+
+         
+ 
+    // var index=layer.index;
+    $("#model-save-cancel").click(function(){
+        layer.close(index);
+    });
+});
+
+</script>
+

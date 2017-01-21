@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.menuwinconf.dao.BasMenuWinConfMapper" >
+  <resultMap id="BaseResultMap" type="com.krm.voteplateform.web.menuwinconf.model.BasMenuWinConf" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="ORDER_CODE" property="orderCode" jdbcType="VARCHAR" />
+    <result column="USE_FLAG" property="useFlag" jdbcType="VARCHAR" />
+    <result column="DEL_FLAG" property="delFlag" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" />
+    <result column="CREATE_BY" property="createBy" jdbcType="VARCHAR" />
+    <result column="UPDATE_TIME" property="updateTime"  />
+    <result column="UPDATE_BY" property="updateBy" jdbcType="VARCHAR" />
+    <result column="GROUPID" property="groupid" jdbcType="VARCHAR" />
+    <result column="FUNCTION_CODE" property="functionCode" jdbcType="VARCHAR" />
+    <result column="TYPE" property="type" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="NULL_FLAG" property="nullFlag" jdbcType="VARCHAR" />
+    <result column="COLLECT_TYPE" property="collectType" jdbcType="VARCHAR" />
+    <result column="DATASOURCE" property="datasource" jdbcType="VARCHAR" />
+    <result column="BIND_FILED" property="bindFiled" jdbcType="VARCHAR" />
+    <result column="BIND_EVENT_OR_URL" property="bindEventOrUrl" jdbcType="VARCHAR" />
+    <result column="ALTER_FLAG" property="alterFlag" jdbcType="VARCHAR" />
+    <result column="BASIC_FLAG" property="basicFlag" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ORDER_CODE,USE_FLAG,DEL_FLAG,CREATE_TIME,CREATE_BY,UPDATE_TIME,UPDATE_BY,GROUPID,ID,FUNCTION_CODE,TYPE,NAME,NULL_FLAG,COLLECT_TYPE,DATASOURCE,BIND_FILED,BIND_EVENT_OR_URL,ALTER_FLAG,BASIC_FLAG
+  </sql>
+  
+ 
+  
+  <delete id="deleteBasMenuWinConf" parameterType="com.krm.voteplateform.web.menuwinconf.model.BasMenuWinConf">
+  	delete from BAS_MENU_WIN_CONF where ID=#{id,jdbcType=VARCHAR}
+  </delete>
+  
+	<select id="findByIdByName" resultType="java.util.Map" parameterType="java.util.Map">
+		select
+		<include refid="Base_Column_List" />
+		from #{tableName}_BAS_MENU_WIN_CONF
+		<where>
+			DEL_FLAG = 0
+			<if test="name !=null and   name  != ''  and  name != 'null'">
+				and name=#{name,jdbcType=VARCHAR}
+  				</if>
+  			<if test="type !=null and   type  != ''  and  type != 'null'">
+				and type=#{type,jdbcType=VARCHAR}
+  			</if>
+  			<if test="bindFiled !=null and   bindFiled  != ''  and  bindFiled != 'null'">
+				and bind_filed=#{bindFiled,jdbcType=VARCHAR}
+  			</if>
+  			<if test="functionCode !=null and   functionCode  != ''  and  functionCode != 'null'">
+				and function_code=#{functionCode,jdbcType=VARCHAR}
+  				</if>
+  				<if test="basicFlag !=null and   basicFlag  != ''  and  basicFlag != 'null'">
+				and BASIC_FLAG=#{basicFlag,jdbcType=VARCHAR}
+  				</if>
+		</where>
+	</select>
+	
+	<select id="listMenuWin" resultType="java.util.Map" parameterType="java.util.Map">
+		select <include refid="Base_Column_List" /> from  #{tableName}_BAS_MENU_WIN_CONF where FUNCTION_CODE='${functionCode}' and DEL_FLAG = 0 and TYPE IN (0,1,2) ORDER BY GROUPID ASC
+	</select>
+	
+	<select id="listAllMenuWin" resultType="java.util.Map" parameterType="java.util.Map">
+		select <include refid="Base_Column_List" /> from  #{tableName}_BAS_MENU_WIN_CONF where DEL_FLAG = 0 and TYPE IN (0,1,2) ORDER BY GROUPID ASC
+	</select>
+	
+	<select id="findSelectGroupList" resultType="java.util.Map" parameterType="java.util.Map">
+		select GROUPID,ID,FUNCTION_CODE,TYPE,NAME from  #{tableName}_BAS_MENU_WIN_CONF 
+		<where>
+				<if test="type !=null and   type != ''  and  type != 'null'">
+  				and TYPE=#{type,jdbcType=VARCHAR}
+  				</if>
+				<if test="useFlag !=null and   useFlag  != ''  and  useFlag != 'null'">
+  				and USE_FLAG=#{useFlag,jdbcType=VARCHAR}
+  				</if>
+  				<if test="delFlag !=null and delFlag !='' and delFlag !='null'">
+  				and DEL_FLAG=#{delFlag,jdbcType=VARCHAR}
+  				</if>
+  				<if test="groupid !=null and groupid !='' and groupid !='null'">
+  				and GROUPID like #{groupid,jdbcType=VARCHAR}
+  				</if>
+  				<if test="functionCode !=null and functionCode !='' and functionCode !='null'">
+  				and FUNCTION_CODE='${functionCode}'
+  				</if>
+		</where>
+	</select>
+	
+	<delete id="deleteGroupId" parameterType="java.util.Map">
+		delete from ${tableName}_BAS_MENU_WIN_CONF where GROUPID like #{group}  
+	</delete>
+	
+	<select id="findById" parameterType="java.util.Map" resultType="com.krm.voteplateform.web.menuwinconf.model.BasMenuWinConf">
+		select <include refid="Base_Column_List" /> from #{tableName}_BAS_MENU_WIN_CONF where ID=#{id}
+	</select>
+	
+	<select id="findGroupByID" parameterType="java.util.Map" resultType="java.util.Map">
+		select ID,NAME,USE_FLAG,order_code,groupid,function_code,BASIC_FLAG from #{tableName}_BAS_MENU_WIN_CONF where ID=#{id}
+	</select>
+	
+	<select id="findWindGatherById" parameterType="java.util.Map" resultType="java.util.Map">
+		select ID,GROUPID,NAME,NULL_FLAG,COLLECT_TYPE,DATASOURCE,USE_FLAG,BIND_FILED,order_code,ALTER_FLAG from #{tableName}_BAS_MENU_WIN_CONF where ID=#{id}
+	</select>
+	
+	<update id="updateWinGather" parameterType="java.util.Map">
+		update ${tableName}_BAS_MENU_WIN_CONF 
+		set GROUPID=#{a.groupid,jdbcType=VARCHAR},NAME=#{a.name,jdbcType=VARCHAR},NULL_FLAG=#{a.nullFlag,jdbcType=VARCHAR},COLLECT_TYPE=#{a.collectType,jdbcType=VARCHAR},
+			DATASOURCE=#{a.datasource,jdbcType=VARCHAR},USE_FLAG=#{a.useFlag,jdbcType=VARCHAR},order_code = #{a.orderCode,jdbcType=VARCHAR},ALTER_FLAG = #{a.alterFlag,jdbcType=VARCHAR}
+		where ID=#{a.id}
+	</update>
+	
+	<select id="getWinDetailById" parameterType="java.util.Map" resultType="java.util.Map">
+		select ID,NAME,GROUPID,USE_FLAG,order_code from ${tableName}_BAS_MENU_WIN_CONF where ID=#{id}
+	</select>
+	
+	<select id="getBasMenWinGroupConf" parameterType="java.util.Map" resultType="java.util.Map">
+		select ID,BXG_ID,BRED_ID,USE_FLAG,DATASOURCE from ${tableName}_BAS_MEN_WIN_GROU_CONF where BMWC_ID=#{bmwcId}
+	</select>
+	
+	<select id="getDataSourceNameById" parameterType="java.util.Map" resultType="java.lang.String">
+		select CODE_GROUP_NAME from  #{tableName}_BAS_CODE_GROUP where ID='${datasource}'
+	</select>
+	
+	<select id="getWinConfList" resultType="java.util.HashMap">
+		select dic.EN_NAME,dic.CN_NAME,dic.data_type,con.id,con.TYPE,con.NAME,con.COLLECT_TYPE,con.DATASOURCE,con.BIND_EVENT_OR_URL,con.GROUPID,con.NULL_FLAG,
+			con.order_code,con.alter_flag,con.basic_flag
+		from ${tableName}_BAS_MENU_WIN_CONF con
+		left join ${tableName}_BAS_DICT dic on con.BIND_FILED = dic.ID 
+		<where>
+			con.FUNCTION_CODE=#{functionCode} and con.DEL_FLAG = 0 and con.USE_FLAG = 0
+		</where>
+		ORDER BY con.ORDER_CODE, con.GROUPID ASC
+	</select>
+	
+	
+	<select id="getExtDetList" parameterType="java.util.Map" resultType="java.util.Map">
+		select wgc.bxg_id,wgc.bmwc_id,dic.en_name,dic.map_cn_name,dic.data_type,dic.data_length,wgc.null_flag,wgc.collect_type,wgc.datasource,wgc.bind_filed,wgc.alter_flag 
+		from #{tableName}_bas_men_win_grou_conf wgc,#{tableName}_bas_expand_group gro,#{tableName}_bas_menu_win_conf con,#{tableName}_bas_ex_det_dic dic
+		<where>
+			gro.ID = wgc.BXG_ID 
+		    and con.ID = wgc.BMWC_ID
+		    and dic.GROUP_ID = wgc.BXG_ID and dic.ID = wgc.BRED_ID
+		    and con.id=#{gatherId} and wgc.USE_FLAG = 0 and dic.state = 0 and dic.del_flag = 0
+    	</where>
+		ORDER BY con.GROUPID ASC 
+	</select>
+	
+	
+	<select id="getTempaletName" parameterType="java.util.Map" resultType="java.util.Map">
+		select TEMP_NAME from #{tableName}_bas_fun_conf 
+		<where>
+			FUNCTION_CODE = #{functionCode}
+    	</where>
+	</select>
+	
+	
+	<select id="getExtDetDataList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from #{tableName}_bas_pro_ex_detail
+		<where>
+			EXTEND_GROUP_ID = #{groupId} and PROJECT_ID = #{projectId}
+    	</where>
+	</select>
+	
+	
+	<select id="getattchTypeList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from #{tableName}_bas_pro_attch_type 
+		<where>
+			ms_flag = #{msFlag} and del_flag = 0
+    	</where>
+	</select>
+	
+	
+	<select id="getProAttchList" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from #{tableName}_bas_pro_attch
+		<where>
+			PROJECT_ID = #{projectId} and del_flag = 0
+    	</where>
+    	order by create_time asc
+	</select>
+	
+	<select id="getOrder" parameterType="java.util.Map" resultType="java.util.Map">
+		 select ORDER_CODE+0.01 as orderCode from (
+            select FUNCTION_CODE, GROUPID,ORDER_CODE,  
+                row_number() over (partition by FUNCTION_CODE order by ORDER_CODE desc) row_id  
+            from #{tableName}_bas_menu_win_conf where FUNCTION_CODE = #{functionCode} AND DEL_FLAG = 0 AND USE_FLAG = 0
+            and GROUPID like CONCAT(#{groupId},'%')
+         )  where row_id &lt;= 2
+	</select>
+	
+	<select id="getGroupOrder" parameterType="java.util.Map" resultType="java.util.Map">
+		 select count(1)+1 as groupOrder from #{tableName}_BAS_MENU_WIN_CONF WHERE FUNCTION_CODE=#{functionCode} AND DEL_FLAG = 0 AND USE_FLAG = 0 and TYPE = 0
+	</select>
+	
+	
+	
+	<update id="updateOrdersByGroup">
+		update #{tableName}_BAS_MENU_WIN_CONF set ORDER_CODE = #{orderCode} || substr(ORDER_CODE,2,4)
+		<where>
+			FUNCTION_CODE=#{functionCode} and GROUPID like CONCAT(#{groupId},'%') AND DEL_FLAG = 0 AND USE_FLAG = 0
+		</where>
+	</update>
+	
+	
+	<update id="changeGroupOrder">
+		update #{tableName}_BAS_MENU_WIN_CONF set ORDER_CODE = #{realCode} || substr(ORDER_CODE,2,4)
+		<where>
+			FUNCTION_CODE=#{functionCode} and ORDER_CODE like CONCAT(#{orderCode},'%') AND DEL_FLAG = 0 AND USE_FLAG = 0
+		</where>
+	</update>
+	
+	
+	
+	<select id="checkFileName" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from #{tableName}_bas_pro_attch
+		<where>
+			original_name = #{fileName} and project_id = #{projectId} and del_flag = 0
+    	</where>
+	</select>
+	
+	<select id="getOneAttchType" parameterType="java.util.Map" resultType="com.krm.voteplateform.web.menuwinconf.model.BasProAttch">
+		select * from #{tableName}_BAS_PRO_ATTCH
+		<where>
+			id = #{pkid} and del_flag = 0
+    	</where>
+	</select>
+	
+	<update id="updateBasMenuWinConfList" parameterType="java.util.Map">
+		update #{tableName}_BAS_MENU_WIN_CONF set BASIC_FLAG = '1'
+		<where>
+			type='0' AND FUNCTION_CODE=#{functionCode,jdbcType=VARCHAR}   AND DEL_FLAG = 0 AND USE_FLAG = 0
+		</where>
+	</update>
+	
+	<select id="selectWinSize" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from #{tableName}_bas_cus_conf 
+		<where>
+			otid = #{functionCode} and type = #{type}
+    	</where>
+	</select>
+</mapper>

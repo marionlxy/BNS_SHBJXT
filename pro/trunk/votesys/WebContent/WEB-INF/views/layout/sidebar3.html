@@ -1,0 +1,42 @@
+<div id="sidebar" class="sidebar responsive  sidebar-fixed">
+	<script type="text/javascript">
+		try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
+		
+	</script>
+	<ul class="nav nav-list" id="sidebar-menu">
+		@menuTree(menuList!);
+	</ul>
+	<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+		<i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+	</div>
+
+	<script type="text/javascript">
+		try{ace.settings.check('sidebar' , 'collapsed')}catch(e){}
+	</script>
+	
+	<script type="text/javascript">
+	$(function(){
+		$("ul#sidebar-menu.nav.nav-list li a").each(function(i) {
+			if (this.hasAttribute("toUrl")) {
+				var url = $(this).attr("toUrl");
+				if(url.indexOf('?')>-1){
+					url+="&r="+Math.random();
+				}else{
+					url+="?r="+Math.random();
+				}
+				$(this).click(function(){
+					$.ajax({
+						url : "${ctxPath!}/"+url,
+						dataType : "html",
+						async : false,
+						success : function(data) {
+							$("#fill-main-content").html(data);
+						}
+					});
+				});
+			}
+		});
+	});
+	</script>
+</div>
+

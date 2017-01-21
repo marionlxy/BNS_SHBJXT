@@ -1,0 +1,67 @@
+<div class="layer">
+<div class="widget-box" style="width:100%;align:center">
+	    <div class="form-inline" role="form">
+	    	<form id="plateform" class="plateform" method="post" action="${ctxPath!}/pt/bascusconf/saveWinSize">
+	    	<input type="hidden" value="${functionCode}" name="functionCode" />
+	    	<div class="form-group">
+			&nbsp;&nbsp;<span>高度:</span>&nbsp;&nbsp;
+			<input type="text" name="height" value="${height!}" class="form-control w150" datatype="n" style="ime-mode:disabled;" errormsg="只允许输入数字" nullmsg="高度不能为空">
+			&nbsp;<span>%(百分比，默认60%)</span>
+			</div>
+			<br>
+			<div class="form-group">
+			&nbsp;&nbsp;<span>宽度:</span>&nbsp;&nbsp;
+			<input type="text" name="width" value="${width!}" class="form-control w150" datatype="n" style="ime-mode:disabled;" errormsg="只允许输入数字" nullmsg="宽度不能为空">
+			&nbsp;<span>%(百分比，默认50%)</span>
+			</div>
+		<div class="clearfix"  style="bottom: 0px;left: 25%;position:absolute;">
+			<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="model-save-form" value="保存"/>&nbsp;&nbsp;
+			<input type="button" class="btn btn-primary btn-sm bigger-110" id="sys_dic_cancel" value="关闭"/>
+			<!-- <span class="btn btn-primary btn-sm bigger-110" id="sys_dic_cancel"> -->
+			</span>
+	</div>
+	</form>
+	</div>
+</div>
+</div>
+
+<script type="text/javascript">
+$("#plateform").Validform({
+	   ajaxPost:true,
+   	tiptype : 4,
+       beforeSubmit:function(curform){
+           var loadi = layer.load(5,2);
+           $("#plateform").data('loadi',loadi);
+       },
+       tiptype : function(msg, o, cssctl) {
+           if (!o.obj.is("form")) {
+               if (o.type != 2) {
+                   tip.errorTip(msg,o.obj);
+               }
+           }
+       },
+       tipSweep : true,
+       callback:function(data){
+			layer.close($("#plateform").data('loadi'));
+			if(data.code=="1"){
+				layer.msg(data.msg, 1, 1,function(){
+					//query();
+					//var treeNodes = [{"id":1, "pId":0, "name":"test1"}];
+				});
+				layer.closeAll('page'); 
+			}else{
+				layer.msg(data.msg,1,1);
+				//layer.closeAll('page');
+			}
+		}
+   });
+   
+
+$("#sys_dic_cancel").click(function () {
+	layer.closeAll();
+	return false;
+});
+
+</script>
+
+

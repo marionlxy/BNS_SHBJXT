@@ -1,0 +1,186 @@
+<div class="layer">
+	<div class="row">
+		<div class="col-xs-12">
+			<div class="widget-body">
+				<table id="tablesuggestion">
+
+				</table>
+				
+			</div>
+		</div>
+	</div>
+	
+		<div class="clearfix"  tag-save-btn style="bottom: 0px; left: 35%; position:absolute;">
+				<span class="btn btn-primary btn-sm bigger-110" onclick="reDiscuss()">确定</span>&nbsp;&nbsp;
+				<span class="btn btn-primary btn-sm bigger-110" id="dic-save-cancel">
+					取消 </span>
+			</div>
+</div>
+
+<script>
+
+	$("#dic-save-cancel").click(function(){
+		var index = layer.index; //获取当前弹层的索引号
+		layer.close(index); //关闭当前弹层
+	    return false;
+	});
+	
+	//表单内容初始化
+	$(function(){
+		$('#tablesuggestion').bootstrapTable({
+			iconSize : 'sm',
+			data:${params.selectRows},
+			height:400,
+			toolbar:'',
+			cache: false,
+			striped : true,
+			columns : [
+					{
+						field : "puid",
+						title : '编号',
+						formatter : function(value, row, index) {
+							return index + 1;
+						}
+					},{
+						field : "realName",
+						title : '委员姓名',
+						sortable : true
+						
+					 },{
+						field:"orgname",
+						title:'部门',
+						sortable : true
+					},
+					{
+						field:"passVal",
+						title:'投票',
+						formatter:fmtPassVal
+						
+					},
+					{
+						field:"passContent",
+						title:'意见',
+						formatter:fmtPassContent,
+						sortable : true
+					}
+				],
+				contentType: "application/x-www-form-urlencoded",//复制
+				queryParamsType: "",//复制
+				dataType: "json",//复制
+				method: "post",//复制
+				queryParams : function(params){
+					var obj={meetingId:'${params.meetingId!}'};
+					$.extend(params,obj);
+					//var json = $("#search_form_info").serializeJson();
+					//$.extend(params,json);
+					console.log(params);
+					return params;
+				}
+		});
+	})
+	
+	function reDiscuss(){
+		var selectRows = $('#resList').bootstrapTable("getSelections");
+		//console.log(selectRows);
+		var dats=$('#tablesuggestion').bootstrapTable("getData");
+		console.log(dats);
+		var str='';
+		var tempArr=[];
+		tempArr=$("select[name^='passVal']");
+		var i=0,j=0,k=0;var newArrData=[];
+		$.each(dats,function(index,obj){
+			var passVal=tempArr[index].value;
+			//同意
+			if(passVal=="01"){
+				i++;
+			//再议	
+			}else if(passVal=="02"){
+				j++;
+			//反对
+			}else if(passVal=="03"){
+				k++;
+			}
+			//审查意见
+			//审查意见
+			var temp={passVal:passVal,passContent:$("textarea[name=fmtPassContent"+index+"]").val()}
+			var obj=$.extend(obj,temp);
+			newArrData.push(obj);
+			str+=obj.realName+"："+$(tempArr[index]).find("option:selected").text()+"；<br/>";
+		})
+		@for(voteMatterConf in voteMatterConfList!){
+			<!-- 同意 -->
+			str+= "${voteMatterConf.committeeText}：<font color='red'>"
+			@if(voteMatterConf.val=="01"){
+				str+=i;
+			@}else if(voteMatterConf.val=="02"){
+				str+=j;
+			@}else if(voteMatterConf.val=="03"){
+				str+=k;
+			@}
+			str+="</font>,"
+		@}
+		var param={
+				projectId:selectRows[0].projectId,
+				meetingId:'${params.meetingId}',
+				agree:i,
+				rediscuss:j,
+				disagree:k,
+				total:i+j+k
+		}
+		var result=selectVote(param);
+		if(result!=''){
+			str+= "当前项目<font color='red'>\""+result+"\"</font>,您确定提交吗？";
+			var obj = {};
+			obj["confirmMsg"] = "项目【"+selectRows[0].projectTitle+"】<br/>"+str;
+			obj["url"] = "${ctxPath!}/ptsystems/menu5/fun1407/saveVoteSuggestion";
+			
+			var json2={selectRows:JSON.stringify(newArrData)};
+			$.extend(param,json2);
+			obj["data"]=param;
+			
+			console.log(param);
+	  		layer.confirm(obj.confirmMsg,function(index){
+				Angel.ajax(obj.url, obj.data, function(result){
+					layer.msg(result.msg,1,1);
+					if(result.code==1){
+						$("#resList").bootstrapTable('refresh');
+					}
+				});
+			     layer.closeAll();
+			 },"提交确认"); 
+			
+		}
+		
+	}
+	
+	function selectVote(param){
+		var result='';
+		$.ajax({
+			url: "${ctxPath}/ptsystems/menu5/fun1407/offlineVote",
+			type:"post",
+			data:param,
+			dataType: "json",
+			async: false,
+			success: function(data){
+					result=data.result;
+			}
+		});
+		return result;
+	}
+	
+	function fmtPassVal(value,row,index){
+		var html='<select name="passVal'+index+'"  class="select">';
+		@for(voteMatterConf in voteMatterConfList!){
+			html+='<option value="${voteMatterConf.val}" >${voteMatterConf.committeeText}</option>'
+		@}
+		html+='</select><script type="text/javascript">$(".select").chosen({width: "100%",disable_search_threshold:20});<\/script>';
+		return html;
+	}
+	
+	function fmtPassContent(value,row,index){
+		return '<textarea name="fmtPassContent'+index+'" class="autosize-transition form-control "style="resize: none;"></textarea>';
+	}
+	
+	
+</script>
+

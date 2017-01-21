@@ -1,0 +1,26 @@
+<public:component lightweight="true">
+<public:attach  event="onmouseover" onevent="selectButtonHover()"/> 
+<public:attach  event="onmousedown" onevent="selectButtonDown()"/> 
+<public:attach  event="onmouseup" onevent="selectButtonUp()"/> 
+<public:attach  event="onmouseout" onevent="selectButtonOut()"/> 
+
+
+
+<script language="Javascript"> 
+function selectButtonHover(){ 
+	this.className="ezSelectButtonHover" ;
+} 
+
+function selectButtonDown(){ 
+	this.className="ezSelectButtonDown" ;
+} 
+
+function selectButtonUp(){ 
+	this.className="ezSelectButtonHover" ;
+} 
+
+function selectButtonOut(){ 
+	this.className="ezSelectButton" ;
+} 
+</script> 
+</public:component>

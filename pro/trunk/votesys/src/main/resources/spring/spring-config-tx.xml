@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/tx 
+		http://www.springframework.org/schema/tx/spring-tx.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd"
+	default-lazy-init="false">
+
+	<!-- 声明式事务管理 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
+	<!-- 配置事务特性 -->
+	<tx:advice id="userTxAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="insert*" propagation="REQUIRED" read-only="false"
+				isolation="READ_COMMITTED" rollback-for="java.lang.Exception" />
+			<tx:method name="save*" propagation="REQUIRED" read-only="false"
+				isolation="READ_COMMITTED" rollback-for="java.lang.Exception" />
+			<tx:method name="add*" propagation="REQUIRED" read-only="false"
+				isolation="READ_COMMITTED" rollback-for="java.lang.Exception" />
+			<tx:method name="update*" propagation="REQUIRED" read-only="false"
+				isolation="READ_COMMITTED" rollback-for="java.lang.Exception" />
+			<tx:method name="delete*" propagation="REQUIRED" read-only="false"
+				isolation="READ_COMMITTED" rollback-for="java.lang.Exception" />
+			<tx:method name="remove*" propagation="REQUIRED" read-only="false"
+				isolation="READ_COMMITTED" rollback-for="java.lang.Exception" />
+			<tx:method name="*" read-only="true" />
+		</tx:attributes>
+	</tx:advice>
+	
+	<!-- 以AspectJ方式 定义 AOP -->
+	<!-- 如果service没有基於介面，使用cgilib来实现AOP，定义proxy-target-class="true" 设定proxy-target-class="true" 
+		其实就是强制spring使用CGLIB代理！这裡我们service基於介面编程就变的毫无意义 -->
+	<aop:config expose-proxy="true" proxy-target-class="true">
+		<aop:pointcut id="pc"
+			expression="execution(* com.krm.voteplateform.web..service.*.*(..))" />
+		<aop:advisor pointcut-ref="pc" advice-ref="userTxAdvice" />
+	</aop:config>
+
+	<tx:annotation-driven proxy-target-class="true"
+		transaction-manager="transactionManager" />
+
+</beans>

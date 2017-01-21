@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.log.dao.PtLogMapper">
+
+	<sql id="BaseColumnList">
+		ID,CREATE_BY,CREATE_TIME,EXCEPTION,METHOD,PARAMS,
+		SYS_FLAG,DESCRIPTION,REMOTE_ADDR,
+		REQUEST_URI,TYPE,USER_AGENT
+	</sql>
+
+	<sql id="BaseColumnValueList">
+		#{id},#{createBy},#{createTime},#{exception},#{method},
+		#{params},#{sysFlag},#{description},#{remoteAddr},#{requestUri},
+		#{type}, #{userAgent}
+	</sql>
+
+	<insert id="insert" parameterType="com.krm.voteplateform.web.log.model.PtLog">
+		insert into pt_log(
+		<include refid="BaseColumnList" />
+		)values(
+		<include refid="BaseColumnValueList" />
+		)
+	</insert>
+
+	<select id="findPageInfo" resultType="java.util.Map">
+		select
+		<include refid="BaseColumnList" />
+		from pt_log
+		<where>
+			<if test="type!=null and type!=''">
+				type = #{type}
+			</if>
+			<if test="@Ognl@isNotBlank(description)">
+				description like '%' || #{description} ||'%'
+			</if>
+		</where>
+	</select>
+
+	<select id="getById" resultType="com.krm.voteplateform.web.log.model.PtLog" parameterType="Object">
+		select
+		<include refid="BaseColumnList" />
+		from pt_log
+		<where>
+			id = #{id}
+		</where>
+	</select>
+</mapper>

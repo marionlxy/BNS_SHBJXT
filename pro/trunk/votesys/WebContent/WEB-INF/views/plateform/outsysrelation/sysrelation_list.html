@@ -1,0 +1,305 @@
+<script type="text/javascript">
+	$(function() {
+		$(".navbar-default").css("background-image","url(${ctxPath!}/static/images/logo.jpg)");
+		$("#sidebar-collapse").click(function(){
+			refreshTable('tableysxm');
+		});
+		$("#tableysxm").bootstrapTable({
+			inconSize : 'sm',
+			url : '${ctxPath!}/pt/relate/relationList?r='+Math.random(),
+			striped : true,
+			cache: false,
+			columns : [ {
+				checkbox : true
+			}, {
+				field : "id",
+				title : '序号',
+				formatter : function(value, row, index) {
+					return index + 1;
+				}
+			}, {
+				field : "code",
+				title : '委员会编码',
+				sortable : true
+			}, {
+				field : "sysTitle",
+				title : '委员会名称',
+				sortable : true
+			}, {
+				field : "relationCode",
+				title : '关联系统编码',
+				sortable : true
+			}, {
+				field : "relationName",
+				title : '关联系统简称',
+				sortable : true
+			}, {
+				field : "notifyAddr",
+				title : '通知Servlet地址',
+				sortable : true
+			},{
+				field : "updateTime",
+				title : '更新时间'
+			}]
+		});
+		/*删除委员信息*/
+		$('#commisdelete').click(function(){
+			var checks = $("#tableysxm").bootstrapTable('getSelections');
+			if(checks.length==0){
+				layer.alert("请选择数据!");
+			}else{
+			layer.confirm('确定删除数据吗？',function(){
+				for(var i=0;i<checks.length;i++){
+					var row = checks[i];
+					  $.post("${ctxPath!}/pt/ptcommission/comDeleteId",{'id':row.id},function(result){
+						  if(result.code==1){
+							layer.msg(result.msg,1,1);
+							 $("#tableysxm").bootstrapTable('refresh');
+						}else{
+							layer.msg("删除失败!");
+						}
+					},"json"); 
+				} 
+			});
+		}	
+		});
+		
+		$("#deploy").click(function(){
+			var rows = $('#tableysxm').bootstrapTable("getSelections");
+			if(rows.length==0){
+				layer.alert("请选择要操作的数据");
+				return;
+			}else if(rows.length>1){
+				layer.alert("请选择一条数据进行操作");
+				return;
+			}else{
+				var row = rows[0];
+				var code1= row.code
+				 var form = $("#form1");
+				 form.attr("action","${ctxPath!}/pt/ptSysDic/toPtSysDic?code="+code1);
+				 form.submit();
+			}
+		});
+		
+		$("#updatevote").click(function(){
+			var rows = $('#tableysxm').bootstrapTable("getSelections");
+			if(rows.length==0){
+				layer.alert("请选择要操作的数据");
+				return;
+			}else if(rows.length>1){
+				layer.alert("请选择一条数据进行操作");
+				return;
+			}else{
+				var row = rows[0];
+				var params = {
+					mode : 'page',
+					width : '60%',
+					height : '80%',
+					url : "${ctxPath!}/pt/relate/toEditCommission",
+					title:'修改委员会信息',
+					data:{id:row.id}
+				};
+				$.cuslayer(params);
+			}
+		});
+		
+/* 		$("#genPreivew").click(function(){
+			var rows = $('#tableysxm').bootstrapTable("getSelections");
+			if(rows.length==0){
+				layer.alert("请选择要操作的数据");
+				return;
+			}else if(rows.length>1){
+				layer.alert("请选择一条数据进行操作");
+				return;
+			}else{
+				var row = rows[0];
+				var params = {
+						mode:"page",
+						url:"${ctxPath!}/pt/gen/genCommissionConfPreview",
+						height:'65%',
+						width:'50%',
+						data:{code:row.code},
+						title:'生成预览页面'
+				};
+				$.cuslayer(params);
+			}
+		}); */
+		
+		//生成委员会信息
+		$("#genConf").click(function(){
+			var rows = $('#tableysxm').bootstrapTable("getSelections");
+			if(rows.length==0){
+				layer.alert("请选择要操作的数据");
+				return;
+			}else if(rows.length>1){
+				layer.alert("请选择一条数据进行操作");
+				return;
+			}else{
+				var row = rows[0];
+				var obj = {};
+				if(row.state==0){
+					obj["confirmMsg"] = "确认要生成["+row.simpleTitle+"]吗？";
+					obj["url"] = "${ctxPath!}/pt/gen/genCommissionConf";
+					obj["data"]={id:row.id,code:row.code};
+					layer.confirm(obj.confirmMsg,function(index){
+						Angel.ajax(obj.url, obj.data, function(result){
+							layer.msg(result.msg,1,1);
+							if(result.code==1){
+								$("#tableysxm").bootstrapTable('refresh');
+							}
+						});
+						layer.close(index);
+					});
+				}else if(row.state==1){
+					layer.alert("该委员会"+row.simpleTitle+"未启用!");
+					return;
+				}
+				
+			}
+		});
+		
+	});
+	function genPreivewPage(menuCode){
+		var rows = $('#tableysxm').bootstrapTable("getSelections");
+		if(rows.length==0){
+			layer.alert("请选择要操作的数据");
+			return;
+		}else if(rows.length>1){
+			layer.alert("请选择一条数据进行操作");
+			return;
+		}else{
+			
+	/* 		var row = rows[0];
+			var code= row.code
+			 var form = $("#form1");
+			 form.attr("action","${ctxPath!}/pt/gen/genCommissionConfPreview?code="+row.code+"&menuCode="+menuCode);
+			 form.submit(); */
+			 var row = rows[0];
+				var obj = {};
+				if(row.state==0){
+					var params = {
+							mode:"page",
+							url:"${ctxPath!}/pt/gen/genCommissionConfPreview",
+							height:'65%',
+							width:'50%',
+							data:{code:row.code,menuCode:menuCode},
+							title:'生成预览页面'
+					};
+					$.cuslayer(params); 
+				}else if(row.state==1){
+					layer.alert("该委员会"+row.simpleTitle+"未启用!");
+					return;
+				}
+			
+		}
+	};
+	
+	//下载模板
+	function downloadModelXml(){
+		var rows = $('#tableysxm').bootstrapTable("getSelections");
+		if(rows.length==0){
+			layer.alert("请选择要操作的数据");
+			return;
+		}else if(rows.length>1){
+			layer.alert("请选择一条数据进行操作");
+			return;
+		}else{
+			 var row = rows[0];
+				var obj = {};
+				if(row.state==0){
+					window.location.href="${ctxPath!}/pt/download/GenModelXMl?code="+row.code;
+				}else if(row.state==1){
+					layer.alert("该委员会"+row.simpleTitle+"未启用!");
+					return;
+				}
+			
+		}
+	}
+	
+	function attachmentModelXml(){
+		var rows = $('#tableysxm').bootstrapTable("getSelections");
+		if(rows.length==0){
+			layer.alert("请选择要操作的数据");
+			return;
+		}else if(rows.length>1){
+			layer.alert("请选择一条数据进行操作");
+			return;
+		}else{
+			 var row = rows[0];
+				var obj = {};
+				if(row.state==0){
+					window.location.href="${ctxPath!}/pt/download/attachmentModelXMl";
+				}else if(row.state==1){
+					layer.alert("该委员会"+row.simpleTitle+"未启用!");
+					return;
+				}
+			
+		}
+	}
+	
+	function codeTableModelXml(){
+		var rows = $('#tableysxm').bootstrapTable("getSelections");
+		if(rows.length==0){
+			layer.alert("请选择要操作的数据");
+			return;
+		}else if(rows.length>1){
+			layer.alert("请选择一条数据进行操作");
+			return;
+		}else{
+			 var row = rows[0];
+				var obj = {};
+				if(row.state==0){
+					window.location.href="${ctxPath!}/pt/download/codeTableModelXml?code="+row.code;
+				}else if(row.state==1){
+					layer.alert("该委员会"+row.simpleTitle+"未启用!");
+					return;
+				}
+			
+		}
+	}
+</script>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h6 class="widget-title">外部系统关联表维护</h6>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2" onclick="refreshTable('tableysxm')">  <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+			</div>
+			<div class="widget-body">
+			<div id="list-page" class="widget-main padding-8">
+				<div class="form-inline" role="form">
+					<div class="form-group">
+						<a class="btn btn-purple btn-xs" href="javascript:void(0);" data-mode="page" data-title="增加信息"
+										data-data="{id:'{row.id}'}"
+										data-width="60%"
+										data-height="80%"
+										data-url="${ctxPath!}/pt/relate/toAddReletion">
+							<i class="fa  fa-plus-circle"></i>&nbsp;新增
+						</a>
+						<a id="updatevote" class="btn btn-purple btn-xs" href="javascript:void(0);">
+							<i class="ace-icon fa fa-pencil-square bigger-130"></i>&nbsp;修改
+						</a>
+						<!-- <a class="btn btn-primary btn-xs" href="javascript:void(0);" id="commisdelete">
+							<i class="ace-icon fa fa-remove">&nbsp;删除
+							</i>
+						</a> -->
+					</div>
+				</div>
+				<form action="" method="post" id="form1">
+					<table id="tableysxm"></table>
+					<input type="hidden" id="HdrowCode"/>
+				</form>
+			</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+

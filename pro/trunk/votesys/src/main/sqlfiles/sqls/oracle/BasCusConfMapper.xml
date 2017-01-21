@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.menuwinconf.dao.BasCusConfMapper">
+
+	<sql id="BaseColumnList">
+		ID,OTID,TYPE,VAL
+	</sql>
+
+	<sql id="BaseColumnValueList">
+		#{id},#{otid},#{type},#{val}
+	</sql>
+	
+	<select id="findOne" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(1) from #{tableName}_bas_cus_conf where TYPE=1 and OTID='${functionCode}'
+	</select>
+	
+	<delete id="delete" parameterType="java.util.Map">
+		delete from ${tableName}_bas_cus_conf where OTID='${functionCode}'
+	</delete>
+</mapper>

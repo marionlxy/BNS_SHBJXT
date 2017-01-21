@@ -1,0 +1,808 @@
+/*	CSS Document
+	2008-09-04 evan.bian
+/*	body { filter:Gray();}*/
+body,td,th {
+	font-size: 11px;
+	color:#FFFFFF;
+	font-family:Tahoma,Verdana,Segoe,sans-serif;
+}
+body {
+	margin: 0px;
+	overflow:auto;
+	border:none;
+}
+#vpDiv {
+	background-color:#000;
+	width:200px;
+	clear:both;
+}
+
+#vpTop{
+	width:200px;
+	height:17px;
+	overflow:hidden;
+	background-image:url(../videoPhone/images/corner.png);
+	background-repeat:no-repeat;
+	clear:both;
+}
+#vpStatus {
+	height:12px;
+	overflow:hidden;
+	margin-top:4px;
+	margin-left:5px;
+	font-family: "Arial", "Helvetica", "sans-serif";
+	font-size: 10px;
+	line-height: 10px;
+	text-decoration:none;
+	float:left;
+}
+#vpTime {
+	margin-top:6px;
+	margin-right:6px;
+	font-family: "Arial", "Helvetica", "sans-serif";
+	font-size: 10px;
+	line-height: 10px;
+	text-decoration:none;
+	float:right;
+}
+
+
+
+#vpVideoDiv {
+	padding-left:1px;
+	padding-right:1px;
+}
+#vpVideo {
+	height:140px;
+	width:196px;
+	border:1px solid #616161;
+	overflow:hidden;
+	float:left;
+}
+#vpMedia {
+	height:140px;
+	width:196px;
+}
+
+
+#vpDialDiv {
+	height:31px;
+	margin-left:1px;
+	margin-right:1px;
+	border-left: 1px solid #616161;
+	border-right: 1px solid #616161;
+}
+#vpDialLeft {
+	width:4px; 
+	height:31px;
+	margin-top:5px;
+	margin-left:2px;
+	float:left;
+}
+#vpDialCenter {
+	height:29px;
+	width:136px;
+	border-top:1px solid #5d5d5d;
+	border-bottom:1px solid #5d5d5d;
+	margin-top:5px;
+	float:left;
+}
+.vpDialInput {
+	width: 100%;
+	height: 21px;
+	border-style: none;
+	padding: 2px;
+	margin-top:3px;
+	background-color:#000;
+	color:#fff;
+	font-size: 16px; 
+	font-weight:bold; 
+	line-height:21px;
+	text-align:right;
+	font-family:Arial, Helvetica, sans-serif;
+	float:left;
+}
+
+#vpDialButton{
+	width:45px;
+	height:31px;
+	margin-top:5px;
+	cursor:pointer;
+	background-image:url(../videoPhone/images/dialButton.png);
+	overflow:hidden;
+	float:left;
+}
+	.vpDialButton_rest{		background-position:0px 0px;	cursor:pointer;}
+	.vpDialButton_hover{	background-position:-50px 0px; 	cursor:pointer;}
+	.vpDialButton_down{		background-position:-100px 0px;	cursor:pointer;}
+	.vpDialButton_disables{	background-position:-150px 0px;	cursor:pointer;}
+
+#line123 {
+	height:11px;
+	padding-left:4px;
+	padding-top:2px;
+	margin-right:1px;
+	margin-left:1px;
+	border-left:1px solid #616161;
+	border-right:1px solid #616161;
+}
+#line1 {
+	width:44px;
+	height:11px;
+	margin-right:9px;
+	cursor:pointer;
+	background-image:url(../videoPhone/images/line.gif);
+	overflow:hidden;
+	float:left;
+}
+	.line1_on_idle		{	background-position:0px 0px;	cursor:pointer;}
+	.line1_on_ringing	{	background-position:0px -11px;	cursor:pointer;}
+	.line1_on_dialing	{	background-position:0px -22px;	cursor:pointer;}
+	.line1_on_talking	{	background-position:0px -22px;	cursor:pointer;}
+	.line1_on_hold		{	background-position:0px -33px;	cursor:pointer;}
+
+	.line1_off_idle		{	background-position:0px -44px;	cursor:pointer;}
+	.line1_off_ringing	{	background-position:0px -55px;	cursor:pointer;}
+	.line1_off_dialing	{	background-position:0px -66px;	cursor:pointer;}
+	.line1_off_talking	{	background-position:0px -66px;	cursor:pointer;}
+	.line1_off_hold		{	background-position:0px -77px;	cursor:pointer;}
+	
+#line2 {
+	width:44px;
+	height:11px;
+	margin-right:9px;
+	cursor:pointer;
+	background-image:url(../videoPhone/images/line.gif);
+	overflow:hidden;
+	float:left;
+}
+	.line2_on_idle		{	background-position:-44px 0px;		cursor:pointer;}
+	.line2_on_ringing	{	background-position:-44px -11px;	cursor:pointer;}
+	.line2_on_dialing	{	background-position:-44px -22px;	cursor:pointer;}
+	.line2_on_talking	{	background-position:-44px -22px;	cursor:pointer;}
+	.line2_on_hold		{	background-position:-44px -33px;	cursor:pointer;}
+
+	.line2_off_idle		{	background-position:-44px -44px;	cursor:pointer;}
+	.line2_off_ringing	{	background-position:-44px -55px;	cursor:pointer;}
+	.line2_off_dialing	{	background-position:-44px -66px;	cursor:pointer;}
+	.line2_off_talking	{	background-position:-44px -66px;	cursor:pointer;}
+	.line2_off_hold		{	background-position:-44px -77px;	cursor:pointer;}
+
+#line3 {
+	width:44px;
+	height:11px;
+	margin-right:15px;
+	cursor:pointer;
+	background-image:url(../videoPhone/images/line.gif);
+	overflow:hidden;
+	float:left;
+}
+	.line3_on_idle		{	background-position:-88px 0px;		cursor:pointer;}
+	.line3_on_ringing	{	background-position:-88px -11px;	cursor:pointer;}
+	.line3_on_dialing	{	background-position:-88px -22px;	cursor:pointer;}
+	.line3_on_talking	{	background-position:-88px -22px;	cursor:pointer;}
+	.line3_on_hold		{	background-position:-88px -33px;	cursor:pointer;}
+
+	.line3_off_idle		{	background-position:-88px -44px;	cursor:pointer;}
+	.line3_off_ringing	{	background-position:-88px -55px;	cursor:pointer;}
+	.line3_off_dialing	{	background-position:-88px -66px;	cursor:pointer;}
+	.line3_off_talking	{	background-position:-88px -66px;	cursor:pointer;}
+	.line3_off_hold		{	background-position:-88px -77px;	cursor:pointer;}
+
+#tools {
+	width:24px;
+	height:11px;
+	cursor:pointer;
+	background-image:url(../videoPhone/images/tools.png);
+	overflow:hidden;
+	float:left;
+}
+#toolsDiv{
+	position:absolute;
+	left:92px;
+	width:100px;
+	height:60px;
+	padding:1px;
+	margin-top:12px;
+	border:1px solid #787878;
+	color:#FFFFFF;
+	background-color:#000000;
+	z-index:2;
+}
+#toolsDiv div {
+	padding:3px;
+	cursor:pointer;
+}
+
+#vp0peration{
+	height:18px;
+	padding-top:5px;
+	padding-right:2px;
+	padding-bottom:0px;
+	margin-left:1px;
+	margin-right:1px;
+	border-left:1px solid #616161;
+	border-right:1px solid #616161;
+	background-color:#000000;
+	clear:both;
+}
+#hangup {
+	position:absolute;
+	cursor:pointer;
+	left:7px;
+	background-image:url(../videoPhone/images/operation.png);
+	z-index:1;
+}
+	.hangup_rest {
+		width:30px;
+		height:18px;
+		background-position:-3px -3px;
+	}
+	.hangup_hover {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-36px 0px;
+	}
+	.hangup_down {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-72px 0px;
+	}
+	.hangup_disabled {
+		width:30px;
+		height:18px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-111px -3px;
+	}
+
+#hold {
+	position:absolute;
+	cursor:pointer;
+	margin-right:1px;
+	left:38px;
+	background-image:url(../videoPhone/images/operation.png);
+	z-index:1;
+}
+	.hold_rest {
+		width:30px;
+		height:18px;
+		background-position:-3px -26px;
+	}
+	.hold_hover {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-36px -23px;
+	}
+	.hold_down {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-72px -23px;
+	}
+	.hold_disabled {
+		width:30px;
+		height:18px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-111px -26px;
+	}
+
+#trans {
+	position:absolute;
+	cursor:pointer;
+	left:69px;
+	background-image:url(../videoPhone/images/operation.png);
+	z-index:1;
+}
+	.trans_rest {
+		width:30px;
+		height:18px;
+		background-position:-3px -49px;
+	}
+	.trans_hover {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-36px -46px;
+	}
+	.trans_down {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-72px -46px;
+	}
+	.trans_disabled {
+		width:30px;
+		height:18px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-111px -49px;
+	}
+
+#mulTrans {
+	position:absolute;
+	cursor:pointer;
+	left:100px;
+	background-image:url(../videoPhone/images/operation.png);
+	z-index:1;
+}
+	.mulTrans_rest {
+		width:30px;
+		height:18px;
+		background-position:-3px -72px;
+	}
+	.mulTrans_hover {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-36px -69px;
+	}
+	.mulTrans_down {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-72px -69px;
+	}
+	.mulTrans_disabled {
+		width:30px;
+		height:18px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-111px -72px;
+	}
+
+#conference {
+	position:absolute;
+	cursor:pointer;
+	left:131px;
+	background-image:url(../videoPhone/images/operation.png);
+	z-index:1;
+}
+	.conference_rest {
+		width:30px;
+		height:18px;
+		background-position:-3px -95px;
+	}
+	.conference_hover {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-36px -92px;
+	}
+	.conference_down {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-72px -92px;
+	}
+	.conference_disabled {
+		width:30px;
+		height:18px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-111px -95px;
+	}
+
+#ivr {
+	position:absolute;
+	cursor:pointer;
+	left:162px;
+	background-image:url(../videoPhone/images/operation.png);
+	z-index:1;
+}
+	.ivr_rest {
+		width:30px;
+		height:18px;
+		background-position:-3px -118px;
+	}
+	.ivr_hover {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-36px -115px;
+	}
+	.ivr_down {
+		width:36px;
+		height:23px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-72px -115px;
+	}
+	.ivr_disabled {
+		width:30px;
+		height:18px;
+		margin-left:-3px;
+		margin-top:-3px;
+		background-position:-111px -118px;
+	}
+
+
+
+#vpCorner {
+	width:200px;
+	height:7px;
+	font-size:0px;
+	background-image:url(../videoPhone/images/corner.png);
+	background-position:0px -20px;
+	background-repeat:no-repeat;
+	overflow:hidden;
+	clear:both;
+}
+
+
+#vpKeypadClip {
+	overflow:hidden;
+	height:112px;
+}
+#vpKeypad {
+	width: 192px;
+	height:112px;
+	margin-top:4px;
+	margin-left:7px;
+	overflow:hidden;
+}
+#vpKey_1 {
+	width: 34px;
+	height: 21px;
+	margin-right:12px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_1_rest{		background-position:0px 0px;	cursor:pointer;}
+	.vpKey_1_hover{		background-position:-34px 0px; 	cursor:pointer;}
+	.vpKey_1_down{		background-position:-68px 0px;	cursor:pointer;}
+
+#vpKey_2 {
+	width: 34px;
+	height: 21px;
+	margin-right:12px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_2_rest{		background-position:0px -21px;		cursor:pointer;}
+	.vpKey_2_hover{		background-position:-34px -21px; 	cursor:pointer;}
+	.vpKey_2_down{		background-position:-68px -21px;	cursor:pointer;}
+
+#vpKey_3 {
+	width: 34px;
+	height: 21px;
+	margin-right:15px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_3_rest{		background-position:0px -42px;		cursor:pointer;}
+	.vpKey_3_hover{		background-position:-34px -42px; 	cursor:pointer;}
+	.vpKey_3_down{		background-position:-68px -42px;	cursor:pointer;}
+
+#vpKey_f1 {
+	width: 44px;
+	height: 21px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+	clear:right;
+}
+	.vpKey_f1_rest{		background-position:0px -260px;		cursor:pointer;}
+	.vpKey_f1_hover{	background-position:-44px -260px; 	cursor:pointer;}
+	.vpKey_f1_down{		background-position:-88px -260px;	cursor:pointer;}
+
+#vpKey_4 {
+	width: 34px;
+	height: 21px;
+	margin-right:12px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_4_rest{		background-position:0px -63px;		cursor:pointer;}
+	.vpKey_4_hover{		background-position:-34px -63px; 	cursor:pointer;}
+	.vpKey_4_down{		background-position:-68px -63px;	cursor:pointer;}
+
+#vpKey_5 {
+	width: 34px;
+	height: 21px;
+	margin-right:12px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_5_rest{		background-position:0px -84px;		cursor:pointer;}
+	.vpKey_5_hover{		background-position:-34px -84px; 	cursor:pointer;}
+	.vpKey_5_down{		background-position:-68px -84px;	cursor:pointer;}
+
+#vpKey_6 {
+	width: 34px;
+	height: 21px;
+	margin-right:15px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_6_rest{		background-position:0px -105px;		cursor:pointer;}
+	.vpKey_6_hover{		background-position:-34px -105px; 	cursor:pointer;}
+	.vpKey_6_down{		background-position:-68px -105px;	cursor:pointer;}
+
+#vpKey_f2 {
+	width: 44px;
+	height: 21px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+	clear:right;
+}
+	.vpKey_f2_rest{		background-position:0px -281px;		cursor:pointer;}
+	.vpKey_f2_hover{	background-position:-44px -281px; 	cursor:pointer;}
+	.vpKey_f2_down{		background-position:-88px -281px;	cursor:pointer;}
+
+#vpKey_7 {
+	width: 34px;
+	height: 21px;
+	margin-right:12px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_7_rest{		background-position:0px -126px;		cursor:pointer;}
+	.vpKey_7_hover{		background-position:-34px -126px; 	cursor:pointer;}
+	.vpKey_7_down{		background-position:-68px -126px;	cursor:pointer;}
+
+#vpKey_8 {
+	width: 34px;
+	height: 21px;
+	margin-right:12px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_8_rest{		background-position:0px -147px;		cursor:pointer;}
+	.vpKey_8_hover{		background-position:-34px -147px; 	cursor:pointer;}
+	.vpKey_8_down{		background-position:-68px -147px;	cursor:pointer;}
+
+#vpKey_9 {
+	width: 34px;
+	height: 21px;
+	margin-right:15px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	background-repeat:no-repeat;
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_9_rest{		background-position:0px -168px;		cursor:pointer;}
+	.vpKey_9_hover{		background-position:-34px -168px; 	cursor:pointer;}
+	.vpKey_9_down{		background-position:-68px -168px;	cursor:pointer;}
+
+#vpKey_f3 {
+	width: 44px;
+	height: 21px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+	clear:right;
+}
+	.vpKey_f3_rest{		background-position:0px -302px;		cursor:pointer;}
+	.vpKey_f3_hover{	background-position:-44px -302px; 	cursor:pointer;}
+	.vpKey_f3_down{		background-position:-88px -302px;	cursor:pointer;}
+
+#vpKey_star {
+	width: 34px;
+	height: 21px;
+	margin-right:12px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_star_rest{		background-position:0px -210px;		cursor:pointer;}
+	.vpKey_star_hover{		background-position:-34px -210px; 	cursor:pointer;}
+	.vpKey_star_down{		background-position:-68px -210px;	cursor:pointer;}
+
+#vpKey_0 {
+	width: 34px;
+	height: 21px;
+	margin-right:12px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	background-repeat:no-repeat;
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_0_rest{		background-position:0px -189px;		cursor:pointer;}
+	.vpKey_0_hover{		background-position:-34px -189px; 	cursor:pointer;}
+	.vpKey_0_down{		background-position:-68px -189px;	cursor:pointer;}
+
+#vpKey_sharp {
+	width: 34px;
+	height: 21px;
+	margin-right:15px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	background-repeat:no-repeat;
+	cursor:pointer;
+	float:left;
+}
+	.vpKey_sharp_rest{		background-position:0px -231px;		cursor:pointer;}
+	.vpKey_sharp_hover{		background-position:-34px -231px; 	cursor:pointer;}
+	.vpKey_sharp_down{		background-position:-68px -231px;	cursor:pointer;}
+
+#vpKey_f4 {
+	width: 44px;
+	height: 21px;
+	margin-bottom: 8px;
+	background-image:url(../videoPhone/images/keypad.png);
+	background-repeat:no-repeat;
+	cursor:pointer;
+	float:left;
+	clear:right;
+}
+	.vpKey_f4_rest{		background-position:0px -323px;		cursor:pointer;}
+	.vpKey_f4_hover{	background-position:-44px -323px; 	cursor:pointer;}
+	.vpKey_f4_down{		background-position:-88px -323px;	cursor:pointer;}
+
+
+
+#vpBottom {
+	width:200px; 
+	height:9px;
+	background-image:url(../videoPhone/images/corner.png);
+	background-position:0px -30px;
+	background-repeat:no-repeat;
+	overflow:hidden;
+}
+
+
+
+
+
+
+
+
+
+#vpExtendDiv {
+	width:200px;
+	clear:both;
+	
+}
+#customerInfo {
+	height:19px;
+	background-image:url(../videoPhone/images/titleBg.gif);
+	clear:both;
+}
+#customerInfoContent { 
+	padding:3px;
+	color:#333333;
+	overflow:auto;
+}
+#customerInfoContent th,td {
+	color:#333333;
+}
+
+#customerOperation{
+	position:absolute;
+	left:86px;
+	width:110px;
+	height:80px;
+	padding:1px;
+	border:1px solid #787878;
+	color:#FFFFFF;
+	background-color:#000000;
+	z-index:2;
+}
+#customerOperation div {
+	padding:3px;
+	cursor:pointer;
+}
+
+#summary {
+	height:19px;
+	background-image:url(../videoPhone/images/titleBg.gif);
+	clear:both;
+}
+.vpSubPannelTitle {
+	margin-top:3px;
+	margin-left:5px;
+	color:#545454;
+	float:left;
+}
+.vpSubPannelSetting {
+	width: 15px;
+	height:15px;
+	margin-top:3px;
+	margin-right:1px;
+	background-image:url(../videoPhone/images/vpTriangle.gif);
+	cursor:pointer;
+	float:right;
+}
+
+
+.hLine {
+	margin-bottom:5px;
+	border-bottom:1px solid #676767;
+	font-size:0px;
+}
+.input_i {
+	font-size:11px;
+	color: #000000;
+	margin:2px;
+	padding:2px;
+	font-family:Tahoma,Verdana,Segoe,sans-serif;
+	border:1px solid #787878;
+	width:194px;
+	overflow:auto;
+}
+.input_t {
+	font-size:11px;
+	color: #000000;
+	margin:3px;
+	padding:2px;
+	font-family:Tahoma,Verdana,Segoe,sans-serif;
+	border:1px solid #787878;
+	width:188px;
+	overflow:auto;
+}
+.text_s {
+	font-size:11px;
+	color: #000000;
+	margin:2px;
+	padding:2px;
+	font-family:Tahoma,Verdana,Segoe,sans-serif;
+	width:188px;
+	overflow:auto;
+}
+.text_t {
+	font-size:11px;
+	color: #0062dc;
+	font-family:Tahoma,Verdana,Segoe,sans-serif;
+	font-weight:bold;
+	text-align:center;
+}
+.text_c {
+	font-size:11px;
+	color: #ff7700;
+	font-family:Tahoma,Verdana,Segoe,sans-serif;
+	font-weight:bold;
+}
+.button {
+	 border:1px solid #005eba;
+	 border-bottom:1px solid #005eba; 
+	 padding: 2px 2px 0px 2px; 
+	 margin:3px;
+	 font-size: 11px;
+	 height:21px;
+	 font-family:Tahoma,Verdana,Segoe,sans-serif;
+	 background:#ffffff url(../videoPhone/images/buttonBg.gif);
+	 background-position:0px 0px;
+}
+
+
+
+

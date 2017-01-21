@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.bascode.dao.BasCodeMapper" >
+  <resultMap id="BaseResultMap" type="com.krm.voteplateform.web.bascode.model.BasCode" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="cg_id" property="cgId" jdbcType="VARCHAR" />
+    <result column="ecode" property="ecode" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="map_name" property="mapName" jdbcType="VARCHAR" />
+    <result column="enable_code" property="enableCode" jdbcType="VARCHAR" />
+    <result column="enable_name" property="enableName" jdbcType="VARCHAR" />
+    <result column="sys_flag" property="sysFlag" jdbcType="NUMERIC" />
+    <result column="del_flag" property="delFlag" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime"  />
+    <result column="create_by" property="createBy" jdbcType="VARCHAR" />
+    <result column="update_time" property="updateTime"  />
+    <result column="update_by" property="updateBy" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    ID,cg_id,ecode,name,map_name,enable_code,enable_name,sys_flag,del_flag,create_time,create_by,update_time,update_by
+  </sql>
+  
+
+  <select id="findById" resultType="com.krm.voteplateform.web.bascode.model.BasCode" parameterType="String">
+  	select <include refid="Base_Column_List"/> from ${code}_BAS_CODE where ID=#{id}
+  </select>
+  
+  <select id="selectByCode" resultType="java.util.Map" parameterType="String">
+  	select ta.* from ${code}_BAS_CODE ta,${code}_BAS_CODE_GROUP tb  where tb.DEL_FLAG = '0' and ta.del_flag='0' and ta.CG_ID=tb.ID and ta.CG_ID=#{id} 
+  </select>
+  
+  <select id="getCodeGroup" resultType="java.util.Map" parameterType="java.util.Map">
+  	select ta.ID,ta.ECODE,ta.MAP_NAME,tb.CODE_GROUP_NAME from ${code}_BAS_CODE ta,${code}_BAS_CODE_GROUP tb  where tb.DEL_FLAG = '0' and ta.del_flag='0' and ta.CG_ID=tb.ID ORDER BY tb.CODE_GROUP_NAME
+  </select>
+ 
+
+</mapper>

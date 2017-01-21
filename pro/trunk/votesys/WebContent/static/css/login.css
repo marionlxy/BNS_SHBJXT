@@ -1,0 +1,33 @@
+@charset "utf-8";
+*{padding:0;margin:0;}
+body{padding:0;margin:0;font-size:12px; font-family:"微软雅黑";color: #333;background:#cce6e5 url(../images/login_bg.jpg) center top repeat-x;}
+img{border:none;}
+a{text-decoration:none;cursor:pointer;color:#666;}
+a:hover{text-decoration:none;color:#9b8939;}
+ul{padding:0;margin:0;list-style:none;}
+li,p{padding:0;margin:0;}
+.clear{clear:both;}
+*html{background-image:url(about:blank);background-attachment:fixed;} /* 修正IE6振动bug */
+ /* 登陆界面 */
+/*.logo{width:312px; height:67px; position:absolute; z-index:2; left:145px; top:-80px;}*/
+.logo{width:312px; height:67px; position:absolute; z-index:2;margin-top: -80px;margin-left: 130px;}
+.login{width:602px; height:318px; margin:220px auto 0px auto; position:relative; z-index:1; background: url(../images/login_k_bg.png) center top no-repeat;}
+.login .input{width:320px; height:auto; overflow:hidden; margin:0 auto; padding-top:100px;}
+.login .input .c{width:320px; height:34px; margin:10px auto;}
+.login .input .c .txt{width:60px; height:34px; margin:0; float:left; font-size:14px; color:#167e77; line-height:34px; text-align:center; font-weight:bold;}
+.login .input .c .sr{width:250px; height:34px; margin:0; float:right;}
+.login .input .c .sr .frame{width:238px; height:32px; background:#d6e7e6; line-height:32px; padding-left:5px; padding-right:5px; color:#167e77; font-size:12px; margin:0; border:1px solid #5fafaa;}
+
+.login .input_but{width:220px; height:36px; margin:0 auto; padding-top:50px;}
+
+.login .input_but .but a{width:96px; height:28px; background:#167e77; border:1px solid #5db6b0; outline:1px solid #25827c; color:#FFF; text-align:center; line-height:28px; font-size:14px;float:left; margin:0;}
+.login .input_but .but a:hover{background:#0d6b65; border:1px solid #489e98; outline:1px solid #145e59; }
+.login .input_but .but_place2{ float:right;}
+
+.othertxt{width:500px; height: auto; overflow:hidden; margin:0 auto; padding-top:15px; color:#167e77; text-align:center; line-height:30px;}
+.othertxt a{color:#167e77; text-decoration:underline;}
+.othertxt a:hover{ color:#ff5a00; text-decoration:underline;}
+
+.login_foot{width:550px; height:40px; margin:120px auto 0px auto; background:url(../images/foot_logo.png) 10px top no-repeat; text-align:center; line-height:40px; font-size:12px; color:#7aa9a6;}
+ /* 登陆界面结束 */
+ 

@@ -1,0 +1,258 @@
+<base target="_parent" />
+<style type="text/css">
+.td {border:solid #add9c0 1px; border-width:0px 1px 1px 0px;}
+.EditTable {border:solid #add9c0 1px; border-width:1px 0px 0px 1px;}
+</style>
+<div class="layer">
+  <form id="plateform" class="plateform" method="post" action="${ctxPath!}/pt/menulist/saveMenu?resid=${resid}" enctype="multipart/form-data">
+    <input type="hidden" value="" name="id" />
+    <table class="EditTable" width="100%">
+    		<tbody>
+    		<tr class="FormData">   			
+    						
+			</tr>
+
+			<tr class="FormData">
+				<td class="CaptionTD">项目字段:</td>
+				<td class="" colspan="3">
+				<select style="font-size: 12px; width: 500px;background-color: white" id="tablecollist" class="voteFlag" datatype="*" ajaxurl="${ctxPath!}/pt/menulist/valiMenuField?resid=${resid}" name="fields" errormsg="你选择的字段已经存在，请选择其他字段！" style="font-size:12px;width:100%;">
+	              </select>
+				</td>
+			</tr>
+			<tr class="FormData">
+				<td class="CaptionTD ">是否可搜索:</td>
+				<td class="" colspan="1">
+							<input id="radio" class="voteFlag" name="offineFlag" type="checkbox" value="0" onchange="changeCheck();"/>设为搜索字段							
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">搜索框类型:</td>
+				<td class="" >
+				<select style="font-size: 12px; width: 500px;background-color: white" id="type" class="voteFlag" name="type" style="font-size:12px;width:100%;" onchange="select()">
+					<option value="0">文本框</option>
+					<option value="1">下拉框</option>
+					<option value="2">日期范围框 </option>
+					<option value="3">数字范围框</option>
+					<option value="4">文本弹出框</option>
+	              </select>
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">搜索框数据源:</td>
+				<td class="" >
+				<select style="font-size: 12px; width: 500px;background-color: white" id="datasource" class="voteFlag" name="dataSource" style="font-size:12px;width:100%;">
+	              </select>
+				</td>
+			</tr>
+			<td> 
+			<div class="clearfix" tag-save-btn style="left: 35%;position:absolute;">
+		<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="model-save-form" value="确定"/>&nbsp;&nbsp;
+		<input type="button" class="btn btn-primary btn-sm bigger-110" id="model-save-cancel" value="取消"/>
+		</div></td>
+			</tr>
+			</tbody>
+		
+    </table>
+   
+  </form>   
+</div>
+
+
+<!-- <div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+	<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="model-save-form" >确定</span>&nbsp;&nbsp;
+	<span class="btn btn-primary btn-sm bigger-110" id="model-save-cancel">
+		取消
+	</span>
+</div> -->
+<script type="text/javascript">
+
+$(function(){
+	
+	var index = layer.index;
+/*     var options ={   
+            url:'${ctxPath!}/pt/ptcommission/saveCommission',   
+            type:'post', 
+            dataType:'html',
+            data:jQuery("#plateform").serialize(),
+            success:function(data){
+             if(data.statusCode=="OK") {  
+                   
+            	}else{
+
+            	} 
+            }   
+         }; 
+     var form =$("#plateform");//form1:表单ID  在表单界面只用这一个表单ID    
+         $("#model-save-form").click(function() {
+       	  form.ajaxSubmit(options); 
+             return false;
+         });*/
+     	//勾选表决标志
+     $("#voteFlag").click(function(){	
+     		var rows=$("input[name='voteFlag']:checked");
+           	if(rows.length>0){
+                  //$('#btnAddMoney').addClass('disabled'); // Disables visually
+               	$('.voteFlag').prop('disabled', false); 
+                }else{
+                	// $('#btnAddMoney').addClass('disabled'); // Disables visually
+                	$('.voteFlag').prop('disabled', true); // Disables visually + functionally	
+ 
+                }
+
+     	  });     
+    
+         $("#plateform").Validform({
+      	   ajaxPost:true,
+          	tiptype : 4,
+              beforeSubmit:function(curform){
+                  var loadi = layer.load(5,2);
+                  $("#plateform").data('loadi',loadi);
+              },
+              tiptype : function(msg, o, cssctl) {
+                  if (!o.obj.is("form")) {
+                      if (o.type != 2) {
+                          tip.errorTip(msg,o.obj);
+                      }
+                  }
+              },
+              tipSweep : true,
+              callback:function(data){
+      			layer.close($("#plateform").data('loadi'));
+      			if(data.code=="1"){
+      				layer.msg(data.msg, 1, 1,function(){
+      					//query();
+      					//var treeNodes = [{"id":1, "pId":0, "name":"test1"}];
+      				});
+      				layer.closeAll('page'); 
+      				$("#alertInfo").bootstrapTable('refresh');
+      				//location.reload();
+      			}else{
+      				layer.msg(data.msg,3,1);
+      				//layer.closeAll('page');
+      			}
+      		}
+          });
+ 
+       
+    $("#model-save-cancel").click(function(){
+        layer.closeAll();
+    });
+});
+
+$(document).ready(function(){  
+    var aa=document.getElementById("tablecollist").value;  
+    $.ajax({  
+            url : encodeURI("${ctxPath!}/pt/menulist/listField"),  
+            type : 'POST',  
+            dataType : "json",  
+            success : function(data) {  
+                var bb =$(document).find("#tablecollist");  
+                //pub_platform.empty();  
+                for ( var i = 0; i < data.length; i++) {  
+                    bb.append("<option value='"+data[i].id+"'>"+ data[i].cnName+ "</option>");  
+                }  
+            }  
+        });  
+});  
+
+
+function changeCheck(){
+	var a = $("input[type='checkbox']").is(':checked')
+	if(a ==false){
+		//alert("没选中");
+		$("#type").attr("disabled",true);
+		$("#datasource").attr("disabled",true);
+		
+	}else{
+		//alert("选中");
+		$("#type").attr("disabled",false);
+		if(!($("#type").find("option:selected").val()=="1")){
+			$("#datasource").attr("disabled",true);
+		}else{
+			$("#datasource").attr("disabled",false);
+		}
+	}
+}
+
+function select(){
+	//alert(1);
+	var count=$("#type option").length;
+	//alert(count);
+	var a="1";
+	//var b= $("#type").get(0).options[1];
+	//alert(b);
+	if(!($("#type").find("option:selected").val()==a)){
+		$("#datasource").attr("disabled",true);
+	}else{
+		$("#datasource").attr("disabled",false);
+	}
+	/* for(var i=0;i<count;i++){
+	if($("#type").get(0).options[i].val()==a){
+		alert(1);
+		$("#datasource").attr("disabled",true);
+	}else{
+		$("#datasource").attr("disabled",false);
+	} 
+	} */
+}
+
+$(document).ready(function(){  
+    var aa=document.getElementById("datasource").value;  
+    $.ajax({  
+            url : encodeURI("${ctxPath!}/pt/menulist/listDataSource"),  
+            type : 'POST',  
+            dataType : "json",  
+            success : function(data) {  
+                var bb =$(document).find("#datasource");  
+                //pub_platform.empty();  
+                for ( var i = 0; i < data.length; i++) {  
+                    bb.append("<option value='"+data[i].id+"'>"+ data[i].codeGroupName+ "</option>");  
+                }  
+            }  
+        });  
+});  
+
+/* $(document).ready(function(){  
+    var aa=document.getElementById("type").value;  
+    $.ajax({  
+            url : encodeURI("pt/menulist/listType"),  
+            type : 'POST',  
+            dataType : "json",  
+            success : function(data) {  
+                var bb =$(document).find("#type");  
+                //pub_platform.empty();  
+                for ( var i = 0; i < data.length; i++) {  
+                    bb.append("<option value='"+data[i]+"'>"+ data[i]+ "</option>");  
+                } 
+                inint();
+            }  
+        });  
+});  */ 
+
+function saveVotePlan(){
+	//window.location.href("${ctxPath}/pt/ptvoteplan/saveVotePlan");
+	var form = document.getElementById('plateform');
+	form.action="${ctxPath}/pt/menulist/saveMenu";
+	form.submit();
+	layer.close();
+}
+
+$(document).ready(function(){  
+	var a = $("input[type='checkbox']").is(':checked');
+	if(!a){
+		$("#type").attr("disabled",true);
+		$("#datasource").attr("disabled",true);
+	}
+});
+ 
+/* function inint(){
+	$("#type option[value='0']").text("文本框");
+	$("#type option[value='1']").text("下拉框");
+	$("#type option[value='2']").text("日期范围框");
+	$("#type option[value='3']").text("数字范围框");
+	$("#type option[value='4']").text("文本弹出框");
+} */
+</script>
+

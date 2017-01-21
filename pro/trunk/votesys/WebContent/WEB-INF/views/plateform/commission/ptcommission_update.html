@@ -1,0 +1,315 @@
+<style type="text/css">
+.td {
+	/*border: solid #add9c0 1px;
+	border-width: 0px 1px 1px 0px;*/
+}
+
+.EditTable {
+	/*border: solid #add9c0 1px;
+	border-width: 1px 0px 0px 1px;*/
+}
+</style>
+<div class="layer">
+	<form id="plateform" method="post" name="plateform" action="">
+		<input type="hidden"  value="${id!}" name="id" id="pid"/>
+	 	<input type="hidden" value="${templateId!}" name="templateId" />
+	 	<input type="hidden"  name="hdVotePlanName" id="hdVotePlanName">
+	 	<input type="hidden"  name="pdsSampleName" id="pdsSampleName">
+	 	<input type="hidden" value="${code!}" name="hdCode">
+	 	<input type="hidden" value="${votePlanName!}" name="votePlanName">
+	 	<input type="hidden" value="${votePlanList!}" name="votePlanList">
+	 	<input type="hidden" value="${sampleName!}" name="sampleName">
+	 	<input type="hidden" value="${sampleNamelist!}" name="sampleNamelist">
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr class="FormData"></tr>
+				<tr class="FormData">
+					<td class="CaptionTD" colspan="4" style="text-align: left; background-color: #d5e2f3">
+						<h4 class="panel-title">基本信息</h4>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">系统标题:</td>
+					<td class="">
+						<input style="width:100%" type="text"name="sysTitle" value="${sysTitle}" class="validate[required]"/>
+					</td>
+					<td class="CaptionTD">会议人数:</td>
+					<td> <input style="width:20%px" type="text" name="totalNum"  class="validate[required,custom[integer],max[999],min[0]]" value="${totalNum!}"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">系统简称:</td>
+					<td class="">
+						<input style="width:100%" type="text" name="simpleTitle" name="simpleTitle" value="${simpleTitle}">
+					</td>
+					<td class="CaptionTD">系统编码:</td>
+					<td class="">
+						<input style="width:20%px" readonly="readonly" type="text" name="code"  value="${code}">
+					</td>
+				</tr>
+				<tr class="FormData">
+				<td class="CaptionTD">委员会信息说明:</td>
+				<td class="DataTD">
+				<textarea name="info"  STYLE="width:100%;height:60px;">${info!}</textarea></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">委员会系统logo:</td>
+					<td class="" colspan="2"><input style="width:500px"  type="file" name="logo" value="${logo!}" class="validate[custom[fileExt]]"></td>
+				</tr>
+				
+				<tr class="FormData">
+					<td class="CaptionTD" colspan="4" style="text-align: left; background-color: #d5e2f3">
+						<h4 class="panel-title">表决信息</h4>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD ">表决标志:</td>
+					<td  colspan="1">
+						<input id = "vsVoteFlag" type="checkbox" name="voteFlag" 
+						@if(voteFlag==0){
+							checked="checked"
+						@}
+						value="0" />&nbsp;表决
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">表决方案:</td>
+					<td>
+						<select  name="votePlanId" id="votePlanId" style="font-size: 12px; width: 300px;background-color: white">
+							@for(vp in votePlanList){
+								<option value="${vp.id!}"
+									@if(vp.id==votePlanId!){
+										selected="selected"
+									@}
+								>${vp.votePlanName}</option>
+							@}
+						</select>
+					</td>
+					<td colspan="2">
+						<input id="VsOneMindFlag" name="oneMindFlag" type="checkbox" 
+							@if(oneMindFlag==0){
+							checked="checked"
+							@}
+						value="0" />&nbsp;是否具有一票否决
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">项目编号生成类型:</td>
+					<td>
+						<select name="proCodeType" id="proCodeType"  style="font-size: 12px; width: 300px;background-color: white">
+								<option value="1" 
+									@if('1'==proCodeType!){
+										selected="selected"
+									@}
+								>项目添加的时候生成</option>
+								<option value="2" 
+									@if('2'==proCodeType!){
+										selected="selected"
+									@}
+								>会议添加项目的时候生成</option>
+						</select>
+				</tr>
+				<tr class="FormData">
+				<td class="CaptionTD">项目编号生成方案:</td>
+					<td>
+						<select  name="pdsid" id="pdsid" style="font-size: 12px; width: 300px;background-color: white">
+							@for(sn in sampleNamelist){
+								<option value="${sn.id!}"
+									@if(sn.id==pdsid!){
+										selected="selected"
+									@}
+								> ${sn.sampleName!}</option>
+							@}
+						</select>
+				</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD ">表决结果显示:</td>
+					<td colspan="3">
+						<input id = "suggShowFlag" name="suggShowFlag" type="checkbox" 
+							@if(suggShowFlag=="0"){
+								checked="checked"
+							@}
+						value="0" />&nbsp;显示汇总意见 &nbsp;&nbsp;&nbsp;&nbsp;
+						<input id="deptShowFlag" name="deptShowFlag" type="checkbox" 
+							@if(deptShowFlag=="0"){
+								checked="checked"
+							@}
+						value="0" />&nbsp;显示未到部门 &nbsp;&nbsp;&nbsp;&nbsp;
+						<input id="signShowFlag" name="signShowFlag" type="checkbox" 
+							@if(signShowFlag=="0"){
+								checked="checked"
+							@}
+						value="0" />&nbsp;是否需要委员签字
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD ">会议类型:</td>
+					<td  colspan="1">
+						<input name="offineFlag" type="checkbox" 
+							@if(offineFlag==0){
+								checked="checked"
+							@}
+						value="0" />&nbsp;具有离线会议
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD ">表决方式:</td>
+					<td  colspan="1">
+						<input id="VsHumanSignFlag" name="humanSignFlag" type="checkbox" 
+							@if(humanSignFlag==0){
+								checked="checked"
+							@}
+						value="0" />&nbsp;允许人工签名表决
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">表决意见是否强制:</td>
+					<td colspan="3">
+						<input id="suggestFlag"   name="suggestFlag" type="radio"  class="validate[required]"
+							@if(suggestFlag=="0"){
+								checked="checked"
+							@}
+						value="0"/> &nbsp;强制 &nbsp;&nbsp;&nbsp;&nbsp;
+						<input id="suggestFlag1"  name="suggestFlag" type="radio" class="validate[required]"
+							@if(suggestFlag=="1"){
+								checked="checked"
+							@}
+						value="1" /> &nbsp;不强制但提示 &nbsp;&nbsp;&nbsp;&nbsp;
+						<input id="suggestFlag2"   name="suggestFlag" type="radio" class="validate[required]"
+							@if(suggestFlag=="2"){
+								checked="checked"
+							@}
+						value="2" /> &nbsp;不强制也不提示
+					</td>
+				</tr>
+
+				<tr class="FormData">
+					<td class="CaptionTD" colspan="4" style="text-align: left; background-color: #d5e2f3">
+						<h4 class="panel-title">会议状态</h4>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD ">系统启用:</td>
+					<td  colspan="1">
+						<input name="state" type="checkbox" 
+							@if(state==0){
+								checked="checked"
+							@}
+						value="0" /> &nbsp;启用
+					</td>
+				</tr>
+			<tr>
+				<td> 
+					<div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+						<input type="button" class="btn btn-primary btn-sm bigger-110"  id="savedate" value="确定"/>&nbsp;&nbsp;
+						<input type="button" class="btn btn-primary btn-sm bigger-110" value="取消 " id="model-update-cancel"/>
+					</div>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+	</form>
+</div>
+
+<script type="text/javascript">
+	$(function() {
+		$("#savedate").click(function(){
+				 $("[disabled]").each(function() {//移除disable,后台方可取值  
+			     if (parseInt($(this).val()) != -1) {  
+			        $(this).attr("disabled", false);  
+			    }  
+			});  
+			var flag = $('#plateform').validationEngine('validate');
+			if(flag){
+				$("#hdVotePlanName").val($("#votePlanId option:selected").text());
+				$("#pdsSampleName").val($("#pdsid option:selected").text());
+				$('#plateform').ajaxSubmit({
+					dataType:'json',
+					type:'post',
+					url:'${ctxPath}/pt/ptcommission/saveUpdate',
+					success:function(data, statusText){
+						//alert(data1);
+						//var data = JSON.parse(data1);
+						var msg = data.msg;
+						if(data.obj!=null){
+							msg+="("+data.obj+")";
+						}
+						if(data.code==1){
+							layer.msg(msg,1,1);
+							layer.close(lastIndex);
+							refreshTable('tableysxm');
+						}else{
+							layer.msg(msg,2,8);
+						}
+					}
+				});
+			}
+		}); 
+		
+		$("#model-update-cancel").click(function() {
+			layer.close(lastIndex);
+		});
+
+	});
+	  $(function() {
+			$("#vsVoteFlag").click(function() {
+		var b = $("#vsVoteFlag").is(':checked');
+		if(b==false){
+			document.getElementById('votePlanId').style.backgroundColor = "#DDDDDD";
+			document.getElementById('votePlanId').disabled = true;
+			/* document.getElementById('proCodeType').style.backgroundColor = "#DDDDDD";
+			document.getElementById('proCodeType').disabled = true;
+			document.getElementById('pdsid').style.backgroundColor = "#DDDDDD";
+			document.getElementById('pdsid').disabled = true; */
+			$("#oneMindFlag").attr("disabled",true);
+			document.getElementById('VsHumanSignFlag').disabled = true;
+			document.getElementById('VsOneMindFlag').disabled = true;
+			document.getElementById('suggShowFlag').disabled = true;
+			document.getElementById('deptShowFlag').disabled = true;
+			document.getElementById('signShowFlag').disabled = true;
+			document.getElementById('suggestFlag').disabled = true;
+			document.getElementById('suggestFlag1').disabled = true;
+			document.getElementById('suggestFlag2').disabled = true;
+		}
+		else{
+			document.getElementById('votePlanId').style.backgroundColor = "white";
+			document.getElementById('votePlanId').disabled = false;
+			/* document.getElementById('proCodeType').style.backgroundColor = "white";
+			document.getElementById('proCodeType').disabled = false;
+			document.getElementById('pdsid').style.backgroundColor = "white";
+			document.getElementById('pdsid').disabled = false; */
+			$("#oneMindFlag").attr("disabled",false); 
+			document.getElementById('VsHumanSignFlag').disabled = false;
+			document.getElementById('VsOneMindFlag').disabled = false;
+			document.getElementById('suggShowFlag').disabled = false;
+			document.getElementById('deptShowFlag').disabled = false;
+			document.getElementById('signShowFlag').disabled = false;
+			document.getElementById('suggestFlag').disabled = false;
+			document.getElementById('suggestFlag1').disabled = false;
+			document.getElementById('suggestFlag2').disabled = false;
+			
+		}
+	 });
+	}); 
+	 
+	 $(function() {
+		 var b = $("#vsVoteFlag").is(':checked');
+			if(b==false){
+				document.getElementById('votePlanId').style.backgroundColor = "#DDDDDD";
+				document.getElementById('votePlanId').disabled = true;
+				/* document.getElementById('proCodeType').style.backgroundColor = "#DDDDDD";
+				document.getElementById('proCodeType').disabled = true;
+				document.getElementById('pdsid').style.backgroundColor = "#DDDDDD";
+				document.getElementById('pdsid').disabled = true; */
+				$("#oneMindFlag").attr("disabled",true);
+				document.getElementById('VsHumanSignFlag').disabled = true;
+				document.getElementById('VsOneMindFlag').disabled = true;
+				document.getElementById('suggShowFlag').disabled = true;
+				document.getElementById('deptShowFlag').disabled = true;
+				document.getElementById('signShowFlag').disabled = true;
+				document.getElementById('suggestFlag').disabled = true;
+				document.getElementById('suggestFlag1').disabled = true;
+				document.getElementById('suggestFlag2').disabled = true;
+			} 
+	 });
+</script>

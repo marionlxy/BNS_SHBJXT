@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.mettingmem.dao.BasMettingMemMapper" >
+  
+  <sql id="Base_Column_List" >
+    MEM_AUTHORITY_FLAG_NAME,MEM_POST_NAME,ID,CONFERENCE_ID,MEM_USER_CODE,MEM_USER_NAME,MEM_ORG_ID,MEM_ORG_NAME,MEM_POST_ID,MEM_ROLE_ID,MEM_ROLE_NAME,MEM_USER_IP,MEM_AUTHORITY_FLAG_ID,MEM_ORDER_CODE,DEL_FLAG,CREATE_TIME,CREATE_BY,CREATE_NAME,CREATE_IP,UPDATE_TIME,UPDAET_BY,UPDATE_NAME,UPDATE_IP
+  </sql>
+  
+
+  
+  <delete id="deleteBasMettingMem" parameterType="com.krm.voteplateform.web.mettingmem.model.BasMettingMem">
+  	delete from BAS_METTING_MEM where ID=#{id,jdbcType=VARCHAR}
+  </delete>
+  
+  <select id="findByMapId" resultType="java.util.Map" parameterType="java.util.Map">
+  	select <include refid="Base_Column_List"/> from #{tableName}_BAS_METTING_MEM where
+  	1=1
+  	<if test="memAuthorityFlagName!=null">
+  	and MEM_AUTHORITY_FLAG_NAME=#{memAuthorityFlagName,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memPostName!=null">
+  	and MEM_POST_NAME=#{memPostName,jdbcType=VARCHAR}
+  	</if>
+  	<if test="id!=null">
+  	and ID=#{id,jdbcType=VARCHAR}
+  	</if>
+  	<if test="conferenceId!=null">
+  	and CONFERENCE_ID=#{conferenceId,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memUserCode!=null">
+  	and MEM_USER_CODE=#{memUserCode,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memUserName!=null">
+  	and MEM_USER_NAME=#{memUserName,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memOrgId!=null">
+  	and MEM_ORG_ID=#{memOrgId,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memOrgName!=null">
+  	and MEM_ORG_NAME=#{memOrgName,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memPostId!=null">
+  	and MEM_POST_ID=#{memPostId,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memRoleId!=null">
+  	and MEM_ROLE_ID=#{memRoleId,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memRoleName!=null">
+  	and MEM_ROLE_NAME=#{memRoleName,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memUserIp!=null">
+  	and MEM_USER_IP=#{memUserIp,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memAuthorityFlagId!=null">
+  	and MEM_AUTHORITY_FLAG_ID=#{memAuthorityFlagId,jdbcType=VARCHAR}
+  	</if>
+  	<if test="memOrderCode!=null">
+  	and MEM_ORDER_CODE=#{memOrderCode,jdbcType=NUMERIC}
+  	</if>
+  	<if test="delFlag!=null">
+  	and DEL_FLAG=#{delFlag,jdbcType=VARCHAR}
+  	</if>
+  	<if test="createTime!=null">
+  	and CREATE_TIME=#{createTime,jdbcType=TIMESTAMP(6)}
+  	</if>
+  	<if test="createBy!=null">
+  	and CREATE_BY=#{createBy,jdbcType=VARCHAR}
+  	</if>
+  	<if test="createName!=null">
+  	and CREATE_NAME=#{createName,jdbcType=VARCHAR}
+  	</if>
+  	<if test="createIp!=null">
+  	and CREATE_IP=#{createIp,jdbcType=VARCHAR}
+  	</if>
+  	<if test="updateTime!=null">
+  	and UPDATE_TIME=#{updateTime,jdbcType=TIMESTAMP(6)}
+  	</if>
+  	<if test="updaetBy!=null">
+  	and UPDAET_BY=#{updaetBy,jdbcType=VARCHAR}
+  	</if>
+  	<if test="updateName!=null">
+  	and UPDATE_NAME=#{updateName,jdbcType=VARCHAR}
+  	</if>
+  	<if test="updateIp!=null">
+  	and UPDATE_IP=#{updateIp,jdbcType=VARCHAR}
+  	</if>
+  </select>
+  
+</mapper>

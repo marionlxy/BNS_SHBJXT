@@ -1,0 +1,79 @@
+<div class="layer">
+	<form id="f1" action="" method="post">
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr class="FormData">
+					<td class="CaptionTD">编码:</td>
+					<td class="DataTD width-100" colspan="3">
+						<input type="text" class="form-control validate[required,custom[onlyLetterNumber],maxSize[4]]" id="id"  name="id" value="${updateObj.id!}" 
+							@if(has(updateObj)){
+								readonly="readonly" isUpdate="true"
+							 @}else{
+								isUpdate="false"
+							@}
+						/>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">简称:</td>
+					<td class="DataTD width-100" colspan="3">
+						<input type="text" class="form-control validate[required,maxSize[250]]" id="sampleName"  name="sampleName" value="${updateObj.sampleName!}">
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">代码:</td>
+					<td class="DataTD width-100" colspan="3">
+						<textarea class="form-control validate[required]" name="javaCode"  id="javaCode" cols="10" rows="5" style="text-align:left;">${updateObj.javaCode!}</textarea>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">描述:</td>
+					<td class="DataTD width-100" colspan="3">
+						<textarea class="form-control" name="description" id="description" cols="10" rows="5">${updateObj.description!}</textarea>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="clearfix  tag-save-btn" style="bottom: 0px;left: 35%;position:absolute;">
+			<input type="button" class="btn btn-primary btn-sm bigger-110"  id="model-save-form" value="确定" />&nbsp;&nbsp;
+			<input type="button" class="btn btn-primary btn-sm bigger-110" id="model-save-cancel" value="取消" />
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+	$(function(){
+		var codeEditor = CodeMirror.fromTextArea(document
+				.getElementById("javaCode"), {
+			mode : "text/x-java",
+			lineNumbers : true,
+			matchBrackets : true,
+			lineWrapping:true
+		});
+		$("#model-save-cancel").click(function(){
+			layer.close(lastIndex);
+		});
+		$("#model-save-form").click(function(){
+			var validateFlag = $('#f1').validationEngine('validate');
+			if(validateFlag){
+				var flag = $("#id").attr("isUpdate");
+				var data = $.extend({},$("#f1").serializeJson(),{dyType:"1",javaCode:codeEditor.getValue()});
+				var url = flag?"${ctxPath}/pt/glueCode/updateGlueCod":"${ctxPath}/pt/glueCode/insertGlueCode";
+				Angel.ajax("${ctxPath}/pt/glueCode/updateGlueCode",data,function(data){
+					if(data.code==1){
+						layer.msg(data.msg,1,1);
+						layer.close(lastIndex);
+					}else{
+						layer.msg(data.msg,2,8);
+					}
+				});
+			}
+		});
+	});
+</script>
+<style>
+.CodeMirror{
+	border: 0px solid black;
+	text-align:left;
+	font-size:14px;
+}
+</style>

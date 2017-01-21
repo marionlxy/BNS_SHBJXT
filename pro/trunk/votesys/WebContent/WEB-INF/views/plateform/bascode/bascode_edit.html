@@ -1,0 +1,79 @@
+<div class="layer">
+  <form id="codeform" class="codeform" method="post" action="${ctxPath!}/pt/bascode/updateBasCode">
+    <input type="hidden" value="${basCode.id}" name="id" />
+    <table class="EditTable" width="100%">
+    		<tbody>
+    		<tr class="FormData">   			
+    			<td></td>			
+			</tr>  	
+    		
+			<tr class="FormData">
+				<td class="CaptionTD">委员会名称:</td>
+				<td class="DataTD width-100" colspan="3"><input  type="text" name="mapName" datatype="*" nullmsg="请输入委员会名称！" 	ajaxurl="" value="${basCode.mapName}" />
+				</td>
+			</tr>
+				<tr class="FormData">   			
+    				<td></td>			
+			</tr>  
+			</tbody>
+		
+    </table>
+   			<div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+		<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="model-save-form" value="确定"/>&nbsp;&nbsp;
+		<input class="btn btn-primary btn-sm bigger-110" id="model-save-cancel" value="取消"/>
+		</div>
+  </form>   
+</div>
+
+
+<!-- <div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+	<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="model-save-form" >确定</span>&nbsp;&nbsp;
+	<span class="btn btn-primary btn-sm bigger-110" id="model-save-cancel">
+		取消
+	</span>
+</div> -->
+<script type="text/javascript">
+
+
+$(function(){
+ 
+ 	//方法一;
+	$("#codeform").Validform({
+		ajaxPost:true,
+		tiptype : 4,
+        beforeSubmit:function(curform){
+            var loadi = layer.load(5,2);
+            $("#codeform").data('loadi',loadi);
+        },
+        tiptype : function(msg, o, cssctl) {
+            if (!o.obj.is("form")) {
+                if (o.type != 2) {
+                    tip.errorTip(msg,o.obj);
+                }
+            }
+        },
+        tipSweep : true,
+		callback:function(data){
+			layer.close($("#codeform").data('loadi'));
+			if(data.code=="1"){
+				layer.msg(data.msg, 1, 1,function(){
+					//query();
+					//var treeNodes = [{"id":1, "pId":0, "name":"test1"}];
+				});
+				layer.closeAll('page'); 
+				refreshParentNode(0);
+				$("#tableCode").bootstrapTable('refresh');
+				//location.reload();
+			}else{
+				layer.msg(data.msg,3,1);
+			}
+		}
+	});
+       
+    $("#model-save-cancel").click(function(){
+        layer.close(layer.index);
+    });
+});
+
+</script>
+

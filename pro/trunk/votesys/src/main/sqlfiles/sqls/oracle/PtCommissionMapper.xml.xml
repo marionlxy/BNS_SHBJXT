@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.commission.dao.PtCommissionMapper">
+
+	<sql id="BaseColumnList">
+		ID,SYS_TITLE,SIMPLE_TITLE,LOGO,VOTE_FLAG,VOTE_PLAN_ID,VOTE_PLAN_NAME,TEMPLATE_ID,SUGGEST_FLAG,ONE_MIND_FLAG,
+		MEMBER_IDS,MEMBER_NAMES,OFFINE_FLAG ,HUMAN_SIGN_FLAG	,
+		STATE,SORT,DEL_FLAG,CREATE_TIME,CREATE_BY,UPDATE_TIME,UPDATE_BYL
+	</sql>
+
+	<sql id="BaseColumnValueList">
+		#{id},#{code},#{sysTitle},#{simpleTitle},#{logo},
+		#{voteFlag},#{votePlanId},#{votePlanName},#{templateId},#{suggestFlag},
+		#{oneMindFlag}, #{memberIds},#{memberNames},#{offineFlag},#{humanSignFlags},#{state},
+		#{sor},#{delFlag},#{createTime},#{createBy},#{updateTime},#{updateBy}
+	</sql>
+
+	
+</mapper>

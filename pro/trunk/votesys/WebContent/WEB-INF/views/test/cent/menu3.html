@@ -1,0 +1,178 @@
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">已审项目</h5>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2"> <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+				 <div class="widget-toolbar no-border">
+					<span class="btn btn-purple btn-xs"
+		                  onclick="Angel.downloadFile('search-form','${ctxPath}/ptsystems/exportMenue3Table')">
+					<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+					导出Excel</span>
+        		</div>
+				<div class="widget-toolbar">
+				<button id="exportExcel" type="button" class="btn btn-primary btn-xs">导&nbsp;&nbsp;出</button>
+			     </div>
+			</div>
+			<div class="widget-container-col ui-sortable">
+			<div class="widget-box">
+				<div class="widget-header widget-header-small">
+					<h6 class="widget-title">
+						<i class="ace-icon fa fa-search"></i>搜索
+					</h6>
+					<div class="widget-toolbar">
+						<a href="javascript:void(0);" data-action="collapse">
+							<i class="ace-icon fa bigger-125 fa-chevron-down"></i>
+						</a>
+					</div>
+				</div>
+				<div class="widget-body">
+					<div class="widget-main margin-8" >
+							<form action="" method="post" id="search-form"
+								target="list-page" class="clearfix">
+								<div class="form-inline" role="form">
+									<div class="form-group ">
+										<span>项目名称：</span>
+										<input name="title" class="form-control w150" type="text" >
+									</div>
+			                          <div class="form-group width-15">
+			                              <span>审批时间：</span>
+			                              <input name="reviewTimeStart" class="form-control w70" type="text" onFocus="WdatePicker()" >
+			                              -
+			                              <input name="reviewTimeEnd" class="form-control w70" type="text" onFocus="WdatePicker()">
+							           </div>
+							           <div class="form-group width-100 ">
+										<button id="selecAudit" type="button" class="btn btn-primary btn-xs">查&nbsp;&nbsp;询</button>
+										<button id="reset" type="reset" class="btn btn-primary btn-xs">取&nbsp;&nbsp;消</button>
+									  </div>
+									</div>
+									<div class="widget-body">
+										<div id="list-page" class="widget-main padding-8">
+										<table  id="auditProjectTable" class="table table-hover "></table>
+										</div>
+									</div>
+								</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+</div>
+
+<script type="text/javascript">
+$(function() {
+	
+	var form = $("#search-form");
+		$("#exportDate").click(function() {
+		form.attr("action", "${ctxPath!}/ptsystems/menue3ExportExcel").submit();
+	}); 
+	
+	$("#auditProjectTable").bootstrapTable({
+		inconSize : 'sm',
+		url : '${ctxPath}/ptsystems/menu3List?r='+Math.random(),
+		striped : true,
+		pagination : true,
+		pageNumber : 1,//首页页码
+		pageSize : 10,//页面显示条数
+		sidePagination : 'server',//服务器端分页
+		responseHandler:function(res){
+			//console.table(res.rows);
+			return res;
+		},
+		columns : [ {
+			checkbox : true
+		}, {
+			field : "id",
+			title : '序号',
+			formatter : function(value, row, index) {
+				return index + 1;
+			}
+		}, {
+			field : "code",
+			title : '项目代号',
+			sortable : true
+		}, {
+			field : "title",
+			title : '评审项目名称',
+			sortable : true
+		}, {
+			field : "appliedAmount",
+			title : '审请金额',
+			sortable : true
+		}, {
+			field : "approvalDeptName",
+			title : '报审部门名称',
+			sortable : true
+		}, {
+			field : "reviewTime",
+			title : '审议时间',
+			sortable : true
+		}, {
+			field : "reviewResult",
+			title : '审议结果',
+			sortable : true,
+			formatter : function(value, row, index) {
+				if(value=='00'){
+					return "待议";
+				}else if(value=='11'){
+					return "通过";
+				}else{
+					return "再议";
+				}
+			}
+		}, {
+			field : "approvedAmount",
+			title : '申请金额',
+			sortable : true
+		}, {
+			field : "description",
+			title : '项目描述',
+			sortable : true
+		},,{
+			field : "reviewTime",
+			title : '审议时间',
+			sortable : true
+		},{
+			field : "createTime",
+			title : '记录创建时间',
+			sortable : true
+		},{
+			field : "createName",
+			title : '记录创建人姓名',
+			sortable : true
+		}],
+		contentType: "application/x-www-form-urlencoded",//复制
+		queryParamsType: "limit",//复制
+		dataType: "json",//复制
+		method: "post",//复制
+		queryParams : function(params) {//设置传递到服务器的参数，部分复制
+			console.log(params);
+			/* return {
+				pageSize : params.pageSize,//复制
+				pageNumber : params.pageNumber//复制
+				//aa : '07'
+			}; */
+			var aa = $("#search-form").serializeJson();
+			$.extend(params,aa);
+			return params;
+		}
+	});
+	
+ 
+});
+
+ $("#selecAudit").click(function(){
+	 $('#auditProjectTable').bootstrapTable('refresh');
+});
+ 
+
+ 
+ 
+</script>

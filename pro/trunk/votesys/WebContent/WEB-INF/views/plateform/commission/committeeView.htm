@@ -1,0 +1,79 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<title>委员会系统属性</title>
+<link href="../../style/chrome.css" rel="stylesheet" type="text/css">
+<script src="../../js/common.js"></script>
+<style type="text/css">
+body {
+	background-image: url(../../images/title_bg.gif); 
+	background-position:left top;
+	background-repeat:no-repeat;
+	background-color:#f5f8f9;
+	overflow:hidden;
+}
+.sdow1 { border: 1px solid #F7F7F7; margin:0px 10px 5px 10px; padding:0px 0px 0px 00px; height: 72px; width: 804px; text-align: center; background-color: #F0F0F0; color: #E8E8E8;}  
+.sdow2 { border: 1px solid #E0E0E0; margin:0px 10px 5px 10px; height: 68px; width: 800px; padding:0px 0px 0px 0px; background-color: #FFF;}  
+
+</style>
+
+<script language="javascript" type="text/javascript" >
+function changeTab(url){
+	//切换标签样式
+	var tdsObj = event.srcElement.parentNode.getElementsByTagName(event.srcElement.tagName);
+	for(i=0;i<tdsObj.length;i++){tdsObj[i].className = "tab4";	event.srcElement.className = "tab4Current";	}
+	window.location.href=url;
+}
+</script>
+</head>
+
+<body onClick="var src = event.target || window.event.srcElement;  if(src == document.getElementById('attachType1') || src ==  document.getElementById('attachType2'))return;document.getElementById('attachtr1').style.display='none';document.getElementById('attachtr2').style.display='none';">
+<table width="100%"  height="28" border="0" cellpadding="0" cellspacing="0" style="padding:0px 20px ">
+  <tr>
+    <td valign="bottom" width="*%">
+      <table width="100%"  border="0" cellpadding="0" cellspacing="0" >
+        <tr>
+          <td class="tabSnull" width="6">&nbsp;</td>
+          <td id="attachType1" name="attachType1"  class="tabSCurrent"  onMouseOver="this.className='tabSCurrent';document.getElementById('attachType2').className='tabS';document.getElementById('attachtr1').style.display='block';document.getElementById('attachtr2').style.display='none';" >申请报告&nbsp;<IMG src="../images/top-point.png" width="16" style="display:inline;"></td>
+          <td id="attachType2" name="attachType2" class="tabS"  onMouseOver="this.className='tabSCurrent';document.getElementById('attachType1').className='tabS';document.getElementById('attachtr2').style.display='block';document.getElementById('attachtr1').style.display='none';" >会议纪要&nbsp;<IMG src="../images/top-point.png" width="16" style="display:inline;"></td>
+          <td class="tabSnull">&nbsp;</td>
+        </tr>
+    </table></td>
+   <td valign="bottom" width="20"> <input name="Submit2" type="button" class="button" value=" 关闭 " onClick="window.close();"></td>
+  </tr>
+</table>
+
+<DIV id="attachtr1" height=20 class="sdow1" style="display:none;">
+	<div class="sdow2">
+		<table border="0" cellpadding="0" cellspacing="5" class="dragAbleTable">
+		<tbody id="dataArea">
+		<tr>
+		  <td style="font-size:14px;"><a href="#" onClick="document.getElementById('mainIframe').src='projectView_需求.htm';document.getElementById('docTitle').innerHTML='业务需求书';" title="业务需求书">业务需求书</td>
+		  <td style="font-size:14px;"><a href="#" onClick="document.getElementById('mainIframe').src='projectView_技术方案.htm';document.getElementById('docTitle').innerHTML='项目技术开发方案';" title="项目技术开发方案">项目技术开发方案</td>
+		  <td style="font-size:14px;"><a href="#" onClick="document.getElementById('mainIframe').src='projectView_分析.htm';document.getElementById('docTitle').innerHTML='行办会会议系统分析';" title="行办会会议系统分析">行办会会议系统分析</td>
+		  <td style="font-size:14px;"><a href="#" onClick="document.getElementById('mainIframe').src='imageView.htm';document.getElementById('docTitle').innerHTML='图片展示示例';" title="图片展示示例">图片展示示例</td>
+		</tr>
+		</tbody></table>
+		</DIV>
+	</DIV>
+  <DIV id="attachtr2" height=0 class="sdow1" style="display:none;">
+	<div class="sdow2">
+		<table border="0" cellpadding="0" cellspacing="5" class="dragAbleTable">
+		<tbody id="dataArea">
+		<tr>
+		  <td style="font-size:14px;"><a href="#" onClick="document.getElementById('mainIframe').src='projectView_会议纪要.htm';document.getElementById('docTitle').innerHTML='会议纪要';" title="会议纪要">会议纪要</td>
+		</tr>
+		</tbody></table>
+		</DIV>
+	</DIV>
+<span id='docTitle' style="MARGIN: 10px 10px 2px 20px;FONT-SIZE: 22px; FONT-FAMILY: 微软雅黑,黑体,arial; box-shadow: 0 1px 0 #FFF">业务需求书</span><A href="#" target="_blacnk">下载原件<A>
+<table width="100%" height="100%" border="1" cellspacing="0" cellpadding="0" style="MARGIN: 3px 3px 2px 3px;">
+  <tr height="100%">
+    <td width="100%">
+		<iframe id="mainIframe" src="projectView_需求.htm" allowtransparency="yes"  frameborder="0" style="background-color:#000099"  width="100%" height="100%" hspace="0" longdesc="0" marginheight="0" marginwidth="0" scrolling="yes" vspace="0"></iframe>
+	</td>
+  </tr>
+</table>
+
+</body>
+</html>

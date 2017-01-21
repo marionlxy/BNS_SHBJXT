@@ -1,0 +1,162 @@
+<base target="_parent" />
+<style type="text/css">
+.td {border:solid #add9c0 1px; border-width:0px 1px 1px 0px;}
+.EditTable {border:solid #add9c0 1px; border-width:1px 0px 0px 1px;cellspacing:1px;cellpadding:3px;}
+</style>
+<div class="layer">
+  <form name="plateform" id="plateform" class="" method="post" action="${ctxPath}/pt/ptresource/saveUpdateMenu">
+    <input type="hidden" value="${map.id!}" name="id" id="pkid" />
+    <table class="EditTable" width="100%">
+    		<tbody>
+    		<tr></tr>
+			<tr class="FormData">
+				<td class="CaptionTD">委员会文本:</td>
+				<td class="DataTD width-100" colspan="3"><input  type="text" name="commText" value="${map.commText!}" datatype="*" nullmsg="请填写委员会文本！" 	ajaxurl="" value="" />
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">指定模板:</td>
+				<td class="DataTD width-100" colspan="3">
+					<select id="pageType" class="pageType" name="tempId" style="font-size:12px;width:100%;">
+						<option value="0">--请选择--</option>
+	              		@for(mode in modes!){
+	              		<option value="${mode.id}"
+	              			@if(mode.id==map.tempId){
+	              				selected="selected"
+	              			@}
+	              		>${mode.name!}</option>
+	              		@}
+	              	</select>
+	              	<input id="tempName" type="hidden" name="tempName"/>
+				</td>
+			</tr>
+			</tbody>
+			<div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+				<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="model-save-form" value="确定"/>&nbsp;&nbsp;
+				<input type="button" class="btn btn-primary btn-sm bigger-110" id="model-save-cancel" value="取消"/>
+			</div>
+    </table>
+  </form>   
+</div>
+<script type="text/javascript">
+$("#pageType").click(function(){
+	//var a =$("#pageType").text();
+	var a=$('#pageType option:selected').text();
+		var b =$.trim(a);
+		$("#tempName").val(b);
+});
+
+$(function(){
+	
+	var index = layer.index;
+	var re = /^[1-9]+[0-9]*]*$/ ; 
+    //提交时有一个bug,当修改时，如果ajaxurl验证方式的文本框框没有点击过时，不会提交    
+    var ajaxS = $("#submitForm input[ajaxurl]");
+    $.each(ajaxS,function(i,obj){
+        $(obj).focus();
+    })
+
+    var validId = $("#submitForm").Validform({
+    	tiptype : 4,
+        ajaxPost : true,
+        beforeSubmit:function(curform){
+            var loadi = layer.load(5,2);
+            $("#submitForm").data('loadi',loadi);
+            curform.ajaxSubmit({
+            	type:'post',
+            	url:'${ctxPath}/pt/ptcommission/saveCommission',
+            	success:function(data){
+                    layer.close($("#dic-save").data('loadi'));
+                    /* 保存成功后的处理逻辑
+                    if(data !=null && re.test(data)) {
+                        layer.msg('下发成功', 1, 1,function(){
+                            layer.close(index);
+                            queryDetail();
+                            query();
+                            var params = jQuery("#search-form").serialize(); 
+                    		params = decodeURIComponent(params,true);
+                    		params = encodeURI(encodeURI(params));
+                    		$('#table').bootstrapTable("refresh",{url:"${ctxPath}/risk/detection/list?"+params})
+                        });
+                    }else if(data == 0){
+                    	layer.msg('<span class="red bigger-120">数据已下发，请勿重复下发</span>');
+                    }else if(data == -2){
+                    	layer.msg('<span class="red bigger-120">数据已核实完毕，无法完成下发操作</span>');
+                    }else{
+                    	layer.msg('<span class="red bigger-120">下发失败</span>');
+                    } */
+                }
+            	
+            });
+        },
+        tiptype : function(msg, o, cssctl) {
+            if (!o.obj.is("form")) {
+                if (o.type != 2) {
+                    tip.errorTip(msg,o.obj);
+                }
+            }
+        },
+        tipSweep : true
+    });
+
+    $("#submitForm").click(function() {
+        validId.submitForm(false);
+        return false;
+    });
+
+    $("#submitForm input,#submitForm textarea").blur(function(){
+        layer.closeTips();
+        return false;
+    })
+
+});
+
+
+function saveVotePlan(){
+	//window.location.href("${ctxPath}/pt/ptvoteplan/saveVotePlan");
+	var form = document.getElementById('plateform');
+	form.action="${ctxPath}/pt/ptvoteplan/saveVotePlan";
+	form.submit();
+	layer.close();
+}
+
+$("#plateform").Validform({
+	   ajaxPost:true,
+   	tiptype : 4,
+       beforeSubmit:function(curform){
+           var loadi = layer.load(5,2);
+           $("#plateform").data('loadi',loadi);
+       },
+       tiptype : function(msg, o, cssctl) {
+           if (!o.obj.is("form")) {
+               if (o.type != 2) {
+                   tip.errorTip(msg,o.obj);
+               }
+           }
+       },
+       
+       tipSweep : true,
+       callback:function(data){
+			layer.close($("#plateform").data('loadi'));
+			if(data.code=="1"){
+				layer.msg(data.msg, 1, 1,function(){
+					//query();
+					//var treeNodes = [{"id":1, "pId":0, "name":"test1"}];
+				});
+				layer.closeAll('page'); 
+				$("#tableCode").bootstrapTable('refresh');
+				//location.reload();
+			}else{
+				layer.msg(data.msg,3,1);
+				//layer.closeAll('page');
+			}
+		}
+   });
+   
+$("#model-save-cancel").click(function(){
+    layer.closeAll('page');
+});
+
+</script>
+

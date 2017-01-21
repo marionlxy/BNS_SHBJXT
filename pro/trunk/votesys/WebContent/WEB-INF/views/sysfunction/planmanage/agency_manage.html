@@ -1,0 +1,96 @@
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h6 class="widget-title">委员会表决方案管理</h6>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2" onclick="refreshTable('tableysxm')">  <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+				</div>
+			<div class="widget-body">
+			<div id="list-page" class="widget-main padding-8">
+				<form action="" method="post" id="form1">
+					<table id="tableysxm"></table>
+				</form>
+			</div>
+			</div>
+	</div>
+</div>
+</div>
+<script type="text/javascript">
+	$(function() {
+		$("#tableysxm").bootstrapTable({
+			inconSize : 'sm',
+			url : '${ctxPath!}/pt/voteplancontroller/showSelect',
+			striped : true,
+			columns : [{ field : "id",
+				title : '序号',
+				width :  150,
+				formatter : function(value, row, index) {
+				return index + 1;
+			}},{
+				field : "votePlanName",
+				title : '方案名称',
+				width :  200,
+				sortable : true
+			},{ 
+				field : "votePlanSummary",
+				title : '方案说明',
+				width :  250,
+				sortable : true
+			},{ 
+				field : "code",
+				title : '操作',
+				sortable : true,
+				formatter:function(value,row,index){
+		        	var edit=
+		        		'<a  class="btn btn-primary btn-xs"  href="javascript:void(0);"' +
+						' data-mode="detail" data-title="修改表决方案"' +
+						' data-url="${ctxPath!}/pt/voteplancontroller/UpdateVotePlan"' +
+						' data-width="50%"' +
+						' data-height="70%"'+
+						' data-data="{id:&apos;' + row.id +  '&apos;,code: &apos;'+row.code+'&apos;}" >' +
+		                ' <i>修改</i>' +
+						' </a>'+
+					'&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'+
+		        		'<a class="btn btn-primary btn-xs"  href="javascript:void(0);"' +
+						' data-mode="detail" data-title="测试表决方案"' +
+						' data-url="${ctxPath!}/pt/votematterconf/TestPlan"' +
+						' data-width="30%"' +
+						' data-height="40%"'+
+						' data-data="{id:&apos;' + row.id + '&apos;}" >' +
+		                ' <i >测试</i>' +
+						' </a>';
+		        		 return edit;
+		        }
+			}]
+		});
+	});
+	//删除委员会机构
+	function remove(){
+		var radio = $("#tableysxm").bootstrapTable('getSelections');
+		if(radio==""){
+			layer.alert("请先选择要删除委员会方案！");
+		}else{	
+	layer.confirm("你确定要删除所选的方案吗？",function(){
+			for(var i=0;i<radio.length;i++){
+				var row = radio[i];
+				alert(row.id);
+				$.post("${ctxPath!}/pt/voteplancontroller/DeleteDate",
+						 {'id':row.id},
+	function(result){
+					 if(result.code==1){
+						 layer.msg("删除委员会方案成功",1,1);
+						 $("#tableysxm").bootstrapTable('refresh');
+					}else{
+						layer.msg("删除委员会方案失败",2);
+					}
+				 },"json");
+			}
+			layer.close();
+		});
+		}
+	} 
+</script>

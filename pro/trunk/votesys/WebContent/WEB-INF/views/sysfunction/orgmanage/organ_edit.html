@@ -1,0 +1,96 @@
+<div class="layer">
+			<div class="widget-body">
+              <form name="FormPost" id="model-save-form" class="FormGrid" method="post" action="${ctxPath!}/pt/PtCommissionOrg/saveOrgUpdate">
+                <input type="hidden" value="${map.code!}" name="code" />
+                <input type="hidden" value="${map.porgid!}" name="porgid" />
+                <table class="EditTable" >
+    		            <tbody>
+				            <tr class="FormData">
+				            <td class="CaptionTD">部门名称:</td>
+				            <td class="DataTD width-100"><input type="text" name="orgname" ajaxurl="" value="${map.orgname!}"></td>
+				            </tr>
+
+				            <tr class="FormData">
+				            <td class="CaptionTD">使用状态:</td>
+				            <td class="DataTD width-100"> <select id="select01" name="state">
+                                <option value='0'>--请选择--</option>
+                                <option value="01"
+                                	@if('01'==map.state!){
+                                		selected="selected"
+                                	@}
+                                >通用</option>
+                                <option value="02"
+                                	@if('02'==map.state!){
+                                		selected="selected"
+                                	@}
+                                >秘书专用</option>
+                                <option value="03"
+                                	@if('03'==map.state!){
+                                		selected="selected"
+                                	@}
+                                >委员专用</option>
+                                <option value="04"
+                                	@if('04'==map.state!){
+                                		selected="selected"
+                                	@}
+                                >停用</option>
+                            </select> 
+            	            </td>
+				            </tr>
+				
+				            <tr class="FormData">
+				            <td class="CaptionTD">备注:</td>
+				            <td class="DataTD width-100">
+                            <textarea name="remarks" class="autosize-transition form-control "
+						            style="resize: none;">${map.orgremark!}</textarea></td>
+				            </tr>
+                </table>
+                <div class="clearfix tag-save-btn" style="bottom: 0px;left: 35%;position:absolute;">
+					<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="submitForm" value="确定">&nbsp;&nbsp;
+					<span class="btn btn-primary btn-sm bigger-110" id="cancel">取消</span>
+				</div>
+              </form>
+    </div>
+</div>
+
+<script>
+$(function(){
+	 $("#model-save-form").Validform({
+    	   ajaxPost:true,
+        	tiptype : 4,
+            beforeSubmit:function(curform){
+                var loadi = layer.load(5,2);
+                $("#model-save-form").data('loadi',loadi);
+            },
+            tiptype : function(msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type != 2) {
+                        tip.errorTip(msg,o.obj);
+                    }
+                }
+            },
+            tipSweep : true,
+            callback:function(data){
+    			layer.close($("#model-save-form").data('loadi'));
+    			if(data.code=="1"){
+    				layer.msg('操作成功', 1, 1,function(){
+    				});
+    				layer.closeAll('page'); 
+    				$("#tableOrgList").bootstrapTable('refresh');
+    			}else{
+    				layer.msg('操作失败',3,1);
+    				//layer.closeAll('page');
+    			}
+    		}
+        });
+});
+
+$("#select01").chosen({width: "100%",disable_search_threshold:20});
+$("#select02").chosen({width: "100%",disable_search_threshold:20});
+$("#submitForm").click(function () {
+    layer.close(layer.index);
+});
+$("#cancel").click(function () {
+    layer.close(layer.index);
+});
+</script>

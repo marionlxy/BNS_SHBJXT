@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.sys.dao.SysDicExpMapper">
+	
+	<!-- 项目拓展明细分组表 -->
+	<sql id="BasExpandGroupColumnList">
+	ID, GROUP_NAME, STATE, DEL_FLAG,to_char(CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') as CREATE_TIME, CREATE_BY, 
+	to_char(UPDATE_TIME,'YYYY-MM-DD HH24:MI:SS') as UPDATE_TIME, UPDATE_BY
+	</sql>
+	<!-- 拓展明细字典表 -->
+	<sql id="ExpGroupDicColumnList">
+	ID, GROUP_ID, DIC_ID, EN_NAME, CN_NAME, DATA_TYPE, DATA_LENGTH, PRECISION, MAP_CN_NAME, 
+	MAP_PRECISION, NULL_FLAG, PLATE_FLAG, STATE, SORT, DEL_FLAG, 
+	to_char(CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') as CREATE_TIME, CREATE_BY, to_char(UPDATE_TIME,'YYYY-MM-DD HH24:MI:SS') as UPDATE_TIME, UPDATE_BY
+	</sql>
+	<!-- 字典表 -->
+	<sql id="BasDictColumnList">
+		ID, EN_NAME, CN_NAME, DATA_TYPE, DATA_LENGTH, PRECISION, MAP_CN_NAME, MAP_PRECISION, 
+		NULL_FLAG, CATEGORY, PLATE_FLAG, SORT, DEL_FLAG, 
+		to_char(CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') as CREATE_TIME, CREATE_BY, 
+		to_char(UPDATE_TIME,'YYYY-MM-DD HH24:MI:SS') as UPDATE_TIME, UPDATE_BY, STATE
+	</sql>
+
+	<sql id="BasDictColumnValueList">
+		#{id},#{enName},#{cnName},#{dataType},#{dateLenget},
+		#{precision},#{mapCnName},#{mapPrecision},#{nullFlag},#{category},
+		#{plateFlag}, #{sort},#{delFlag},#{createTime}
+		,#{createBy},#{updateTime},#{updateBy},{state}
+	</sql>
+
+	<sql id="BasExpandGroupValueList">
+		#{id},#{groupName},#{state},#{delFlag},#{createTime},#{createBy},#{updateTime},#{updateBy},
+	</sql>
+	
+	<sql id="ExpGroupDicValueList">
+		#{id},#{groupId},#{dicId},#{enName},#{cnName},#{dataType},#{dataLength},#{precision},#{mapCnName},#{mapPrecision},
+		#{nullFlag},#{plateFlag},#{state},#{sort},#{delFlag},#{createTime},#{createBy},#{updateTime},#{updateBy}
+	</sql>
+	
+	<!-- 根据字典类型，code动态 查询来同类型的字典页面-->
+	<select id="findDicExpList" resultType="java.util.Map" parameterType="java.util.Map">
+		select 
+		<include refid="BasExpandGroupColumnList"/>
+		from ${tableName}_BAS_EXPAND_GROUP								
+		<where>
+		DEL_FLAG=0
+		</where>
+	
+	</select>
+	
+	<!-- 根据字典类型，字典同类型的字典下拉框-->
+	<select id="findSelectDicExpList" resultType="java.util.Map" parameterType="java.util.Map">
+		select 
+		<include refid="BasExpandGroupColumnList"/>
+		from ${tableName}_BAS_EXPAND_GROUP 							
+		<where>
+				<if test="state !=null and   state  != ''  and  state != 'null'">
+  				and STATE=#{state,jdbcType=VARCHAR}
+  				</if>
+  				<if test="delFlag !=null and delFlag !='' and delFlag !='null'">
+  				and DEL_FLAG=#{delFlag,jdbcType=VARCHAR}
+  				</if>
+		</where>
+		   
+	</select>
+	
+		<!-- 根据字典类型，字典tabel-->
+	<select id="findExpGroupList" resultType="java.util.Map" parameterType="java.util.Map">
+		select 
+		<include refid="ExpGroupDicColumnList"/>
+		from #{tableName}_BAS_EX_DET_DIC 							
+		<where>
+		
+				<if test="group_id !=null and   group_id  != ''  and  group_id != 'null'">
+  				and GROUP_ID=#{group_id,jdbcType=VARCHAR}
+  				</if>
+				<if test="state !=null and   state  != ''  and  state != 'null'">
+  				and STATE=#{state,jdbcType=VARCHAR}
+  				</if>
+  				<if test="delFlag !=null and delFlag !='' and delFlag !='null'">
+  				and DEL_FLAG=#{delFlag,jdbcType=VARCHAR}
+  				</if>
+		</where>
+		   
+	</select>
+	
+	<!-- 根据项目拓展明细分组表id查询出拓展明细字典表GROUP_ID=id的数据 -->
+	<select id="findDicExpDetial" resultType="java.util.Map" parameterType="java.util.Map">
+		select 
+		<include refid="ExpGroupDicColumnList"/>
+		from #{tableName}_BAS_EX_DET_DIC 
+		<where>
+		 	GROUP_ID=#{id}
+		</where>
+	</select>
+	
+	<select id="selectBasDict" resultType="java.util.Map" parameterType="java.util.Map" >
+		select
+		<include refid="BasDictColumnList"/>
+		from ${tableName}_BAS_DICT
+		<where>
+			CATEGORY='07'
+		</where> 
+	</select>
+	
+	<select id="updateExpGroup" resultType="com.krm.voteplateform.web.sys.model.BasExpandGroup" parameterType="java.util.Map">
+		select 
+		<include refid="BasExpandGroupColumnList"/>
+		from ${tableName}_BAS_EXPAND_GROUP
+		<where>
+			ID=#{id}
+		</where>	
+	</select>
+	
+	<select id="findDicGroupFild" resultType="com.krm.voteplateform.web.sys.model.BasExDetDic" parameterType="java.util.Map">
+		select
+		<include refid="ExpGroupDicColumnList"/>
+		from #{tableName}_BAS_EX_DET_DIC 
+		<where>
+		 	ID=#{id} and GROUP_ID=#{gropId}
+		</where>
+	</select>
+	
+	<update id="editDicGroupFild"  parameterType="java.util.Map">
+		update ${tableName}_BAS_EX_DET_DIC SET MAP_CN_NAME=#{mapCnName}
+		<where>
+			ID=#{id} and  GROUP_ID=#{gropId}
+		</where>
+	</update>
+	
+	<select id="getBasExpandGroupById" parameterType="java.util.Map" resultType="java.util.Map">
+		select GROUP_NAME from ${tableName}_BAS_EXPAND_GROUP where ID=#{bxgId}
+	</select>
+	
+	<select id="findGroupList" parameterType="java.util.Map" resultType="java.util.Map">
+		select f.ID,e.CN_NAME,e.MAP_CN_NAME,f.NULL_FLAG,f.COLLECT_TYPE,f.DATASOURCE,f.USE_FLAG,f.ALTER_FLAG
+		from ${tableName}_BAS_MEN_WIN_GROU_CONF  f 
+		left join ${tableName}_bas_ex_det_dic e on f.BRED_ID=e.ID WHERE
+		 f.BMWC_ID='${group_id}'						
+	</select>
+	
+	<!-- 根据groupId删除明细字典 -->
+	<update id="updateByGroupId"  parameterType="java.util.Map">
+		update #{tableName}_BAS_EX_DET_DIC set DEL_FLAG='1' where GROUP_ID=#{groupId}
+	</update>
+	
+	<select id="isExistGroupName" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select
+			count(*) 
+		from #{tableName}_BAS_EXPAND_GROUP 
+		<where>
+			GROUP_NAME=#{groupName} and 
+			DEL_FLAG='0' and
+			STATE='0'
+		</where>
+	</select>
+	
+</mapper>

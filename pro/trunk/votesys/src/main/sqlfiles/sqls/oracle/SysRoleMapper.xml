@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.sysrole.dao.SysRoleMapper" >
+  <resultMap id="BaseResultMap" type="com.krm.voteplateform.web.commission.model.PtCommissionRole" >
+    <id column="CRID" property="crid" jdbcType="VARCHAR" />
+    <result column="CODE" property="code" jdbcType="VARCHAR" />
+    <result column="ROLENAME" property="rolename" jdbcType="VARCHAR" />
+    <result column="ROLE_CATEGORY" property="roleCategory" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+  	CRID,CODE,ROLENAME,ROLE_CATEGORY
+  </sql>
+
+  <select id="listRoles" resultType="java.util.Map" parameterType="java.lang.String">
+  	select <include refid="Base_Column_List"/> from PT_COMMISSION_ROLE where CODE=#{code}
+  </select>
+  
+  <select id="listFunctionsByRole" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT ID,COMM_TEXT as name,PARENTID,PARENT_IDS,level FROM ${tableName}_BAS_RESOURCE where PARENTID!=0 AND ENABLE_FLAG=0
+			start with  PARENTID=#{pid} connect by prior id = PARENTID order by level,RE_ORDER
+  </select>
+ 
+ <select id="listAuthorityByRole" resultType="java.util.Map">
+ 	SELECT ID,AUTH_NAME from PT_AUTHORITY
+ </select>
+ 
+ <select id="getRoleById" resultType="java.util.Map" parameterType="java.lang.String">
+ 	select <include refid="Base_Column_List"/> from PT_COMMISSION_ROLE
+ 	where CRID=#{id}
+ </select>
+ 
+ <select id="getRoleFuntionsByRoleId" resultType="java.lang.Long" parameterType="java.lang.String">
+ 	select RESID from PT_COMMISSION_FUNCTION
+ 	where CRID=#{crid}
+ </select>
+ 
+ <select id="getRoleAuthoritysByRoleId" resultType="java.util.Map" parameterType="java.lang.String">
+ 	select AUTH_ID from PT_AUTHORITY_ROLE
+ 	where CRID=#{crid}
+ </select>
+ 
+ <delete id="deleteRoleFunctionsById">
+ 	delete from PT_COMMISSION_FUNCTION
+ 	where CRID=#{crid}
+ </delete>
+ 
+ <delete id="deleteRoleAuthoritysById">
+ 	delete from PT_AUTHORITY_ROLE
+ 	where CRID=#{crid}
+ </delete>
+
+</mapper>

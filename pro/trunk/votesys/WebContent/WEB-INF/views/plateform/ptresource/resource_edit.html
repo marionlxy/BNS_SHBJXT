@@ -1,0 +1,133 @@
+<base target="_parent" />
+<style type="text/css">
+.td {border:solid #add9c0 1px; border-width:0px 1px 1px 0px;}
+.EditTable {border:solid #add9c0 1px; border-width:1px 0px 0px 1px;cellspacing:1px;cellpadding:3px;}
+</style>
+<div class="layer">
+  <form name="plateform" id="plateform" class="" method="post" action="" enctype="multipart/form-data">
+    <input type="hidden" value="${id}" name="id" />
+    <table class="EditTable" width="100%">
+    		<tbody>
+    		<tr class="FormData">   			
+    			<td class="CaptionTD" colspan="4" style="text-align: left;background-color: #d5e2f3"><h4 class="panel-title">基本信息</h4></td>			
+			</tr>
+    		
+			<tr class="FormData">
+				<td class="CaptionTD">提示编码:</td>
+				<td class="DataTD width-100" colspan="3"><input  type="text" name="helpCode" datatype="*" nullmsg="请输入处理期限！" 	ajaxurl="" value="${helpCode}" disabled/>
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">文本平台:</td>
+				<td class="DataTD width-100" colspan="3"><input  type="text" name="sysText" datatype="*" nullmsg="请输入处理期限！" 	ajaxurl="" value="${sysText}" disabled/>
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">委员会文本:</td>
+				<td class="DataTD width-100" colspan="3"><input  type="text" name="commText" datatype="*" nullmsg="请输入处理期限！" 	ajaxurl="" value="${commText}" />
+				</td>
+			</tr>
+			</tbody>
+
+    </table>
+  </form>   
+</div>
+
+
+<div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110"  id="submitForm"  onClick="saveVotePlan()">保存</span>&nbsp;&nbsp;
+	<span class="btn btn-primary btn-sm bigger-110" id="model-save-cancel" onClick="layer.close()">
+		取消
+	</span>
+</div>
+<script type="text/javascript">
+/* //描述框自动扩张高度
+$('textarea[class*=autosize]').autosize({append: "\n"});
+$(function(){
+	$("#organSelect").chosen({width: "100%",search_contains: true,disable_search_threshold:10}); 
+}); */
+$(function(){
+	
+	var index = layer.index;
+	var re = /^[1-9]+[0-9]*]*$/ ; 
+    //提交时有一个bug,当修改时，如果ajaxurl验证方式的文本框框没有点击过时，不会提交
+    var ajaxS = $("#submitForm input[ajaxurl]");
+    $.each(ajaxS,function(i,obj){
+        $(obj).focus();
+    })
+
+    var validId = $("#submitForm").Validform({
+    	tiptype : 4,
+        ajaxPost : true,
+        beforeSubmit:function(curform){
+            var loadi = layer.load(5,2);
+            $("#submitForm").data('loadi',loadi);
+            curform.ajaxSubmit({
+            	type:'post',
+            	url:'${ctxPath}/pt/ptcommission/saveCommission',
+            	success:function(data){
+                    layer.close($("#dic-save").data('loadi'));
+                    /* 保存成功后的处理逻辑
+                    if(data !=null && re.test(data)) {
+                        layer.msg('下发成功', 1, 1,function(){
+                            layer.close(index);
+                            queryDetail();
+                            query();
+                            var params = jQuery("#search-form").serialize(); 
+                    		params = decodeURIComponent(params,true);
+                    		params = encodeURI(encodeURI(params));
+                    		$('#table').bootstrapTable("refresh",{url:"${ctxPath}/risk/detection/list?"+params})
+                        });
+                    }else if(data == 0){
+                    	layer.msg('<span class="red bigger-120">数据已下发，请勿重复下发</span>');
+                    }else if(data == -2){
+                    	layer.msg('<span class="red bigger-120">数据已核实完毕，无法完成下发操作</span>');
+                    }else{
+                    	layer.msg('<span class="red bigger-120">下发失败</span>');
+                    } */
+                }
+            	
+            });
+        },
+        tiptype : function(msg, o, cssctl) {
+            if (!o.obj.is("form")) {
+                if (o.type != 2) {
+                    tip.errorTip(msg,o.obj);
+                }
+            }
+        },
+        tipSweep : true
+    });
+
+    $("#submitForm").click(function() {
+        validId.submitForm(false);
+        return false;
+    });
+
+    $("#model-save-cancel").click(function(){
+        layer.close(layer.index);
+    });
+
+    $("#submitForm input,#submitForm textarea").blur(function(){
+        layer.closeTips();
+        return false;
+    })
+
+});
+
+$("#dmodel-save-cancel").click(function(){
+    layer.close(index);
+});
+
+function saveVotePlan(){
+	//window.location.href("${ctxPath}/pt/ptvoteplan/saveVotePlan");
+	var form = document.getElementById('plateform');
+	form.action="${ctxPath}/pt/ptresource/saveResource";
+	form.submit();
+	layer.close();
+}
+
+</script>
+

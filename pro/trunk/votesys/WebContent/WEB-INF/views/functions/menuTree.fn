@@ -1,0 +1,48 @@
+@for(menu in para0){//class="highlight"
+	<li data-level="${menu.level!}">
+	
+		<a 
+			@if(menu.hasChild){
+				href="javascript:void(0);" class="dropdown-toggle" 
+				 haschild="${menu.hasChild}"
+			@}else if(!isEmpty(menu.url)){
+				@if(menu.url == 'model/tool'){//探索式分析工具单独弹出窗口
+					target="_blank"
+					href="javascript:void(0)" 
+					id="menu_${strutil.replace(menu.url!'','/','')}"
+					haschild="${menu.hasChild!}"
+					toUrl="${menu.url!}"
+				@}else{
+					href="javascript:void(0)" 
+					id="menu_${strutil.replace(menu.url!'','/','')}" 
+					haschild="${menu.hasChild!}"
+					toUrl="${menu.url!}"
+				@}
+				
+			@}
+			
+			
+		>
+			@if(menu.level == 1||menu.level == 2) {
+				<i class="menu-icon fa fa-asterisk"></i>
+			@}
+			<span class="menu-text"
+				@if(menu.level == 1) {
+					style="vertical-align: middle;font-weight:bold;font-size:12px;margin-left: 5px;height: 34px;"
+				@}else{
+					style="font-size:12px;margin-left: 5px;"
+				@}
+			> ${menu.commText!} </span>
+			@if(menu.hasChild){
+			<b class="arrow fa fa-angle-down" ></b>
+			@}
+		</a>
+		
+		
+		@if(menu.hasChild){
+		<ul class="submenu nav-hide" style="display:none;">
+			@menuTree(menu.childs!);
+		</ul>
+		@}
+	</li>
+@}elsefor{}

@@ -1,0 +1,766 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.basProject.dao.BasProjectMapper">
+
+	<!-- 会议项目字典 -->
+	<sql id="BasProjectColumnList">
+		PROJECT_ID, CONFERENCE_ID, SPEC_PRO_CODE,OTHER_SYS_KEY,PROJECT_TITLE, KIND_ID, APPLY_DATE, APPLY_ORG_ID, APPLY_ORG_NAME, APPLY_CATET, HAND_SIGN_FLAG_ID,
+	 	APPROVAL_DATE, APPROVAL_DEPT_ID, APPROVAL_DEPT_NAME,APPROVAL_TYPE_NAME, APPROVAL_TYPE_ID, HOST_DEPT_ID, HOST_DEPT_NAME, SUPPORT_DEPT_ID,
+	 	SUPPORT_DEPT_NAME, REVIEW_TIME, REVIEW_RESULT_ID, REVIEW_NOTE, ADDITIONAL_CONDITIONS, CURRENCY_ID, MONETARY_UNIT_ID,
+	 	APPLIED_AMOUNT, APPROVED_AMOUNT, DESCRIPTION, CODE_OA, DEL_FLAG, to_char(CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') as CREATE_TIME,
+	  	CREATE_BY, CREATE_NAME, CREATE_IP,to_char(UPDATE_TIME,'YYYY-MM-DD HH24:MI:SS') as UPDATE_TIME, UPDATE_BY, UPDATE_NAME, UPDATE_IP, 
+	 	 STR1, STR2, STR3, STR4, STR5, STR6, STR7, STR8, STR9, STR10, 
+		  NO1, NO2, NO3, NO4, NO5, NO6, NO7, NO8,  AMOUNT1,
+	 	AMOUNT2, AMOUNT3, AMOUNT4, AMOUNT5, AMOUNT6, AMOUNT7, AMOUNT8,
+	 	 DATECOL1, DATECOL2, DATECOL3, DATECOL4, DATECOL5, DATECOL6,
+	 	CODENAME1_ID, CODENAME2_ID, CODENAME3_ID, CODENAME4_ID, CODENAME5_ID, CODENAME6_ID, CODENAME1_NAME, CODENAME2_NAME, 
+		CODENAME3_NAME, CODENAME4_NAME, CODENAME5_NAME, CODENAME6_NAME, KIND_NAME, HAND_SIGN_FLAG_NAME,
+	 	PROJECT_STATE_ID, PROJECT_STATE_NAME,
+	 	(CASE  
+		WHEN  REVIEW_RESULT_NAME is null THEN '未表决' 
+		ELSE REVIEW_RESULT_NAME END)REVIEW_RESULT_NAME , CURRENCY_NAME,PROJECT_ORDER,
+		MONETARY_UNIT_NAME
+	</sql>
+	<!-- 会议项目字典 -->
+	<sql id="BasProjectColumnValueList">
+		#{projectId},#{conferenceId},#{specProCode},#{otherSysKey},#{projectTitle},#{kindId},#{applyDate},#{applyOrgId},#{applyOrgName},#{applyCatet},
+		#{handSignFlagId},#{approvalDate},#{approvalDeptId},#{approvalDeptName},#{approvalTypeId},#{hostDeptId},#{hostDeptName},#{supportDeptId},#{supportDeptName},
+		#{reviewTime},#{reviewResultId},#{reviewNote},#{additionalConditions},#{currencyId},#{monetaryUnitId},#{appliedAmount},
+		#{approvedAmount},#{description},#{codeOa},#{delFlag},#{createTime},#{createBy},#{createName},#{createIp},#{updateTime},#{updateBy},
+		#{updateName},#{updateIp},#{str1},#{str2},#{str3},#{str4},#{str5},#{str6},#{str7},#{strg8},
+		#{str9},#{stg10},#{no1},#{no2},#{no3},#{no4},#{no5},#{no6},#{no7},#{no8},
+		#{amount1},#{amount2},#{amount3},#{amount4},#{amount5},#{amount6},#{amount7},#{amount8},#{datecol1},#{datecol2},
+		#{datecol3},#{datecol4},#{datecol5},#{datecol6},#{codename1Id},#{codename2Id},#{codename3Id},#{codename4Id},#{codename5Id},#{codename6Id},
+		#{codename1Name},#{codename2Name},#{codename3Name},#{codename4Name},#{codename5Name},#{codename6Name},#{kindName},#{handSignFlagName},#{approvalTypeName},#{projectStateId},
+		#{projectStateName},#{reviewResultName},#{currencyName},#{projectOrder},#{monetaryUnitName}
+	</sql>
+	
+	
+	
+	<!-- 查询PROJECT_STATE_ID='10200300'所有未审项目列表信息 -->
+	<select id="findNoAuditoItemList" resultType="java.util.Map" parameterType="java.util.Map">
+		select
+		<include refid="BasProjectColumnList"/>
+		from #{tableName}_BAS_PROJECT
+		<where>
+			DEL_FLAG = '0' and PROJECT_STATE_ID='10200300' and CONFERENCE_ID is null
+			order by UPDATE_TIME DESC
+		</where>
+		
+	</select>
+	
+	<!--查询已审项目会议列表信息 -->
+	<select id="findAuditoItemList" resultType="java.util.Map" parameterType="com.krm.voteplateform.web.basProject.model.BasProject">
+		select
+		<include refid="BasProjectColumnList"/> 
+		 from #{tableName}_BAS_PROJECT
+		 <where>
+		 	DEL_FLAG='0'
+		 	<if test="projectId!=null and projectId!='' ">
+			 and PROJECT_ID=#{projectId,jdbcType=VARCHAR}
+			</if>
+			<if test="conferenceId!=null and conferenceId!='' ">
+			and CONFERENCE_ID=#{conferenceId,jdbcType=VARCHAR}
+			</if>
+			<if test="specProCode!=null and specProCode!='' ">
+			and SPEC_PRO_CODE=#{specProCode,jdbcType=VARCHAR}
+			</if>
+			<if test="projectTitle!=null and projectTitle!='' ">
+			and	PROJECT_TITLE like '%' || #{projectTitle} ||'%'
+			 <!-- TITLE=#{title,jdbcType=VARCHAR}, -->
+			</if>
+			<if test="kindId!=null and kindId!='' ">
+			and KIND_ID=#{kindId,jdbcType=VARCHAR}
+			</if>
+			<if test="applyDate!=null and applyDate!='' ">
+			and APPLY_DATE=#{applyDate,jdbcType=VARCHAR}
+			</if>
+			<if test="applyOrgId!=null and applyOrgId!='' " >
+			and APPLY_ORG_ID=#{applyOrgId,jdbcType=VARCHAR}
+			</if>
+			<if test="applyOrgName!=null and applyOrgName!='' ">
+			and APPLY_ORG_NAME=#{applyOrgName,jdbcType=VARCHAR}
+			</if>
+			<if test="applyCatet!=null and applyCatet!='' ">
+			and APPLY_CATET=#{applyCatet,jdbcType=VARCHAR}
+			</if>
+			<if test="handSignFlagId!=null and handSignFlagId!='' ">
+			and HAND_SIGN_FLAG_ID=#{handSignFlagId,jdbcType=VARCHAR}
+			</if>
+			<if test="approvalDate!=null and approvalDate!='' ">
+			and	APPROVAL_DATE=#{approvalDate,jdbcType=VARCHAR}
+			</if>
+			<if test="approvalDeptId!=null and approvalDeptId!='' ">
+			and	APPROVAL_DEPT_ID=#{approvalDeptId,jdbcType=VARCHAR}
+			</if>
+			<if test="approvalDeptName!=null and approvalDeptName!='' ">
+			and	APPROVAL_DEPT_NAME=#{approvalDeptName,jdbcType=VARCHAR}
+			</if>
+			<if test="approvalTypeId!=null and approvalTypeId!='' ">
+			and	APPROVAL_TYPE_ID=#{approvalTypeId,jdbcType=VARCHAR}
+			</if>
+			<if test="hostDeptId!=null and hostDeptId!='' ">
+			and	HOST_DEPT_ID=#{hostDeptId,jdbcType=VARCHAR}
+			</if>
+			<if test="hostDeptName!=null and hostDeptName!='' ">
+			and	HOST_DEPT_NAME=#{hostDeptName,jdbcType=VARCHAR}
+			</if>
+			<if test="supportDeptId!=null and supportDeptId!='' ">
+			and	SUPPORT_DEPT_ID=#{supportDeptId,jdbcType=VARCHAR}
+			</if>
+			<if test="supportDeptName!=null and supportDeptName!='' ">
+			and	SUPPORT_DEPT_NAME=#{supportDeptName,jdbcType=VARCHAR}
+			</if>
+		 	<if test="reviewTimeStart!=null and reviewTimeStart!='' ">
+		 	and  REVIEW_TIME<![CDATA[>=#{reviewTimeStart} ]]>
+			</if>
+			<if test="reviewTimeEnd!=null and reviewTimeEnd!='' ">
+		 	and  REVIEW_TIME<![CDATA[<=#{reviewTimeEnd} ]]>
+			</if>
+			<if test="reviewResultId!=null and reviewResultId!='' ">
+			and	REVIEW_RESULT_ID=#{reviewResultId,jdbcType=VARCHAR}
+			</if>
+			<if test="reviewNote!=null and reviewNote!='' ">
+			and	REVIEW_NOTE=#{reviewNote,jdbcType=VARCHAR}
+			</if>
+			<if test="additionalConditions!=null and additionalConditions!='' ">
+			and	ADDITIONAL_CONDITIONS=#{additionalConditions,jdbcType=VARCHAR}
+			</if>
+			<if test="currencyId!=null and currencyId!='' ">
+			and	CURRENCY_ID=#{currencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="monetaryUnitId!=null and monetaryUnitId!='' ">
+			and	MONETARY_UNIT_ID=#{monetaryUnitId,jdbcType=VARCHAR}
+			</if>
+			<if test="appliedAmount!=null and appliedAmount!='' ">
+			and	APPLIED_AMOUNT=#{appliedAmount,jdbcType=NUMBER}
+			</if>
+			<if test="approvedAmount!=null and approvedAmount!='' ">
+			and	APPROVED_AMOUNT=#{approvedAmount,jdbcType=NUMBER}
+			</if>
+			<if test="description!=null and description!='' ">
+			and	DESCRIPTION=#{description,jdbcType=VARCHAR}
+			</if>
+			<if test="codeOa!=null and codeOa!='' ">
+			and	CODE_OA=#{codeOa,jdbcType=VARCHAR}
+			</if>
+			<if test="delFlag!=null and delFlag!='' ">
+			and DEL_FLAG=#{delFlag,jdbcType=VARCHAR}
+			</if>
+			<if test="createTime!=null">
+			and	CREATE_TIME=#{createTime,jdbcType=VARCHAR}
+			</if>
+			<if test="createBy!=null and createBy!='' ">
+			and	CREATE_BY=#{createBy,jdbcType=VARCHAR}
+			</if>
+			<if test="createName!=null and createName!='' ">
+			and	CREATE_NAME=#{createName,jdbcType=VARCHAR}
+			</if>
+			<if test="createIp!=null and createIp!='' ">
+			and	CREATE_IP=#{createIp,jdbcType=VARCHAR}
+			</if>
+			<if test="updateTime!=null and updateTime!='' ">
+			and	UPDATE_TIME=#{updateTime,jdbcType=VARCHAR}
+			</if>
+			<if test="updateBy!=null and updateBy!='' ">
+			and	UPDATE_BY=#{updateBy,jdbcType=VARCHAR}
+			</if>
+			<if test="updateName!=null and updateName!='' ">
+			and	UPDATE_NAME=#{updateName,jdbcType=VARCHAR}
+			</if>
+			<if test="updateIp!=null and updateIp!='' ">
+			and	UPDATE_IP=#{updateIp,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="str1!=null">
+			and	STR1=#{str1,jdbcType=VARCHAR}
+			</if>
+			<if test="str2!=null">
+			and	STR2=#{str2,jdbcType=VARCHAR}
+			</if>
+			<if test="str3!=null">
+			and	STR3=#{strg3,jdbcType=VARCHAR}
+			</if>
+			<if test="str4!=null">
+			and	STR4=#{str4,jdbcType=VARCHAR}
+			</if>
+			<if test="str5!=null">
+			and	STR5=#{str5,jdbcType=VARCHAR}
+			</if>
+			<if test="str6!=null">
+			and	STR6=#{str6,jdbcType=VARCHAR}
+			</if>
+			<if test="str7!=null">
+			and	STR7=#{str7,jdbcType=VARCHAR}
+			</if>
+			<if test="str8!=null">
+			and	STR8=#{str8,jdbcType=VARCHAR}
+			</if>
+			<if test="str9!=null">
+			and	STR9=#{str9,jdbcType=VARCHAR}
+			</if>
+			<if test="str10!=null">
+			and	STR10=#{str10,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="no1!=null">
+			and	NO1=#{no1,jdbcType=NUMERIC}
+			</if>
+			<if test="no2!=null">
+			and	NO2=#{no2,jdbcType=NUMERIC}
+			</if>
+			<if test="no3!=null">
+			and	NO3=#{no3,jdbcType=NUMERIC}
+			</if>
+			<if test="no4!=null">
+			and	NO4=#{no4,jdbcType=NUMERIC}
+			</if>
+			<if test="no5!=null">
+			and	NO5=#{no5,jdbcType=NUMERIC}
+			</if>
+			<if test="no6!=null">
+			and	NO6=#{no6,jdbcType=NUMERIC}
+			</if>
+			<if test="no7!=null">
+			and	NO7=#{no7,jdbcType=NUMERIC}
+			</if>
+			<if test="no8!=null">
+			and	NO8=#{no8,jdbcType=NUMERIC}
+			</if>
+			<if test="amount1!=null">
+			and	AMOUNT1=#{amount1,jdbcType=NUMERIC}
+			</if>
+			<if test="amount2!=null ">
+			and	AMOUNT2=#{amount2,jdbcType=NUMERIC}
+			</if>
+			<if test="amount3!=null ">
+			and	AMOUNT3=#{amount3,jdbcType=NUMERIC}
+			</if>
+			<if test="amount4!=null ">
+			and	AMOUNT4=#{amount4,jdbcType=NUMERIC}
+			</if>
+			<if test="amount5!=null ">
+			and	AMOUNT5=#{amount5,jdbcType=NUMERIC}
+			</if>
+			<if test="amount6!=null">
+			and	AMOUNT6=#{amount6,jdbcType=NUMERIC}
+			</if>
+			<if test="amount7!=null ">
+			and	AMOUNT7=#{amount7,jdbcType=NUMERIC}
+			</if>
+			<if test="amount8!=null">
+			and	AMOUNT8=#{amount8,jdbcType=NUMERIC}
+			</if>
+			<if test="datecol1Start!=null and datecol1Start!='' ">
+				and  DATECOL1<![CDATA[>=#{datecol1Start} ]]>
+			</if>
+			<if test="datecol1End!=null and datecol1End!='' ">
+				and  DATECOL1<![CDATA[<=#{datecol1End} ]]>
+			</if>
+			<if test="datecol2Start!=null and datecol2Start!='' ">
+				and  DATECOL2<![CDATA[>=#{datecol2Start} ]]>
+			</if>
+			<if test="datecol2End!=null and datecol2End!='' ">
+				and  DATECOL2<![CDATA[<=#{datecol2End} ]]>
+			</if>
+			<if test="datecol3Start!=null and datecol3Start!='' ">
+				and  DATECOL3<![CDATA[>=#{datecol3Start} ]]>
+			</if>
+			<if test="datecol3End!=null and datecol3End!='' ">
+				and  DATECOL3<![CDATA[<=#{datecol3End} ]]>
+			</if>
+			<if test="datecol4Start!=null and datecol4Start!='' ">
+				and  DATECOL4<![CDATA[>=#{datecol4Start} ]]>
+			</if>
+			<if test="datecol4End!=null and datecol4End!='' ">
+				and  DATECOL4<![CDATA[<=#{datecol4End} ]]>
+			</if>
+			<if test="datecol5Start!=null and datecol5Start!='' ">
+				and  DATECOL5<![CDATA[>=#{datecol5Start} ]]>
+			</if>
+			<if test="datecol5End!=null and datecol5End!='' ">
+				and  DATECOL5<![CDATA[<=#{datecol5End} ]]>
+			</if>
+			<if test="datecol6Start!=null and datecol6Start!='' ">
+				and  DATECOL6<![CDATA[>=#{datecol6Start} ]]>
+			</if>
+			<if test="datecol6End!=null and datecol6End!='' ">
+				and  DATECOL6<![CDATA[<=#{datecol6End} ]]>
+			</if>
+			
+			<if test="codename1Id!=null">
+			and	CODENAME1_ID=#{codename1Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename2Id!=null">
+			and	CODENAME2_ID=#{codename2Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename3Id!=null">
+			and	CODENAME3_ID=#{codename3Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename4Id!=null">
+			and	CODENAME4_ID=#{codename4Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename5Id!=null">
+			and	CODENAME5_ID=#{codename5Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename6Id!=null ">
+			and	CODENAME6_ID=#{codename6Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename1Name!=null">
+			and	CODENAME1_NAME=#{codename1Name,jdbcType=VARCHAR}
+			</if>
+			<if test="codename2Name!=null">
+			and	CODENAME2_NAME=#{codename2Name,jdbcType=VARCHAR}
+			</if>
+			<if test="codename3Name!=null ">
+			and	CODENAME3_NAME=#{codename3Name,jdbcType=VARCHAR}
+			</if>
+			<if test="codename4Name!=null">
+			and	CODENAME4_NAME=#{codename4Name,jdbcType=VARCHAR}
+			</if>
+			<if test="codename5Name!=null">
+			and	CODENAME5_NAME=#{codename5Name,jdbcType=VARCHAR}
+			</if>
+			<if test="codename6Name!=null">
+			and	CODENAME6_NAME=#{codename6Name,jdbcType=VARCHAR}
+			</if>
+			<if test="kindName!=null and kindName!='' ">
+			and	KIND_NAME=#{kindName,jdbcType=VARCHAR}
+			</if>
+			<if test="handSignFlagName!=null and handSignFlagName!='' ">
+			and	HAND_SIGN_FLAG_NAME=#{handSignFlagName,jdbcType=VARCHAR}
+			</if>
+			<if test="approvalTypeName!=null and approvalTypeName!='' ">
+			and	APPROVAL_TYPE_NAME=#{approvalTypeName,jdbcType=VARCHAR}
+			</if>
+			<if test="projectStateId!=null and projectStateId!='' ">
+			and	PROJECT_STATE_ID=#{projectStateId,jdbcType=VARCHAR}
+			</if>
+			<if test="projectStateName!=null and projectStateName!='' ">
+			and	PROJECT_STATE_NAME=#{projectStateName,jdbcType=VARCHAR}
+			</if>
+			<if test="reviewResultName!=null and reviewResultName!='' ">
+			and	REVIEW_RESULT_NAME=#{reviewResultName,jdbcType=VARCHAR}
+			</if>
+			<if test="currencyName!=null and currencyName!='' ">
+			and	CURRENCY_NAME=#{currencyName,jdbcType=VARCHAR}
+			</if>
+			<if test="monetaryUnitName!=null and monetaryUnitName!='' ">
+			and	MONETARY_UNIT_NAME=#{monetaryUnitName,jdbcType=VARCHAR}
+			</if>
+			<if test="projectOrder!=null and projectOrder!='' ">
+			and	PROJECT_ORDER=#{projectOrder,jdbcType=VARCHAR}
+			</if>
+			and PROJECT_STATE_ID='10200301' 
+			order by REVIEW_TIME DESC
+		 </where> 
+	</select>
+	
+	<select id="exportData" resultType="java.util.Map" parameterType="java.util.Map">
+		select
+		<include refid="BasProjectColumnList"/> 
+		 from #{tableName}_BAS_PROJECT
+		 <where>
+		 	DEL_FLAG='0'
+		 	<if test="projectId!=null and projectId!='' ">
+			 and PROJECT_ID=#{projectId,jdbcType=VARCHAR}
+			</if>
+			<if test="conferenceId!=null and conferenceId!='' ">
+			and CONFERENCE_ID=#{conferenceId,jdbcType=VARCHAR}
+			</if>
+			<if test="specProCode!=null and specProCode!='' ">
+			and SPEC_PRO_CODE=#{specProCode,jdbcType=VARCHAR}
+			</if>
+			<if test="projectTitle!=null and projectTitle!='' ">
+			and	PROJECT_TITLE like '%' || #{projectTitle} ||'%'
+			 <!-- TITLE=#{title,jdbcType=VARCHAR}, -->
+			</if>
+			<if test="kindId!=null and kindId!='' ">
+			and KIND_ID=#{kindId,jdbcType=VARCHAR}
+			</if>
+			<if test="applyDate!=null and applyDate!='' ">
+			and APPLY_DATE=#{applyDate,jdbcType=VARCHAR}
+			</if>
+			<if test="applyOrgId!=null and applyOrgId!='' " >
+			and APPLY_ORG_ID=#{applyOrgId,jdbcType=VARCHAR}
+			</if>
+			<if test="applyOrgName!=null and applyOrgName!='' ">
+			and APPLY_ORG_NAME=#{applyOrgName,jdbcType=VARCHAR}
+			</if>
+			<if test="applyCatet!=null and applyCatet!='' ">
+			and APPLY_CATET=#{applyCatet,jdbcType=VARCHAR}
+			</if>
+			<if test="handSignFlagId!=null and handSignFlagId!='' ">
+			and HAND_SIGN_FLAG_ID=#{handSignFlagId,jdbcType=VARCHAR}
+			</if>
+			<if test="approvalDate!=null and approvalDate!='' ">
+			and	APPROVAL_DATE=#{approvalDate,jdbcType=VARCHAR}
+			</if>
+			<if test="approvalDeptId!=null and approvalDeptId!='' ">
+			and	APPROVAL_DEPT_ID=#{approvalDeptId,jdbcType=VARCHAR}
+			</if>
+			<if test="approvalDeptName!=null and approvalDeptName!='' ">
+			and	APPROVAL_DEPT_NAME=#{approvalDeptName,jdbcType=VARCHAR}
+			</if>
+			<if test="approvalTypeId!=null and approvalTypeId!='' ">
+			and	APPROVAL_TYPE_ID=#{approvalTypeId,jdbcType=VARCHAR}
+			</if>
+			<if test="hostDeptId!=null and hostDeptId!='' ">
+			and	HOST_DEPT_ID=#{hostDeptId,jdbcType=VARCHAR}
+			</if>
+			<if test="hostDeptName!=null and hostDeptName!='' ">
+			and	HOST_DEPT_NAME=#{hostDeptName,jdbcType=VARCHAR}
+			</if>
+			<if test="supportDeptId!=null and supportDeptId!='' ">
+			and	SUPPORT_DEPT_ID=#{supportDeptId,jdbcType=VARCHAR}
+			</if>
+			<if test="supportDeptName!=null and supportDeptName!='' ">
+			and	SUPPORT_DEPT_NAME=#{supportDeptName,jdbcType=VARCHAR}
+			</if>
+		 	<if test="reviewTimeStart!=null and reviewTimeStart!='' ">
+		 	and  REVIEW_TIME<![CDATA[>=#{reviewTimeStart} ]]>
+			</if>
+			<if test="reviewTimeEnd!=null and reviewTimeEnd!='' ">
+		 	and  REVIEW_TIME<![CDATA[<=#{reviewTimeEnd} ]]>
+			</if>
+			<if test="reviewResultId!=null and reviewResultId!='' ">
+			and	REVIEW_RESULT_ID=#{reviewResultId,jdbcType=VARCHAR}
+			</if>
+			<if test="reviewNote!=null and reviewNote!='' ">
+			and	REVIEW_NOTE=#{reviewNote,jdbcType=VARCHAR}
+			</if>
+			<if test="additionalConditions!=null and additionalConditions!='' ">
+			and	ADDITIONAL_CONDITIONS=#{additionalConditions,jdbcType=VARCHAR}
+			</if>
+			<if test="currencyId!=null and currencyId!='' ">
+			and	CURRENCY_ID=#{currencyId,jdbcType=VARCHAR}
+			</if>
+			<if test="monetaryUnitId!=null and monetaryUnitId!='' ">
+			and	MONETARY_UNIT_ID=#{monetaryUnitId,jdbcType=VARCHAR}
+			</if>
+			<if test="appliedAmount!=null and appliedAmount!='' ">
+			and	APPLIED_AMOUNT=#{appliedAmount,jdbcType=NUMBER}
+			</if>
+			<if test="approvedAmount!=null and approvedAmount!='' ">
+			and	APPROVED_AMOUNT=#{approvedAmount,jdbcType=NUMBER}
+			</if>
+			<if test="description!=null and description!='' ">
+			and	DESCRIPTION=#{description,jdbcType=VARCHAR}
+			</if>
+			<if test="codeOa!=null and codeOa!='' ">
+			and	CODE_OA=#{codeOa,jdbcType=VARCHAR}
+			</if>
+			<if test="delFlag!=null and delFlag!='' ">
+			and DEL_FLAG=#{delFlag,jdbcType=VARCHAR}
+			</if>
+			<if test="createTime!=null">
+			and	CREATE_TIME=#{createTime,jdbcType=VARCHAR}
+			</if>
+			<if test="createBy!=null and createBy!='' ">
+			and	CREATE_BY=#{createBy,jdbcType=VARCHAR}
+			</if>
+			<if test="createName!=null and createName!='' ">
+			and	CREATE_NAME=#{createName,jdbcType=VARCHAR}
+			</if>
+			<if test="createIp!=null and createIp!='' ">
+			and	CREATE_IP=#{createIp,jdbcType=VARCHAR}
+			</if>
+			<if test="updateTime!=null and updateTime!='' ">
+			and	UPDATE_TIME=#{updateTime,jdbcType=VARCHAR}
+			</if>
+			<if test="updateBy!=null and updateBy!='' ">
+			and	UPDATE_BY=#{updateBy,jdbcType=VARCHAR}
+			</if>
+			<if test="updateName!=null and updateName!='' ">
+			and	UPDATE_NAME=#{updateName,jdbcType=VARCHAR}
+			</if>
+			<if test="updateIp!=null and updateIp!='' ">
+			and	UPDATE_IP=#{updateIp,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="str1!=null">
+			and	STR1=#{str1,jdbcType=VARCHAR}
+			</if>
+			<if test="str2!=null">
+			and	STR2=#{str2,jdbcType=VARCHAR}
+			</if>
+			<if test="str3!=null">
+			and	STR3=#{strg3,jdbcType=VARCHAR}
+			</if>
+			<if test="str4!=null">
+			and	STR4=#{str4,jdbcType=VARCHAR}
+			</if>
+			<if test="str5!=null">
+			and	STR5=#{str5,jdbcType=VARCHAR}
+			</if>
+			<if test="str6!=null">
+			and	STR6=#{str6,jdbcType=VARCHAR}
+			</if>
+			<if test="str7!=null">
+			and	STR7=#{str7,jdbcType=VARCHAR}
+			</if>
+			<if test="str8!=null">
+			and	STR8=#{str8,jdbcType=VARCHAR}
+			</if>
+			<if test="str9!=null">
+			and	STR9=#{str9,jdbcType=VARCHAR}
+			</if>
+			<if test="str10!=null">
+			and	STR10=#{str10,jdbcType=VARCHAR}
+			</if>
+			
+			<if test="no1!=null">
+			and	NO1=#{no1,jdbcType=NUMERIC}
+			</if>
+			<if test="no2!=null">
+			and	NO2=#{no2,jdbcType=NUMERIC}
+			</if>
+			<if test="no3!=null">
+			and	NO3=#{no3,jdbcType=NUMERIC}
+			</if>
+			<if test="no4!=null">
+			and	NO4=#{no4,jdbcType=NUMERIC}
+			</if>
+			<if test="no5!=null">
+			and	NO5=#{no5,jdbcType=NUMERIC}
+			</if>
+			<if test="no6!=null">
+			and	NO6=#{no6,jdbcType=NUMERIC}
+			</if>
+			<if test="no7!=null">
+			and	NO7=#{no7,jdbcType=NUMERIC}
+			</if>
+			<if test="no8!=null">
+			and	NO8=#{no8,jdbcType=NUMERIC}
+			</if>
+			<if test="amount1!=null">
+			and	AMOUNT1=#{amount1,jdbcType=NUMERIC}
+			</if>
+			<if test="amount2!=null ">
+			and	AMOUNT2=#{amount2,jdbcType=NUMERIC}
+			</if>
+			<if test="amount3!=null ">
+			and	AMOUNT3=#{amount3,jdbcType=NUMERIC}
+			</if>
+			<if test="amount4!=null ">
+			and	AMOUNT4=#{amount4,jdbcType=NUMERIC}
+			</if>
+			<if test="amount5!=null ">
+			and	AMOUNT5=#{amount5,jdbcType=NUMERIC}
+			</if>
+			<if test="amount6!=null">
+			and	AMOUNT6=#{amount6,jdbcType=NUMERIC}
+			</if>
+			<if test="amount7!=null ">
+			and	AMOUNT7=#{amount7,jdbcType=NUMERIC}
+			</if>
+			<if test="amount8!=null">
+			and	AMOUNT8=#{amount8,jdbcType=NUMERIC}
+			</if>
+			<if test="datecol1Start!=null and datecol1Start!='' ">
+				and  DATECOL1<![CDATA[>=#{datecol1Start} ]]>
+			</if>
+			<if test="datecol1End!=null and datecol1End!='' ">
+				and  DATECOL1<![CDATA[<=#{datecol1End} ]]>
+			</if>
+			<if test="datecol2Start!=null and datecol2Start!='' ">
+				and  DATECOL2<![CDATA[>=#{datecol2Start} ]]>
+			</if>
+			<if test="datecol2End!=null and datecol2End!='' ">
+				and  DATECOL2<![CDATA[<=#{datecol2End} ]]>
+			</if>
+			<if test="datecol3Start!=null and datecol3Start!='' ">
+				and  DATECOL3<![CDATA[>=#{datecol3Start} ]]>
+			</if>
+			<if test="datecol3End!=null and datecol3End!='' ">
+				and  DATECOL3<![CDATA[<=#{datecol3End} ]]>
+			</if>
+			<if test="datecol4Start!=null and datecol4Start!='' ">
+				and  DATECOL4<![CDATA[>=#{datecol4Start} ]]>
+			</if>
+			<if test="datecol4End!=null and datecol4End!='' ">
+				and  DATECOL4<![CDATA[<=#{datecol4End} ]]>
+			</if>
+			<if test="datecol5Start!=null and datecol5Start!='' ">
+				and  DATECOL5<![CDATA[>=#{datecol5Start} ]]>
+			</if>
+			<if test="datecol5End!=null and datecol5End!='' ">
+				and  DATECOL5<![CDATA[<=#{datecol5End} ]]>
+			</if>
+			<if test="datecol6Start!=null and datecol6Start!='' ">
+				and  DATECOL6<![CDATA[>=#{datecol6Start} ]]>
+			</if>
+			<if test="datecol6End!=null and datecol6End!='' ">
+				and  DATECOL6<![CDATA[<=#{datecol6End} ]]>
+			</if>
+			<if test="codename1Id!=null">
+			and	CODENAME1_ID=#{codename1Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename2Id!=null">
+			and	CODENAME2_ID=#{codename2Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename3Id!=null">
+			and	CODENAME3_ID=#{codename3Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename4Id!=null">
+			and	CODENAME4_ID=#{codename4Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename5Id!=null">
+			and	CODENAME5_ID=#{codename5Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename6Id!=null ">
+			and	CODENAME6_ID=#{codename6Id,jdbcType=VARCHAR}
+			</if>
+			<if test="codename1Name!=null">
+			and	CODENAME1_NAME=#{codename1Name,jdbcType=VARCHAR}
+			</if>
+			<if test="codename2Name!=null">
+			and	CODENAME2_NAME=#{codename2Name,jdbcType=VARCHAR}
+			</if>
+			<if test="codename3Name!=null ">
+			and	CODENAME3_NAME=#{codename3Name,jdbcType=VARCHAR}
+			</if>
+			<if test="codename4Name!=null">
+			and	CODENAME4_NAME=#{codename4Name,jdbcType=VARCHAR}
+			</if>
+			<if test="codename5Name!=null">
+			and	CODENAME5_NAME=#{codename5Name,jdbcType=VARCHAR}
+			</if>
+			<if test="codename6Name!=null">
+			and	CODENAME6_NAME=#{codename6Name,jdbcType=VARCHAR}
+			</if>
+			<if test="kindName!=null and kindName!='' ">
+			and	KIND_NAME=#{kindName,jdbcType=VARCHAR}
+			</if>
+			<if test="handSignFlagName!=null and handSignFlagName!='' ">
+			and	HAND_SIGN_FLAG_NAME=#{handSignFlagName,jdbcType=VARCHAR}
+			</if>
+			<if test="approvalTypeName!=null and approvalTypeName!='' ">
+			and	APPROVAL_TYPE_NAME=#{approvalTypeName,jdbcType=VARCHAR}
+			</if>
+			<if test="projectStateId!=null and projectStateId!='' ">
+			and	PROJECT_STATE_ID=#{projectStateId,jdbcType=VARCHAR}
+			</if>
+			<if test="projectStateName!=null and projectStateName!='' ">
+			and	PROJECT_STATE_NAME=#{projectStateName,jdbcType=VARCHAR}
+			</if>
+			<if test="reviewResultName!=null and reviewResultName!='' ">
+			and	REVIEW_RESULT_NAME=#{reviewResultName,jdbcType=VARCHAR}
+			</if>
+			<if test="currencyName!=null and currencyName!='' ">
+			and	CURRENCY_NAME=#{currencyName,jdbcType=VARCHAR}
+			</if>
+			<if test="monetaryUnitName!=null and monetaryUnitName!='' ">
+			and	MONETARY_UNIT_NAME=#{monetaryUnitName,jdbcType=VARCHAR}
+			</if>
+			<if test="projectOrder!=null and projectOrder!='' ">
+			and	PROJECT_ORDER=#{projectOrder,jdbcType=VARCHAR}
+			</if>
+			and PROJECT_STATE_ID='10200301' 
+		 </where> 
+	</select>
+	
+	
+	<!--根据会议表中的mettingId查询出项目列表信息-->
+	<select id="findProjectByIdList" resultType="java.util.Map" parameterType="java.util.Map">
+		select
+		<include refid="BasProjectColumnList"/>
+		from #{tableName}_BAS_PROJECT
+		<where>
+			CONFERENCE_ID=#{mettingId} and
+			DEL_FLAG='0'
+			order by PROJECT_ORDER
+		</where>
+	</select>
+	
+	<!--根据项目Id查询项目表决权限-->
+	<select id="findAuthsProjectByIdList" resultType="java.util.Map" parameterType="java.util.Map">
+		select
+		<include refid="BasProjectColumnList"/>
+		from #{tableName}_BAS_PROJECT
+		<where>
+			DEL_FLAG='0'
+			<if test="projectId !=null and   projectId != ''  and  projectId != 'null'">
+  				and PROJECT_ID=#{projectId,jdbcType=VARCHAR}
+  			</if>
+  			<if test="conferenceId !=null and   conferenceId != ''  and  conferenceId != 'null'">
+  				and CONFERENCE_ID=#{conferenceId,jdbcType=VARCHAR}
+  			</if>	
+		</where>
+	</select>
+	
+	
+	<!-- 根据projectId退出预备 会议 -->
+	<update id="updateQuitMetById"  parameterType="java.util.Map" >
+		update ${tableName}_BAS_PROJECT SET CONFERENCE_ID=null
+		<where>
+			PROJECT_ID=#{projectId}  
+		</where>
+	</update>
+	
+	<!-- 修改时反显数据查询，传出的projectId用了(“id”) functionCode(fun1102,) -->
+	<select id="selectBasProjectAll" resultType="com.krm.voteplateform.web.basProject.model.BasProject"  parameterType="java.util.Map" >
+		select
+		<include refid="BasProjectColumnList"/> 
+		from #{tableName}_BAS_PROJECT
+		<where>
+			DEL_FLAG='0' and 
+			PROJECT_ID=#{projectId}
+		</where>
+	
+	</select>
+	
+	<!-- 查询出会议的最大序号 -->
+	<!-- <select id="findMaxProjectOrder" parameterType="java.util.Map" resultType="java.util.Map">
+		select 
+		MAX(t.PROJECT_ORDER) AS PROJECT_ORDER
+		from #{tableName}_BAS_PROJECT t
+	<where>
+		<if test="conferenceId !=null and   conferenceId != ''  and  conferenceId != 'null'">
+  				and t.CONFERENCE_ID=#{conferenceId,jdbcType=VARCHAR}
+  		</if>
+	</where>
+	</select>
+	  -->
+
+	<!-- 获取项目顺序 -->
+	<select id="getProjectOrder" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT count(1) + 1 as PROJECT_ORDER  from #{tableName}_BAS_PROJECT p where p.CONFERENCE_ID=#{id}
+	</select>
+
+
+	<!-- 找到最大projectOrder 小1 的projectOrder -->
+	<select id="findMaxprojectOrder" parameterType="java.util.Map"  resultType="com.krm.voteplateform.web.basProject.model.BasProject">
+		select <include refid="BasProjectColumnList"/> from #{tableName}_BAS_PROJECT where PROJECT_ORDER=(
+			select MAX(PROJECT_ORDER) as PROJECT_ORDER  from #{tableName}_BAS_PROJECT where PROJECT_ORDER &lt;${projectOrder} 
+		) AND  CONFERENCE_ID=#{conferenceId}
+	</select>
+	
+	<select id="findMinprojectOrder" parameterType="java.util.Map"  resultType="com.krm.voteplateform.web.basProject.model.BasProject">
+		select <include refid="BasProjectColumnList"/> from #{tableName}_BAS_PROJECT where PROJECT_ORDER=(
+			select MIN(PROJECT_ORDER) as PROJECT_ORDER  from #{tableName}_BAS_PROJECT where PROJECT_ORDER &gt;${projectOrder} 
+		) AND  CONFERENCE_ID=#{conferenceId}
+	
+	</select>
+
+<!-- 将后一个当前的projectOrder换成上比它小1的projectOrder -->
+	<update id="updateProjectOrder" parameterType="com.krm.voteplateform.web.basProject.model.BasProject">
+		update #{tableName}_BAS_PROJECT set PROJECT_ORDER=#{projectOrder}
+		<where>
+			 PROJECT_ID=#{projectId}
+		</where>
+	
+	</update>
+	<!-- 为获取特殊的项目编码 -->
+	<select id="findParamsList" resultType="com.krm.voteplateform.web.basProject.model.BasProject" parameterType="java.util.Map">
+		select 
+		<include refid="BasProjectColumnList"/>
+		from #{tableName}_BAS_PROJECT 
+		<where>
+			 PROJECT_ID=#{projectId}
+		</where>
+	
+	</select>
+
+
+</mapper>

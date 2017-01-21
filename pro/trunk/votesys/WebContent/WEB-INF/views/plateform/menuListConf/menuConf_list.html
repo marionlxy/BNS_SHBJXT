@@ -1,0 +1,163 @@
+<input type="hidden" id="resid" name="resid" value="${resid}"/>
+<script type="text/javascript">
+	$(function() {
+		var resid=$("#resid").val();
+		$("#alertInfo").bootstrapTable({
+			inconSize : 'sm',
+			url : '${ctxPath!}/pt/menulist/listMenuConf?resid='+resid,
+			columns : [{
+				checkbox : true
+			},{
+				field : "id",
+				title : '序号',
+				formatter : function(value, row, index) {
+					return index + 1;
+				}
+			}, {
+				field : "enName",
+				title : '字段英文名称',
+				sortable : true
+			}, {
+				field : "cnName",
+				title : '标题',
+				sortable : true
+			},{
+				field : "searchFlag",
+				title : '可搜索标志',
+				sortable : true,
+				formatter : function(value, row, index) {
+					if(value==0){
+						return "是";
+					}else{
+						return "否";
+					}
+				}
+			}, {
+				field : "searchType",
+				title : '搜索框类型',
+				sortable : true,
+				formatter : function(value, row, index) {
+					if(value==0){
+						return "文本框";
+					}else if(value==1){
+						return "下拉框";
+					}else if(value==2){
+						return "日期范围框";
+					}else if(value==3){
+						return "数字范围框";
+					}else if(value==4){
+						return "文本弹出框";
+					}
+				}
+			}, {
+				field : "datasource",
+				title : '搜索框数据源',
+				sortable : true
+			}]
+		});
+	});
+	function operateFormatter(value, row, index) {
+        return [
+            '<a class="edit" href="javascript:void(0)" title="Edit">',
+            '修改',
+            '</a>'
+        ].join('');
+    }
+	
+	 window.operateEvents = {
+		        'click .edit': function (e, value, row, index) {
+		    	layer.confirm("确定要修改吗？",function(index){
+		    		var id =row.id;
+			 		layer.close(layer.index);
+					$.cuslayer({
+						mode:'page',
+						height:'30%',
+						width:'45%',
+						title:'修改',
+						url:'pt/ptresource/addVotePlan?id='+id,
+			})
+		     
+		 },"提交确认"); 
+		            $table.bootstrapTable('edit', {
+		                field: 'id',
+		                values: [row.id]
+		            });
+		        }
+		    };
+</script>
+<div id="toolbar2"  style="margin-bottom:1px">
+	<div class="widget-box">
+	<div class="widget-header widget-header-flat widget-header-small" style="margin-top:4px">
+	<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2" onclick="refreshTable('tableysxm')">  <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+	</div>
+	<a class="btn btn-purple btn-xs" href="javascript:void(0);"
+		data-mode="page" data-title="新增窗体"
+		data-url="${ctxPath!}/pt/menulist/beginEdit?resid=${resid}" data-width="50%"
+		data-height="60%" data-data="{id:'{row.id}'}"> <i
+		class="ace-icon fa fa-plus-circle bigger-130"></i> <span>新增</span>
+	</a> <a id="updatevote" class="btn btn-purple btn-xs"  href="javascript:void(0);"> <i
+		class="ace-icon fa fa-pencil-square bigger-130"></i> <span>修改</span>
+	</a> <button class="btn btn-purple btn-xs" onclick="removeProject();"
+		id="delSelected"> <i class="ace-icon fa fa-remove bigger-130"></i>
+		<span>删除</span>
+	</button>
+</div>
+	<div id="list-page" class="widget-main padding-8">
+				<form action="" method="post" id="form1">
+					<table id="alertInfo"></table>
+					<input type="hidden" id="HdrowCode"/>
+				</form>
+			</div>
+</div>
+</div>
+<table id="alertInfo" data-toolbar="toolbar2"></table>
+<script>
+$("#updatevote").click(function(){
+	var rows = $('#alertInfo').bootstrapTable("getSelections");
+	if(rows.length==0){
+		layer.alert("请选择要操作的数据");
+		return;
+	}else if(rows.length>1){
+		layer.alert("请选择一条数据进行操作");
+		return;
+	}else{
+		var row = rows[0];
+		var params = {
+			mode : 'page',
+			width : '50%',
+			height : '60%',
+			url : "${ctxPath!}/pt/menulist/toEdit",
+			title:'修改委员会信息',
+			data:{id:row.id}
+		};
+		$.cuslayer(params);
+	}
+});
+function removeProject(){
+	var rows = $("#alertInfo").bootstrapTable('getSelections');
+	if(rows==""){
+		layer.alert("请先选择要删除的数据！");
+	}else{
+		var ids=[]
+		$.each(rows,function(index,obj){
+			ids.push(obj.id);
+		})
+		var obj = {};
+		obj["confirmMsg"] = "确认要删除该条记录吗？";
+		obj["url"] = "${ctxPath!}/pt/menulist/deleMenuById";
+		obj["data"]={ids:ids.join()};
+		layer.confirm(obj.confirmMsg,function(index){
+			Angel.ajax(obj.url, obj.data, function(result){
+				layer.msg(result.msg,1,1);
+				if(result.code==1){
+					$("#alertInfo").bootstrapTable('refresh');
+				}
+			});
+			layer.close(index);
+		});
+	}
+}
+</script>

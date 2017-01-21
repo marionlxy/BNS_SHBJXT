@@ -1,0 +1,99 @@
+
+<style type="text/css">
+.td {border:solid #add9c0 1px; border-width:0px 1px 1px 0px;}
+.EditTable {border:solid #add9c0 1px; border-width:1px 0px 0px 1px;cellspacing:1px;cellpadding:3px;}
+</style>
+<div class="layer">
+  <form name="FormPost" id="plateform" class="FormGrid"  method="post">
+    <input type="hidden" value="${map.id!}" name="id" id="pkid" />
+    <table class="EditTable" width="100%">
+    		<tbody>
+			<tr class="FormData">
+				<td class="CaptionTD">模板名称:</td>
+				<td class="DataTD width-100" colspan="3"><input class="validate[required,custom[invalidChar],funcCall[valiMenuField]]"  type="text" name="name" value="${map.name!}" id="modulName"/>
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">模板文件名:</td>
+				<td class="DataTD width-100" colspan="3"><input class="validate[required,custom[fileName]]"  type="text" name="fileName" value="${map.fileName!}"  ajaxurl="" value="" />
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">模板说明:</td>
+				<td class="DataTD width-100" colspan="3"><textarea name="explain" style="width:100%;height:100px;" >${map.explain!}</textarea>
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">指定页面模板:</td>
+				<td class="DataTD width-100" colspan="3">
+					<select id="pageType" class="pageType" name="type"  style="font-size:12px;width:100%;">
+	              		<option value="01"
+	              			@if("01"==map.type!){
+	              				selected="selected"
+	              			@}
+	              		>列表页面模板</option>
+	              		<option value="02"
+	              			@if("02"==map.type!){
+	              				selected="selected"
+	              			@}
+	              		>窗体页面模板</option>
+	              	</select>
+				</td>
+			</tr>
+			</tbody>
+    </table>
+  </form>   
+</div>
+	<div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+		<input type="button" class="btn btn-primary btn-sm bigger-110"  id="submitForm" value="确定"/>&nbsp;&nbsp;
+		<input type="button" class="btn btn-primary btn-sm bigger-110" id="plateform-cancel" value="取消"/>
+	</div>
+<script type="text/javascript">
+$(function(){
+	    $("#submitForm").click(function() {
+    	var flag = $("#plateform").validationEngine('validate');
+    	if(!flag){
+    		return;
+    	}    
+    	
+    	Angel.ajax("${ctxPath}/pt/votePageTemplet/savePageTemplet",$("#plateform").serializeJson(),function(data){
+    		if(data.code==1){
+    			$("#tableysxm").bootstrapTable("refresh");
+    			layer.msg(data.msg, 1, 1,function(){
+	    			layer.closeAll();
+    			});
+    		}else{
+    			layer.msg(data.msg);
+    		}
+    	});
+    });
+})
+var index = layer.index;
+$("#plateform-cancel").click(function(){
+    layer.close(index);
+});
+
+function valiMenuField(field, rules, i, options){
+	var flag = true;
+	$.ajax({
+		url: "${ctxPath!}/pt/votePageTemplet/valiMenuField?id=${map.id!}&name="+$("#modulName").val(),
+        dataType: "json",
+        async: false,
+        method:"post",
+        success: function(data) {
+        	if(data.status == 'n'){
+        		flag = false;
+    		}
+        }
+    });
+	if(!flag){
+		rules.push('required');
+		return "模板名称已经存在！";
+	}
+}
+
+</script>
+

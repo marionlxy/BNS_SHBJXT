@@ -1,0 +1,20 @@
+<public:component lightweight="true">
+<public:attach event="ondblclick" onevent="openUrl()" />
+<public:attach event="onmouseover" onevent="tooTip()" />
+
+
+<script language="javascript">
+function openUrl(){
+	var targetUrl = this.value;
+		window.open(targetUrl,"","")
+}
+
+function tooTip(){
+	if (this.title == "" && this.value != ""){
+		this.title = "Double click to view "+this.value;
+	}
+
+}
+</script>
+
+</public:component>

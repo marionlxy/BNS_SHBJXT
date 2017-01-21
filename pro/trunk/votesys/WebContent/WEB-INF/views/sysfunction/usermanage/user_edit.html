@@ -1,0 +1,100 @@
+<div class="layer">
+	<form name="FormPost" id="userform" class="FormGrid"  method="post" 
+	    action="${ctxPath!}/pt/PtBasUserList/saveUserUpdate">
+		<input type="hidden" value="${map.puid!}" name="puid"/>
+		<input type="hidden" value="${map.id!}" name="urid"/>
+		<table class="EditTable" width="100%">
+			<tbody>
+				<tr></tr>
+				<tr class="FormData">
+					<td class="CaptionTD">姓名:</td>
+					<td class="DataTD width-100"><input type="text" name="realName" value="${map.realName!}" disabled></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">用户名:</td>
+					<td class="DataTD width-100"><input type="text" name="userName" value="${map.userName!}"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">更新密码:</td>
+					<td class="DataTD width-150"><input type="password" value="" name="loginPassword" datatype="/^[0-9\-\(\)\ ]+|$/" errormsg="密码范围在6~15位之间！"></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">确认密码:</td>
+					<td class="DataTD width-150"><input type="password" name="loginPasswordAgain" datatype="/^[0-9\-\(\)\ ]+|$/" recheck="loginPassword" errormsg="您两次输入的账号密码不一致！" value=""></td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">角色:</td>
+					<td class="DataTD width-150"> 
+						<select id="select1" name="crid">
+                    		<option value="">--请选择--</option>
+                    		@for(role in list!){
+							<option value="${role.crid!}"
+								@if(role.crid==map.crid!){
+									selected="selected"
+								@}
+							>
+							  ${role.rolename!}
+							</option>
+						@}
+                		</select> 
+            		</td>
+				</tr>
+				<!-- <tr class="FormData">
+					<td class="CaptionTD">职务:</td>
+					<td class="DataTD width-150"><input type="text" name="name" readonly value="副行长"></td>
+				</tr> -->
+			</tbody>
+		</table>
+		<div class="clearfix tag-save-btn" style="bottom: 0px;left: 30%;position:absolute;">
+			<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="submitForm" value="确定">&nbsp;&nbsp;
+			<span class="btn btn-primary btn-sm bigger-110" id="model-save-cancel">取消</span>
+		</div>
+	</form>
+</div>
+
+<script type="text/javascript">
+//$('textarea[class*=autosize]').autosize({append: "\n"});
+$(function(){
+	var ajaxS = $("#userform input[ajaxurl]");
+	$.each(ajaxS,function(i,obj){
+		$(obj).focus();
+	})
+
+	$("#userform").Validform({
+		tiptype : 4,
+		ajaxPost : true,
+		beforeSubmit:function(curform){
+			var loadi = layer.load(5,2);
+			$("#userform").data('loadi',loadi);
+		},
+		tiptype : function(msg, o, cssctl) {
+			if (!o.obj.is("form")) {
+				if (o.type != 2) {
+					tip.errorTip(msg,o.obj);
+				}
+			}
+		},
+		tipSweep : true,
+		callback:function(data){
+			layer.close($("#userform").data('loadi'));
+			if(data.code == 1) {
+				layer.msg('操作成功', 1, 1,function(){
+					
+				});
+				layer.closeAll('page');
+				$("#tableysxm").bootstrapTable('refresh');
+			}else{
+				layer.msg('操作失败', 1, 1,function(){
+					//layer.closeAll('page');
+				});
+			}
+		}
+	});
+
+	$("#model-save-cancel").click(function(){
+		layer.closeAll();
+		return false;
+	});
+});
+$("#select1").chosen({width: "100%",disable_search_threshold:20});
+</script>

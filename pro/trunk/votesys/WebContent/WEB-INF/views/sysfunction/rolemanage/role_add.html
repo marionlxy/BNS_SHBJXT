@@ -1,0 +1,173 @@
+<div class="layer">
+	<form name="FormPost" id="role-save" class="FormGrid"  method="post" 
+	    action="${ctxPath!}/pt/role/saveRole">
+		<table class="EditTable" width="100%">
+			<tbody>
+			<tr></tr>
+				<tr class="FormData">
+					<td class="CaptionTD">角色名:</td>
+					<td class="DataTD "><input id="rolename" type="text" name="rolename" value="" dataType="*" nullMsg="请输入角色名！">
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD">角色类别:</td>
+					<td class="DataTD width-150">
+						<select id="roleCategory" class="voteFlag" name="roleCategory" style="font-size:12px;width:100%;">
+							<option value="0">--请选择--</option>
+							<option value="01">秘书端角色</option>
+							<option value="02">委员端角色</option>
+	             		 </select>
+	             		 <script type="text/javascript">
+							$("#roleCategory").change(function(){
+								if($(this).val() == '01'){
+									$("#secretaryTree").show();
+									$("#committeeTree").hide();
+								}else if($(this).val() == '02'){
+									$("#committeeTree").show();
+									$("#secretaryTree").hide();
+								}else{
+									$("#committeeTree").hide();
+									$("#secretaryTree").hide();
+								}
+							})
+						</script>
+					</td>
+				</tr>
+				<tr class="FormData" id="roleType">
+					<td class="CaptionTD" rowspan="2">角色功能:</td>
+				</tr>
+				<tr class="FormData">
+					<td class="" id="roleFunctions">
+						<#treeselect url="pt/role/listFunctionByRole?roleCategory=01" checked="true" isLayer="false" pIdKey="parentid"
+							class="width-50" treeSelectId="secretaryTree" selectIds="${resIds!}" chkboxType="2">
+							<div id="secretaryTree" style="width: 50%;display: inline-block;vertical-align: top;float: left"></div>
+						</#treeselect>
+						<#treeselect url="pt/role/listFunctionByRole?roleCategory=02" checked="true" isLayer="false" pIdKey="parentid"
+							class="width-50" treeSelectId="committeeTree" selectIds="${resIds!}" chkboxType="2">
+							<div id="committeeTree" style="width: 50%;display: inline-block;vertical-align: top;float: left"></div>
+						</#treeselect>
+					</td>
+				</tr>
+				<tr class="FormData">
+					<td class="CaptionTD" rowspan="2">委员权限:</td>
+				</tr>
+				<tr class="FormData">
+					<td class="" id="autoTbody">
+					</td>
+				</tr>
+			</tbody>
+			<div class="clearfix" tag-save-btn style="bottom: 0px;left: 30%;position:absolute;">
+				<input type="button" class="btn btn-primary btn-sm bigger-110"  id="submitForm" value="确定">&nbsp;&nbsp;
+				<input type="button" class="btn btn-primary btn-sm bigger-110" id="dic-save-cancel" value="取消">
+			</div>
+		</table>
+	</form>
+</div>
+<script id="dataTmpl" type="text/x-jsrender">
+					<td class="">
+						<input class="" name="authName" type="checkbox" value='{{:id}}'/>&nbsp;{{:authName}}							
+					</td>
+</script>
+<script type="text/javascript">
+$(function(){
+	$("#committeeTree").hide();
+	$("#secretaryTree").hide();
+})
+var node;
+function zTreeOnCheck(event, treeId, treeNode) {
+	if($("#roleCategory").val() == '02'){
+	    if(treeNode.name == "当前会议"){
+	    	node = treeNode;
+	    	
+	    	if(node.checked){
+	    		$.ajax({    
+	    		    url:'${ctxPath!}/pt/role/listAuthorityByRole',// 跳转到 action    
+	    		    type:'post', 
+	    		    data:{    
+	    		    },
+	    		    cache:false,    
+	    		    dataType:'json',    
+	    		    success:function(data){    
+	    		    	if(data.length>0){
+	    		    		var htm = $("#dataTmpl").render(data);  
+	      		    	    $("#autoTbody").html(htm);
+	      		    	  	$("#autoTbody").show();
+	    		    	}else{ 
+	    		    		layer.msg("数据异常！");
+	    		    	}
+	    		     },    
+	    		     error : function() {    
+	    		          alert("异常！");    
+	    		     }    
+	    		});
+	    	}else{
+	    		$("#autoTbody").hide();
+	    		
+	    	}
+	    }
+	}
+};
+
+</script>
+<script type="text/javascript">
+
+$(function(){
+	
+	var index = layer.index;
+	var roleEditForm = $("#role-save").Validform({
+		ajaxPost : true,
+		beforeSubmit:function(curform){
+			var loadi = layer.load(5,2);
+			$("#role-save").data('loadi',loadi);
+		},
+		callback:function(data){
+			layer.close($("#dic-save").data('loadi'));
+			if(data.code == 1) {
+				layer.msg('操作成功', 1, 1,function(){
+					layer.closeAll();
+					$("#tableysxm").bootstrapTable('refresh');
+				});
+			}else{
+				layer.msg('<span class="red bigger-120">操作失败</span>');
+			}
+		},
+		tiptype : function(msg, o, cssctl) {
+			if (!o.obj.is("form")) {
+				if (o.type != 2) {
+					tip.errorTip(msg,o.obj);
+				}
+			}
+		},
+		tipSweep : true
+	});
+
+
+	
+    $("#submitForm").click(function() {
+    	var secretaryTreeIds = getCheckbox(secretaryTree);
+    	var committeeTreeIds = getCheckbox(committeeTree);
+    	var data = $("#role-save").serialize()+"&secretaryTree="+secretaryTreeIds.toString()+"&committeeTree="+committeeTreeIds.toString();
+		roleEditForm.config({
+		 	ajaxpost:{data:data}
+		});
+		roleEditForm.submitForm(false);
+        return false;
+    });
+
+    $("#dic-save-cancel").click(function(){
+        layer.close(layer.index);
+    });
+
+    $("#dic-save input,#dic-save textarea").blur(function(){
+        layer.closeTips();
+        return false;
+    })
+
+});
+var index = layer.index;
+$("#dic-save-cancel").click(function(){
+    layer.close(index);
+});
+
+
+</script>

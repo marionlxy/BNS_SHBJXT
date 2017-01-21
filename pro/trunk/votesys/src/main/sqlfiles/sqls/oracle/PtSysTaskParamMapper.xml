@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.task.dao.PtSysTaskParamMapper">
+	<resultMap id="BaseResultMap"
+		type="com.krm.voteplateform.web.task.model.PtSysTaskParam">
+		<id property="id" column="ID" jdbcType="VARCHAR" />
+		<result property="taskId" column="TASK_ID" jdbcType="VARCHAR" />
+		<result property="paramName" column="PARAM_NAME" jdbcType="VARCHAR" />
+		<result property="paramValue" column="PARAM_VALUE" jdbcType="VARCHAR" />
+		<result property="paramDescribe" column="PARAM_DESCRIBE"
+			jdbcType="VARCHAR" />
+		<result property="paramStatus" column="PARAM_STATUS" jdbcType="VARCHAR" />
+		<result property="paramType" column="PARAM_TYPE" jdbcType="VARCHAR" />
+		<result property="orderby" column="ORDERBY" jdbcType="DECIMAL" />
+	</resultMap>
+
+	<sql id="BaseColumnList">
+		ID,TASK_ID,PARAM_NAME,PARAM_VALUE,PARAM_DESCRIBE,
+		PARAM_STATUS,PARAM_TYPE,ORDERBY
+	</sql>
+
+	<sql id="TableClause"> PT_SYS_TASK_PARAM </sql>
+
+	<select id="getSysTaskParamList" resultMap="BaseResultMap"
+		parameterType="string">
+		select
+		<include refid="BaseColumnList" />
+		from
+		<include refid="TableClause"></include>
+		where TASK_ID=#{taskId} and PARAM_STATUS='1' ORDER BY ORDERBY
+	</select>
+
+</mapper>

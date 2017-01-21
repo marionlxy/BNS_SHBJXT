@@ -1,0 +1,251 @@
+
+<script src="${ctxPath!}/static/lodop/LodopFuncs.js"></script>
+<object id="LODOP_OB" classid="clsid:2105C259-1E0C-4534-8141-A753534CB4CA" width=0 height=0> 
+	<embed id="LODOP_EM" type="application/x-print-lodop" width=0 height=0 pluginspage="install_lodop.exe"></embed>
+</object> 
+<div class="layer">
+<div class="widget-body">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">表决结果详细信息</h5>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2"> <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+				<div class="widget-toolbar no-border">
+					<span id="close" class="btn btn-purple btn-xs">
+					<i class="ace-icon fa fa-mail-reply bigger-130"></i>
+					返回</span>
+				</div>
+				<div class="widget-toolbar no-border">
+					<span class="btn btn-purple btn-xs"
+						  onclick="javascript:print_preview()">
+					<i class="ace-icon fa fa-print bigger-130"></i>
+					打印</span>
+				</div>
+				<div class="widget-toolbar no-border">
+					<span class="btn btn-purple btn-xs"
+						  onclick="downloadFile()">
+					<i class="ace-icon fa fa-cloud-download bigger-130"></i>
+					导出</span>
+				</div>
+			</div>
+				<div id="voteResult" class="widget-main padding-8">
+				<style type="text/css">
+					#title {
+						font-size: 30px;
+						font-family: "隶书";
+					}
+					.table-bordered>tbody>tr>td {
+						border: 1px solid #060606;
+					}
+					.content {
+						font-size: 12px;
+					}
+					#table {
+						width: 101%;
+					}
+					#table tr td:first-child{ 
+					    border-left:0; 
+					    marging-left:-5px;
+					} 
+					#table tr td:last-child { 
+					       border-right:0; 
+					   } 
+					#table tr:first-child td,tr:first-child th{ 
+					    border-top:0px;
+					    margin-top: -5px; 
+					} 
+					#table tr:last-child td{ 
+					    border-bottom:0px; 
+					    margin-bottom: -5px;
+					} 
+					</style>
+					 <table width="100%" border="0" align="center" cellspacing="0" class="table table-condensed table-bordered nomargin-bottom">
+					  <tr>
+					    <td height="50" colspan="3" align="center" valign="middle"><strong id="title">表决结果详细信息</strong></td>
+					  </tr>
+					  <tr>
+					    <td width="14%" height="25" valign="middle"><em class="content"><strong>项目名称</strong></em></td>
+					    <td width="86%" height="25" valign="middle"><span id="proName"><span class="content" id="proName2">${project.projectTitle!}</span></span></td>
+					  </tr>
+					  <tr>
+ 					    <td rowspan=${decode(voteResTmpl.deptShowFlag,"0","14","12")} valign="middle"><strong class="content"><em>表决基本信息</em></strong></td>
+					    <td height="25" valign="middle" class="content">当前项目的表决结果：【${project.reviewResultName!}】</td>
+					  </tr>
+					  <tr>
+					    <td height="25" valign="middle" class="content">★★★到会情况</td>
+					  </tr>
+					  <tr>
+					    <td height="25" valign="middle" class="content"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;总&nbsp;&nbsp;人&nbsp;&nbsp;数： ${total!} </td>
+					  </tr>
+					  <tr>
+					    <td height="25" valign="middle"><span class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;实 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;到：&nbsp;${attend!}</span></td>
+					  </tr>
+					  <tr>
+					    <td height="25" valign="middle"><span class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;有表决权：&nbsp;&nbsp;${haveVotes!}</span></td>
+					  </tr>
+					  <tr>
+					    <td height="25" valign="middle"><span class="content">★★★表决情况</span></td>
+					  </tr>
+					  @for(map in voteMatterList){
+						@if(map.val == '01'){
+							<tr>
+						    <td height="25" valign="middle"><span class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${strutil.subStringTo(map.committeeText,0,1)}
+						    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${strutil.subStringTo(map.committeeText,1,2)}：<span id="agree">0</span></span></span></td>
+						  </tr>
+						@}
+						@if(map.val == '02'){
+							<tr>
+						    <td height="25" valign="middle"><span class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${strutil.subStringTo(map.committeeText,0,1)}
+						    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${strutil.subStringTo(map.committeeText,1,2)}：<span id="rediscuss">0</span></span></span></td>
+						  </tr>
+						@}
+						@if(map.val == '03'){
+							<tr>
+						    <td height="25" valign="middle"><span class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${strutil.subStringTo(map.committeeText,0,1)}
+						    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${strutil.subStringTo(map.committeeText,1,2)}：<span id="disagree">0</span></span></span></td>
+						  </tr>
+						@}
+					@}
+					  <tr>
+					    <td height="25" valign="middle"><span class="content">★★★投票情况</span></td>
+					  </tr>
+					  <tr>
+					    <td height="25" valign="middle"><span class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;已投票委员：</span></td>
+					  </tr>
+					  <tr>
+					    <td height="25" valign="middle"><span class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${voted}</span></td>
+					  </tr>
+					  @if(voteResTmpl.deptShowFlag == '0'){
+						  <tr>
+						    <td height="25" valign="middle"><span class="content">★★★未到部门</span></td>
+					       </tr>
+						  <tr>
+						    <td height="25" valign="middle"><span class="content">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							    	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${absentDept!}</span>  </td>
+					       </tr>
+					  @}
+					  
+					  <tr>
+					    <td height="20" valign="middle">&nbsp;</td>
+					    	<td height="24" valign="middle">&nbsp;</td>
+					    @if(voteResTmpl.deptShowFlag == '0'){
+					    @}
+				       </tr>
+					  @if(voteResTmpl.suggShowFlag == '0'){
+						  <tr>
+						    <td valign="middle"><strong class="content"><em>汇总意见</em></strong></td>
+						    <td colspan="2" valign="middle">
+						    	<table width="100%">
+						    	  @for(detail in votedDeatails){
+						    			<tr>
+								    	  	<td width="54px" valign="middle">
+								    	  		<span class="content">${detail.userName!}:&nbsp;&nbsp;</span>
+								    	  	</td>
+								    	  	<td>
+							    			 	<span class="content">${detail.suggestion!}</span>
+								    	  	</td>
+						    			</tr>
+								  @}
+						    	</table>
+						     </td>
+					      </tr>
+					  @}
+					  <tr>
+					    <td rowspan="2" valign="middle"><span class="content"><strong class="content"><em>表决详细信息</em></strong></span></td>
+					    <td height="40" colspan="2" valign="middle">
+					    	<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" class="table-bordered" id="table" 
+							    	style="margin: -1px -1px -1px -4px;">
+							      <tr>
+							        <td width="10%" height="25" align="center" valign="middle"><span class="content"><strong>委员</strong></span></td>
+							        <td width="10%" height="25" align="center" valign="middle"><span class="content"><strong>投票结果</strong></span></td>
+  									<td width="70%" height="25" align="center" valign="middle"><span class="content"><strong>表决意见</strong></span></td>
+							        @if(voteResTmpl.signShowFlag == '0'){
+		  								<td width="10%" height="25" align="center" valign="middle"><span class="content"><strong>签字</strong></span></td>
+							        @}
+						          </tr>
+						          @for(detail in votedDeatails){
+								      <tr>
+								        <td align="center" valign="middle"><span class="content">${detail.userName!}</span></td>
+								        <td align="center" valign="middle"><span class="content">${detail.committeeText}</span></td>
+	  									<td height="40" align="left" valign="middle"><span class="content">${detail.suggestion!}</span></td>
+								        @if(voteResTmpl.signShowFlag == '0'){
+			  								<td height="40" align="center" valign="middle"><span class="content"></span></td>
+								        @}
+							          </tr>
+								  @}
+						        </table>
+					    </td>
+				       </tr>
+			        </table>   
+				</div>
+			</div>
+		</div>
+			
+</div>
+
+<script type="text/javascript">
+var index = layer.index;
+$("#close").click(function(){
+    layer.close(index);
+});
+$(function(){
+	countVote();
+});
+function countVote(){
+	$.ajax({
+		url: "${ctxPath}/ptsystems/menu5/fun1410/countVote?projectId=${projectId!}",
+		dataType: "json",
+		async: false,
+		success: function(data) {
+			for(var i = 0; i < data.length; i++){
+				if(data[i].voteResult == '01'){
+					$("#agree").html(data[i].count);
+				}
+				if(data[i].voteResult == '02'){
+					$("#rediscuss").html(data[i].count);
+				}
+				if(data[i].voteResult == '03'){
+					$("#disagree").html(data[i].count);
+				}
+			}
+		}
+	});
+}
+
+function downloadFile(){
+	var indexLoad = layer.msg('正在生成文件，请稍等',  1000000,16);
+	var ajaxUrl = "${ctxPath}/ptsystems/menu5/fun1403/generateFile?projectId=${projectId!}&functionCode=${functionCode}&meetingId=${meetingId}";
+	$.post(ajaxUrl,function(data) {
+        var url = "${ctxPath!}/ptsystems/menu5/fun1403/downloadFile?fileName="+data.fileName;
+		 	$('<form method="post" action="' + url + '"></form>').appendTo('body').submit().remove();
+		layer.close(indexLoad);
+    }); 
+}
+
+var LODOP; //声明为全局变量 
+function CreateOneFormPage(){
+	LODOP=getLodop(document.getElementById('LODOP_OB'),document.getElementById('LODOP_EM'));  
+	LODOP.PRINT_INIT("打印表决结果");
+	LODOP.SET_PRINT_STYLE("FontSize",10);
+	LODOP.SET_PRINT_PAGESIZE(1,0,0,"A4");	
+	LODOP.ADD_PRINT_TABLE("50","35","90%","100%",document.getElementById("voteResult").innerHTML);
+};
+
+function print_preview(){
+	CreateOneFormPage();	
+	LODOP.PREVIEW();	
+}
+</script>
+
+

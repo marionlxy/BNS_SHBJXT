@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>通用表决系统</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script type="text/javascript"
+	src="${ctxPath}/static/jquery/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="${ctxPath!}/static/layer/layer.js"></script>
+<script type="text/javascript"
+	src="${ctxPath}/static/js/jsrender.min.js"></script>
+<script type="text/javascript">
+	$(function() {
+		$("#tds").css("width", window.screen.width + "px");
+		$.post(
+				"${ctxPath}/ptsystems/getContrCommissionList?r="
+						+ Math.random(), function(datas) {
+					var flag = false;
+					var msg = "";
+					if (datas.length == 1) {
+						var data = datas[0];
+						if (data.state == 0) {
+							flag = true;
+						}else{
+							msg = "对不起，当前委员会为停用状态，请联系管理员！";
+						}
+					}
+					if (flag) {
+						location.href = "ptsystems/toMain/" + data.code;
+					} else {
+						var html = $("#tmpl").render(datas);
+						$("#uls").empty().html(html);
+						if(msg!=""){
+							layer.msg(msg);
+						}
+					}
+				}, "json");
+	});
+
+	function exec(code, state) {
+		if (state == 1) {
+			layer.alert("对不起，当前委员会为停用状态，请联系管理员！");
+		} else {
+			location.href = "ptsystems/toMain/" + code;
+		}
+	}
+</script>
+
+<style type="text/css">
+<!--
+.foot {
+	padding-top: 10px;
+	font-size: 12px;
+	color: #666;
+	text-align: center;
+}
+
+body {
+	padding: 0px;
+	margin: 0px;
+}
+
+.tdimage {
+	background: url('${ctxPath}/static/images/p2.png') no-repeat;
+}
+
+.liimage {
+	width: 400px;
+	height: 92px;
+	background: url('${ctxPath}/static/images/p3.png') no-repeat;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	float: left;
+	line-height: 92px;
+	list-style-type: none;
+	text-align: center;
+	display: inline;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+a:hover {
+	color: #fc051c;
+}
+
+.votename {
+	color: #ffffff;
+	font-weight: 800;
+	font-size: 22px;
+	text-decoration: none;
+	font-family: 黑体;
+}
+-->
+</style>
+</head>
+<body leftmargin="0" topmargin="0">
+	<form class="form-signin" action="" method="post" id="loginForm">
+		<table border="0" align="center" cellpadding="0" cellspacing="0">
+			<tr>
+				<td align="left" valign="middle" id="tds"
+					background="${ctxPath}/static/images/pagebj.jpg"
+					style="min-height: 600px; height: 600px; background-repeat: no-repeat;">
+					<table>
+						<tr>
+							<td height="50"></td>
+						</tr>
+					</table>
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+						<tr>
+							<td width="5%">&nbsp;</td>
+							<td width="80%" height="121" align="center">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0"
+									align="center">
+									<tr>
+										<td style="text-align: center;">
+											<ul style="overflow: hidden; text-align: center; width: 100%"
+												id="uls">
+											</ul>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td width="5%">&nbsp;</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<tr>
+				<td height="35" align="center"><span class="foot">北京农村商业银行
+						版权所有&copy; 2016-2017</span></td>
+			</tr>
+		</table>
+	</form>
+	<!-- /container -->
+	<script type="text/x-jsrender" id="tmpl">
+		<li class="liimage">
+			<a href="javascript:void(0)" class="votename" onclick="exec('{{:code}}',{{:state}})">{{:sysTitle}}</a>
+		</li>
+	</script>
+</body>
+</html>

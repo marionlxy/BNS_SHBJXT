@@ -1,0 +1,100 @@
+	<div class="layer">
+		<form name="FormPost" id="calculate" class="FormGrid"  method="post" action="">
+            <table class="EditTable" width="100%">
+           		<tbody>
+           		@for(map in voteMatterList){
+					<tr class="FormData">
+					<tr class="FormData">
+					    <td class="CaptionTD">${map.committeeText!}:</td>
+					    <td class="DataTD width-100">
+							<input name="${map.val}" type="text" dataType="/^(0|([1-9]\d{0,2}))$/" errormsg="请输入大于等于'0'小于等于'999'的整数"/>
+					    </td>
+					    <td>票</td>
+					</tr>
+					</tr>
+           		@}
+				<tr class="FormData">
+				    <td class="CaptionTD">一票否决:</td>
+				    <td>
+						<input name="oneMindFlag" type="checkbox"/>
+				    </td>
+				</tr>
+				<tr class="FormData">
+				    <td class="CaptionTD">结果:</td>
+				    <td class="DataTD width-100">
+						<span id="result"></span>
+				    </td>
+				</tr>
+	           </tbody>
+        	</table>
+         </form>
+</div>
+<div class="clearfix" tag-save-btn style="bottom: 0px;left: 25%;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110"  id="submitForm">计算</span>&nbsp;&nbsp;
+	<span class="btn btn-primary btn-sm bigger-110"  id="close">关闭</span>&nbsp;&nbsp;
+</div>
+<script type="text/javascript">
+ $(function(){
+    	var index = layer.index;
+        var ajaxS = $("#calculate input[ajaxurl]");
+        $.each(ajaxS,function(i,obj){
+            $(obj).focus();
+        })
+        var validId = $("#calculate").Validform({
+        	tiptype : 4,
+            ajaxPost : true,
+            beforeSubmit:function(curform){
+                var loadi = layer.load(5,2);
+                $("#calculate").data('loadi',loadi);
+                curform.ajaxSubmit({
+                	type:'post',
+                	url:'${ctxPath!}/pt/votematterconf/calculate',
+                	success:function(data){
+                        layer.close($("#calculate").data('loadi'));
+                        if(data.resultType == '01'){
+            				$("#result").html('<span style="color: green;">'+data.result+'</span>');
+            			}
+            			if(data.resultType == '02'){
+            				$("#result").html('<span style="color: red;">'+data.result+'</span>');
+            			}
+            			if(data.resultType == '03'){
+            				$("#result").html('<span style="color: red;">'+data.result+'</span>');
+            			}
+            			if(data.resultType==null){
+            				layer.msg("投票意见和投票结果的配置不统一",3,8);
+            			}
+                    }
+                	
+                });
+            },
+            tiptype : function(msg, o, cssctl) {
+                if (!o.obj.is("form")) {
+                    if (o.type != 2) {
+                        tip.errorTip(msg,o.obj);
+                    }
+                }
+            },
+            tipSweep : true
+        });
+        $("#submitForm").click(function() {
+            validId.submitForm(false);
+            return false;
+        });
+
+        $("#close").click(function(){
+            layer.close(layer.index);
+        });
+        $("#calculate input,#calculate textarea").blur(function(){
+            layer.closeTips();
+            return false;
+        })
+    }); 
+	var index = layer.index;
+	$("#close").click(function(){
+	    layer.close(index);
+	});
+</script>
+
+
+
+

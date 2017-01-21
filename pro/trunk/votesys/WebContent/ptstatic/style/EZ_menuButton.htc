@@ -1,0 +1,15 @@
+<public:component lightweight="true">
+<public:attach  event="onmouseover" onevent="iconButtonHover()"/> 
+<public:attach  event="onmouseout"  onevent="iconButtonOut()"/> 
+
+
+<script language="Javascript"> 
+function iconButtonHover(){ 
+	this.className="iconButtonHover" ;
+} 
+
+function iconButtonOut(){ 
+	this.className="iconButton" ;
+} 
+</script> 
+</public:component>

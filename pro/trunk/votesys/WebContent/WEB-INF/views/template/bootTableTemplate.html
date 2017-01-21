@@ -1,0 +1,221 @@
+	<script type="text/javascript">
+		$(function(){
+			
+		$("#resList").bootstrapTable({
+			iconSize : '${bt.iconSize}',
+			url : '${pageinfo.ctxPath!}/ptsystems/${pageinfo.menu}List?r='+Math.random(),
+			height:400,
+			toolbar:'#toolbar',
+			cache: false,
+			singleSelect:true,
+			striped : true,
+			@if(bt.pagination==true){
+				pagination : ${bt.pagination!},
+				pageNumber : ${bt.pageNumber!},//首页页码
+				pageSize : ${bt.pageSize!},//页面显示条数
+				pageList : [ 2, 10, 25, 50, 100 ],
+				sidePagination : 'server',//服务器端分页
+			@}
+			columns : [
+				 	{
+					checkbox : true
+						}, {
+					field : "projectId",
+					title : '序号',
+					formatter : function(value, row, index) {
+						return index + 1;
+						}
+					},
+					{
+						field : "projectStateId",
+						title : '项目状态'
+						
+					 },
+				@for(clo in bt.columns){
+					{
+						field:"${clo.field}",
+						title:'${clo.title}',
+						sortable : ${clo.sortable}
+					}
+					@if(!cloLP.last){
+						,
+					@}
+				@}
+				],
+				contentType : "${bt.contentType!}",
+				queryParamsType : "limit",
+				dataType : "${bt.dataType!}",
+				method : "${bt.method!}",
+				queryParams : function(params){
+					var json = $("#search-form").serializeJson();
+					$.extend(params,json);
+					return params;
+				}
+		});
+		//隐藏项目状态列
+		$("#resList").bootstrapTable('hideColumn', 'projectStateId')
+		//查询设置 
+		$("#ok").click(function(){
+			$("#resList").bootstrapTable('refresh');
+		})
+		
+		
+		//确定按钮信息
+		@for(btn in btninfo!){
+			var ${btn.functionCode}Obj={
+					 width:'${btn.weight!50}',
+					 height:'${btn.height!60}',
+					 title:'${btn.commtext}',
+					 functionCode:'${btn.functionCode}',
+					 tableName:'${btn.tableName!}'
+				}
+			@for(btnw in btnwind!){
+				@if(btn.functionCode==btnw.functionCode){
+						@if(btn.bindEventOrUrl=="javascript:updateWin"){
+							 //弹出窗修改
+						 	$("#${btn.functionCode}").click(function(){
+						 		updateObj(${btn.functionCode}Obj);
+						 	})
+				 		@}else if(btn.bindEventOrUrl=="javascript:addWin"){
+				 			 //弹出窗添加
+						 	$("#${btn.functionCode}").click(function(){
+						 		addObj(${btn.functionCode}Obj);
+						 	})
+				 		@}else if(btn.bindEventOrUrl=="javascript:viewWin"){
+				 			$("#${btn.functionCode}").click(function(){
+						 		viewObj(${btn.functionCode}Obj);
+						 	})
+						 	
+						 	@if(btnw.doubleClickFlag=="1"){
+						 		$('#resList').on('dbl-click-row.bs.table', function(e,row, $element, field){
+						 			var projectId=row.projectId;
+						 			var objt={"projectId":projectId};
+						 			var param=$.extend(${btn.functionCode}Obj,objt);
+						 			viewObj(param);
+						 		});
+						 	@}
+				 		@}else{
+				 			
+				 		@}
+						
+					@}
+				
+				 @}
+			//这个非弹出窗
+			@if(btn.bindEventOrUrl=="javascript:deleteAjax"){
+				$("#${btn.functionCode}").click(function(){
+					deleteObj(${btn.functionCode}Obj);
+			 	})
+			@}	
+		 @}		
+		
+			
+	});
+	
+	//通用更新弹出方法
+	@updateObj();
+	
+	//通用添加弹出方法
+	@addObj();
+	
+	//通用删除(ajax)
+	@deleteObj();
+
+	
+	//通用查看
+	@viewObj();
+	
+	//通用(非删除ajax形式)
+	function ajaxObj(param){
+
+	}
+	</script>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box">
+				<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">${pageinfo.commText!}</h5>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2" onclick="refreshTable('resList')"> <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+			    </div> 
+			   @if(isNotEmpty(sm)){
+			  <div class="widget-container-col ui-sortable">
+						<div class="widget-box">
+						
+						<div class="widget-header widget-header-small">
+								<h6 class="widget-title">
+									<i class="ace-icon fa fa-search"></i>搜索
+								</h6>
+								<div class="widget-toolbar">
+									<a href="javascript:void(0);" data-action="collapse">
+										<i class="ace-icon fa bigger-125 fa-chevron-down"></i>
+									</a>
+								</div>
+							</div>
+						
+							
+						
+				<div class="widget-body">
+						<div class="widget-main margin-8" >
+							<form action="" method="post" id="search-form"
+								target="list-page" class="clearfix">
+								<div class="form-inline" role="form">
+								@for(divipt in sm!){
+									<!-- 0表示普通文本框 -->
+									@if(divipt.searchType=='0'){
+										<div class="form-group">
+										<span>${divipt.cn}:</span>
+										<input name="${divipt.en}" class="form-control w150" type="text">
+										</div>
+									<!-- 1下拉框-->
+										@}else if(divipt.searchType=='1'){
+										<div class="form-group">
+										<span>${divipt.cn}:</span>
+										<select name="${divipt.en}Name">
+												<option value="" >
+					                    			----请选择----
+					                    		</option>
+					                   		 @for(selp in divipt.selgroups!){
+					                    		<option value="${selp.ecode!}">
+					                    			${selp.mapName!}
+					                    		</option>
+					                    	@}
+				                    	</select>
+										</div>
+									<!-- 2日期框-->
+										@}else if(divipt.searchType=='2'){
+										<div class="form-group">
+										<span>${divipt.cn}:</span>
+										<input name="${divipt.en}Start" class="form-control w150" type="text" onFocus="WdatePicker()">
+										-
+										<input name="${divipt.en}End" class="form-control w150" type="text" onFocus="WdatePicker()">
+										</div>
+										@}else{
+										
+									@}
+								@}
+							    	@if(isNotEmpty(sm)){
+									  <div class="form-group width-100 ">
+										<button id="ok" type="button" class="btn btn-primary btn-xs">查&nbsp;&nbsp;询</button>
+										<button id="reset" type="reset" class="btn btn-primary btn-xs">取&nbsp;&nbsp;消</button>
+									  </div>
+									@}
+									
+									</div>
+								</form>
+							
+					</div>
+					</div>
+				</div>
+			</div>	
+				@}
+		<#btnGroup btninfo="${btninfo!}"/>
+			
+	</div>
+	</div>
+</div>
+
+

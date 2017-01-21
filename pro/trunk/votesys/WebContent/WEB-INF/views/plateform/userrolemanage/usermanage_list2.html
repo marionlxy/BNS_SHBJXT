@@ -1,0 +1,39 @@
+<script>
+$(function(){
+			var url = $("#setAdmin").attr("toUrl");
+			if(url.indexOf('?')>-1){
+				url+="&r="+Math.random();
+			}else{
+				url+="?r="+Math.random();
+			}
+			$("#setAdmin").click(function(){
+				$.ajax({
+					url : "${ctxPath!}/"+url,
+					dataType : "html",
+					async : false,
+					success : function(data) {
+						$("#fill-main-content").html(data);
+					}
+				});
+			});
+});
+</script>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box">
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">当前委员会系统管理员</h5>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2" onclick="refreshTable('basMessageTable')">  <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+			</div>
+			<div class="widget-body">
+				<div id="list-page" class="widget-main padding-8">
+					<p align="center">委员会当前无管理员，请<a id="setAdmin" href="javascript:void(0)" toUrl="pt/userRole/toSetAdministrator"><font color="red">设定</font></a>管理员</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

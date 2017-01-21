@@ -1,0 +1,311 @@
+<!-- 头部 -->
+@layout("/layout/header.html"){
+<link rel="stylesheet" href="${ctxPath!}/static/ztree/metro.css" />
+<link rel="stylesheet"
+	href="${ctxPath}/static/validate/css/validform.css" />
+<link rel="stylesheet" href="${ctxPath!}/static/css/custom.css" />
+@}
+
+<style>
+	.bar {
+    	height: 18px;
+    	background: green;
+	}
+</style>
+
+<script type="text/javascript">
+	$(function() {
+		var form = $("#search-form");
+
+		$("#testExcelDownLoad").click(function() {
+			form.attr("action", "${ctxPath!}/test/exporExcel").submit();
+		});
+
+		$("#testExcelDownLoadCommon").click(function() {
+			form.attr("action", "${ctxPath!}/test/exportExcelCommon").submit();
+		});
+
+		$("#sysDicTable").bootstrapTable({
+			inconSize : 'sm',
+			url : '${ctxPath!}/testPage/findTestPage',
+			striped : true,
+			pagination : true,
+			pageNumber : 1,//首页页码
+			pageSize : 2,//页面显示条数
+			pageList : [ 2, 10, 25, 50, 100 ],
+			sidePagination : 'server',//服务器端分页
+			responseHandler:function(res){
+				console.table(res.rows);
+				return res;
+			},
+			columns : [ {
+				field : "id",
+				title : '序号',
+				formatter : function(value, row, index) {
+					return index + 1;
+				}
+			}, {
+				field : "enName",
+				title : '英文名称',
+				sortable : true
+			}, {
+				field : "cnName",
+				title : '中文名称',
+				sortable : true
+			}, {
+				field : "dataType",
+				title : '数据类型',
+				sortable : true,
+				formatter : function(index, value, row) {
+					if (value == "01") {
+						return '数字';
+					} else if (value == "02") {
+						return '字符串';
+					} else if (value == "03") {
+						return '编码&名称';
+					} else if (value == "04") {
+						return '编码&名称';
+					} else {
+						return '金额';
+					}
+				}
+			}, {
+				field : "dateLength",
+				title : '长度',
+				sortable : true
+			}, {
+				field : "precision",
+				title : '精度',
+				sortable : true
+			}, {
+				field : "mapCnName",
+				title : '映射名称',
+				sortable : true
+			}, {
+				field : "mapPrecision",
+				title : '映射精度',
+				sortable : true
+			}, {
+				field : "nullFlag",
+				title : '允许为空',
+				sortable : true,
+				formatter : function(index, value, row) {
+					if (value == 0) {
+						return '可为空';
+					} else {
+						return '不可为空';
+					}
+				}
+			}, {
+				field : "plateFlag",
+				title : '平台标志',
+				sortable : true,
+				formatter : function(index, value, row) {
+					if (value == 0) {
+						return '是';
+					} else {
+						return '否';
+					}
+				}
+
+			} ],
+			contentType: "application/x-www-form-urlencoded",//复制
+			queryParamsType: "",//复制
+			dataType: "json",//复制
+			method: "post",//复制
+			queryParams : function(params) {//设置传递到服务器的参数，部分复制
+				console.log(params);
+				//var res = {};
+				//res["pageSize"] = params.pageSize;
+				//res["pageNumber"]=params.pageNumber;
+				//var aa = $("#search-form").serializeArray();
+				/*for(var item in aa){
+					if(aa[item].name!=""){
+						params[aa[item].name] = aa[item].value;
+					}
+				}*/
+				var aa = $("#search-form").serializeJson();
+				$.extend(params,aa);
+				return params;
+				/*return {
+					pageSize : params.pageSize,//复制
+					pageNumber : params.pageNumber//复制
+					//category : $("#category").val()
+				};*/
+			}
+		});
+		//aa();
+		$("#tu").click(function(){
+			$("#sysDicTable").bootstrapTable('refresh');
+		});
+		
+		$("#t1").click(function(){
+			Angel.FunctionExc(function() {
+					alert(111);
+				},{type:2,otherMsg:'是是是'});
+			});
+	});
+
+	/////上传实例 
+
+	$(function() {
+
+		/* $("#fileupload_input").fileupload({
+			dataType: 'json',		
+		    url:"${ctxPath!}/testFile/uploadOneFile",//文件上传地址，当然也可以直接写在input的data-url属性内
+		   // formData:{param1:"p1",param2:"p2"},//如果需要额外添加参数可以在这里添加
+		    done:function(e,result){
+		        //done方法就是上传完毕的回调函数，其他回调函数可以自行查看api
+		        //注意result要和jquery的ajax的data参数区分，这个对象包含了整个请求信息
+		        //返回的数据在result.result中，假设我们服务器返回了一个json对象
+		        console.log(JSON.stringify(result));
+		    },
+		    progressall: function (e, data) {
+		        var progress = parseInt(data.loaded / data.total * 100, 10);
+		        $('#progress .bar').css(
+		            'width',
+		            progress + '%'
+		        );
+		    }
+		}); */
+
+		$("#uploadify")
+				.uploadify(
+						{
+							buttonText : '请选择文件',//可复制
+							swf : '${ctxPath}/static/uploadify/uploadify.swf',//可复制
+							uploader : "${ctxPath!}/testFile/uploadOneFile",
+							cancelImg : '${ctxPath}/static/uploadify/uploadify-cancel.png',//可复制
+							progressData : 'speed',//可复制
+							folder : 'UploadFile',//可复制
+							queueID : 'fileQueue',//可复制
+							fileObjName : 'file',
+							fileTypeExts : '*.jpg; *.png,*.jpeg',
+							//fileSizeLimit: '5MB',
+							height : 50,//可选
+							width : 300,//可选
+							// queueSizeLimit : 200,//可选，队列的最大长度
+							formData : {
+								"someOtherKey" : ''
+							},
+							onUploadProgress : function(file, bytesUploaded,
+									bytesTotal, totalBytesUploaded,
+									totalBytesTotal) {
+								$('#progress').html(
+										totalBytesUploaded + ' 字节已上传，共 '
+												+ totalBytesTotal + "字节.");
+							},
+							onUploadStart : function(file) {//开始上传
+								//$('#progress').empty().html('正在上传'+file.name);
+								//$("#file_upload").uploadify("settings", "someOtherKey", 2);
+							},
+							onUploadSuccess : function(file, data, response) {//上传成功
+								//alert('The file ' + file.name + ' was successfully uploaded with a response of ' + response + ':' + data);
+							},
+							onClearQueue : function(queueItemCount) {
+								//alert(queueItemCount + ' file(s) were removed from the queue');
+							},
+							onCancel : function(file) {
+								//alert('The file ' + file.name + ' was cancelled.');
+							},
+							onSelect : function(file) {
+								//alert('The file ' + file.name + ' was added to the queue.');
+							},
+							auto : false,
+							multi : true
+						});
+
+	});
+	
+</script>
+
+<form id="search-form" method="post" action="">
+
+	<input type="text" name="category"  id="category"value="07"/>
+	<input type="button" id="tu" value="测试分页"/>
+	<input type="button" id="t1" value="测试函数FunctionExc"/>
+	
+</form>
+<table id="sysDicTable" class="table table-hover "></table>
+
+<button id="testExcelDownLoad">带有跨行的Excel导出</button>
+<br>
+<button id="testExcelDownLoadCommon">普通Excel导出</button>
+<br>
+<!-- <h2>文件上传示例</h2>
+<form >
+	<input type="file" name="file" id="fileupload_input" />
+	<div id="progress">
+    	<div class="bar" style="width: 0%;"></div>
+	</div>
+</form> -->
+<h2>文件上传示例2</h2>
+
+    <input type="file" name="file" id="uploadify" />
+    <div id="progress"></div>
+    <p>
+      <a href="javascript:$('#uploadify').uploadify('upload','*')">上传</a>|
+      <a href="javascript:$('#uploadify').uploadify('cancel','*')">取消上传</a>
+   </p>
+<div id="fileQueue"></div>
+
+
+<script type="text/javascript">
+$(function(){
+	
+	$("#btuuu").click(function(){
+		var trs = $("#tb tr");
+		$.each(trs,function(index){
+			var tr = trs.eq(index);
+			var tds = tr.find("td");
+			$.each(tds,function(index1){
+				var td =tds.eq(index1);
+				var input = td.find("input,select").eq(0);
+				var n = input.attr("name");
+				input.attr("name","tms["+index+"]."+n);
+				//alert(input.attr("name"));
+			});
+		});
+		
+		//Angel.ajax("${ctxPath!}/test/submitDu",$("#aaform").serializeJson(),function(data){
+			
+		//});
+		$("#aaform").attr("action","${ctxPath!}/test/submitDu1").submit();
+	});
+
+});
+</script>
+<form id="aaform" action="" enctype="multipart/form-data" method="post">
+		<table id="tb">
+			<tr>
+				<td ><input name="username"/></td>
+				<td ><input name="password"/></td>
+				<td ><select name="sel">
+					<option value="0">111</option>
+				</select></td>
+				<td ><input type="file" name="file"></td>
+			</tr>
+			<tr>
+				<td><input name="username"/></td>
+				<td><input name="password"/></td>
+				<td ><select name="sel">
+					<option value="0">111</option>
+				</select></td>
+				<td ><input type="file" name="file"></td>
+			</tr>
+		</table>
+		<input type="button" value="测试多个行提交" id="btuuu"/>
+</form>
+@var polpdf = polink.openWindow(request,"a123456","111.pdf","width=800px;height=800px;");
+@var visio1 = polink.openWindow(request,"a123456","444.vsd","");
+@var xls = polink.openWindow(request,"a123456","222.xlsx","");
+@var word = polink.openWindow(request,"a123456","111.docx","");
+@var jpg = polink.openWindow(request,"a123456","1.jpg","");
+<a href="${polpdf}"onclick="changHref(this)">测试查看PDF</a><br>
+<a href="${visio1}" onclick="changHref(this)">测试查看Visio</a><br>
+<a href="${xls}" onclick="changHref(this)">测试查看Excel</a><br>
+<a href="${word}" onclick="changHref(this)">测试查看Word</a><br>
+<a href="${jpg}" onclick="changHref(this)">测试查看JPG图像</a><br>
+<!-- 底部 -->
+@layout("/layout/footer.html"){ 
+@}

@@ -1,0 +1,121 @@
+	<div class="col-xs-12">
+	<input type="hidden" value="${list!}" name="list" id="list" >
+	<input type="hidden" value="${code!}" name="code" id="code" >
+	<input type="hidden" value="${id!}" name="id" id = "id" >
+	<input type="hidden" value="${VotePlan.id!}" name="VotePlan" id = "VotePlan" >
+	<input type="hidden" value="${VotePlanNameByCode.votePlanId!}" name="VotePlanNameByCode"  id= "votePlanId">
+	<input type="hidden" value="${VotePlanNameByCode.votePlanName!}" name="votePlanName"  id= "votePlanName">
+			<div class="widget-body">
+			<div id="list-page" class="widget-main padding-8">
+			<div class="FormData">
+				&nbsp;&nbsp;&nbsp;<td class="CaptionTD">表决方案:</td>
+				<td class="DataTD" >
+			<select id="votePlanName1" name="votePlanName1"  style="font-size:12px;width:400px;">
+	                 @for(li in list!){
+							<option value="${li.id!}"
+								@if(VotePlan.votePlanId == li.id){
+									selected="selected"
+								@}
+							>${li.votePlanName!}</option>
+						@}
+	         </select>
+			</td>
+			</div>
+			<br>
+			<div class="widget-header widget-header-flat widget-header-small">
+				<h6 class="widget-title">是否具有一票否决的委员</h6>
+			</div>
+				<form action="" method="post" id="form1">
+					<table id="tableid"></table>
+				</form>
+			</div>
+	</div>
+</div>
+<div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110"  id="ok"  onClick="saveVotePlan()">保存</span>&nbsp;&nbsp;
+	<span class="btn btn-primary btn-sm bigger-110" id="model-save-cancel" onClick="layer.close()">取消</span>
+</div>
+<script type="text/javascript">
+	$(function() {
+		var code=$("#code").val();
+		var id=$("#id").val();
+		$("#tableid").bootstrapTable({
+			inconSize : 'sm',
+			url : '${ctxPath!}/pt/voteplancontroller/selectComissionMembers',
+			striped : true,
+			columns : [{	
+							field:"chk", 
+							checkbox : true,
+							formatter : formatCheck,
+						},{ field :"realName",
+			           		title:'姓名',
+							sortable:true
+						},{
+			           		field :"orgname",
+			           		title:'部门',
+							sortable:true
+						}],
+onCheck:function(row,obj){
+			$.ajax({
+	            url: "${ctxPath!}/pt/voteplancontroller/addreid?puid="+row.puid,
+	            dataType: "json",
+	            async: false,
+	            method:"post",
+	            success: function(data) {
+	            }
+	        }); 
+		},
+onUncheck:function(row,obj){
+			$.ajax({
+				url: "${ctxPath!}/pt/voteplancontroller/deletereid?puid="+row.puid,
+	            dataType: "json",
+	            async: false,
+	            method:"post",
+	            success: function(data) {
+	            }
+		});
+			}
+	});
+	$("#model-save-cancel").click(function(){
+       					 layer.close(layer.index);
+    		});
+	$("#ok").click(function(){
+					var votePlanName = $("#votePlanName1 option:selected").text();	
+					var votePlanId = $("#votePlanName1 option:selected").val();
+					var id= $("#id").val();
+					var code = $("#code").val();
+					$.ajax( {    
+					    url:'${ctxPath!}/pt/voteplancontroller/SavevotePlanName',   
+					    data:{    
+					    	id : id,    
+					    	votePlanId  : votePlanId,
+					    	votePlanName : votePlanName,
+					    	code :code
+					    },    
+					    type:'post',    
+					    cache:false,    
+					    dataType:'json',    
+					    success:function(data) {    
+					    	layer.msg(data.msg,1,1);
+					    	if(data.code==1){
+					    		var sys = parent.document.getElementById("tableysxm");
+					    		var $sys = $(sys);
+					    		$sys.bootstrapTable('refresh');
+					    		layer.close(lastIndex);
+					    	}
+					     },    
+					     error : function() {    
+					          alert("数据异常！");    
+					     }    
+					}); 
+				});
+	function formatCheck(value,row,index) {
+		if(row.flag == '1'){
+			return {checked : true};
+		}
+	};
+	});
+	$(function() {
+		$("input[name='btSelectAll']").hide();
+	});
+</script>

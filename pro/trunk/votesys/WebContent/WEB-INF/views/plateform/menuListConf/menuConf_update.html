@@ -1,0 +1,326 @@
+<base target="_parent" />
+<style type="text/css">
+.td {border:solid #add9c0 1px; border-width:0px 1px 1px 0px;}
+.EditTable {border:solid #add9c0 1px; border-width:1px 0px 0px 1px;}
+</style>
+<div class="layer">
+  <form id="plateform" class="plateform" method="post" action="${ctxPath!}/pt/menulist/saveMenuUpdate" enctype="multipart/form-data">
+  	<input type="hidden" id="data" name="dataSource1" value="${map.datasource!}"/>
+  	<input type="hidden" name="searchType" value="${map.searchType!}"/>
+    <input type="hidden" value="${map.id!}" name="id" />
+    <table class="EditTable" width="100%">
+    		<tbody>
+    		<tr class="FormData">   			
+    						
+			</tr>
+
+			<tr class="FormData">
+				<td class="CaptionTD">项目字段:</td>
+				<td class="" colspan="3">
+				<!-- <select id="tablecollist" class="voteFlag" name="fields" style="font-size:12px;width:100%;">
+	              </select> -->
+	              <input type="text" value="${map.cnName!}" name="cnName" style="font-size:12px;width:100%;" disabled/>
+				</td>
+			</tr>
+			<tr class="FormData">
+				<td class="CaptionTD ">是否可搜索:</td>
+				<td class="" colspan="1">
+							<input id="radio" class="voteFlag" name="offineFlag" type="checkbox" value="0" onchange="changeChecked();"/>设为搜索字段							
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">搜索框类型:</td>
+				<td class="" >
+				<select id="type" class="voteFlag" name="type" style="font-size:12px;width:100%;" onchange="select()">
+					<option value="0">文本框</option>
+					<option value="1">下拉框</option>
+					<option value="2">日期范围框 </option>
+					<option value="3">数字范围框</option>
+					<option value="4">文本弹出框</option>
+	              </select>
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">搜索框数据源:</td>
+				<td class="" >
+				<select id="datasource" class="voteFlag" name="dataSource" style="font-size:12px;width:100%;" onchange="collect()">
+	              </select>
+				</td>
+			</tr>
+			<td> 
+			<div class="clearfix" tag-save-btn style="left: 35%;position:absolute;">
+		<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="model-save-form" value="确定"/>&nbsp;&nbsp;
+		<input type="button" class="btn btn-primary btn-sm bigger-110" id="model-save-cancel" value="取消"/>
+		</div></td>
+			</tr>
+			</tbody>
+		
+    </table>
+   
+  </form>   
+</div>
+
+
+<script type="text/javascript">
+
+$(function(){
+	
+	var index = layer.index;
+/*     var options ={   
+            url:'${ctxPath!}/pt/ptcommission/saveCommission',   
+            type:'post', 
+            dataType:'html',
+            data:jQuery("#plateform").serialize(),
+            success:function(data){
+             if(data.statusCode=="OK") {  
+                   
+            	}else{
+
+            	} 
+            }   
+         }; 
+     var form =$("#plateform");//form1:表单ID  在表单界面只用这一个表单ID    
+         $("#model-save-form").click(function() {
+       	  form.ajaxSubmit(options); 
+             return false;
+         });*/
+     	//勾选表决标志
+     $("#voteFlag").click(function(){	
+     		var rows=$("input[name='voteFlag']:checked");
+           	if(rows.length>0){
+                  //$('#btnAddMoney').addClass('disabled'); // Disables visually
+               	$('.voteFlag').prop('disabled', false); 
+                }else{
+                	// $('#btnAddMoney').addClass('disabled'); // Disables visually
+                	$('.voteFlag').prop('disabled', true); // Disables visually + functionally	
+ 
+                }
+
+     	  });     
+    
+         $("#plateform").Validform({
+        	   ajaxPost:true,
+            	tiptype : 4,
+                beforeSubmit:function(curform){
+                    var loadi = layer.load(5,2);
+                    $("#plateform").data('loadi',loadi);
+                },
+                tiptype : function(msg, o, cssctl) {
+                    if (!o.obj.is("form")) {
+                        if (o.type != 2) {
+                            tip.errorTip(msg,o.obj);
+                        }
+                    }
+                },
+                tipSweep : true,
+                callback:function(data){
+        			layer.close($("#plateform").data('loadi'));
+        			if(data.code=="1"){
+        				layer.msg(data.msg, 1, 1,function(){
+        					//query();
+        					//var treeNodes = [{"id":1, "pId":0, "name":"test1"}];
+        				});
+        				layer.closeAll('page'); 
+        				$("#alertInfo").bootstrapTable('refresh');
+        				//location.reload();
+        			}else{
+        				layer.msg(data.msg,3,1);
+        				//layer.closeAll('page');
+        			}
+        		}
+            });
+         
+ 
+       
+    $("#model-save-cancel").click(function(){
+        layer.close(layer.index);
+    });
+});
+
+/* $(document).ready(function(){  
+    var aa=document.getElementById("tablecollist").value;  
+    $.ajax({  
+            url : encodeURI("pt/menulist/listField"),  
+            type : 'POST',  
+            dataType : "json",  
+            success : function(data) {  
+                var bb =$(document).find("#tablecollist");  
+                //pub_platform.empty();  
+                for ( var i = 0; i < data.length; i++) {  
+                    bb.append("<option value='"+data[i].id+"'>"+ data[i].cnName+ "</option>");  
+                }  
+            }  
+        });  
+});  */ 
+
+
+function changeChecked(){
+	var a = $("#radio").is(':checked')
+	if(a ==false){
+		//alert("没选中");
+		$("#type").attr("disabled",true);
+		$("#datasource").attr("disabled",true);
+	}else{
+		//alert("选中");
+		$("#type").attr("disabled",false);
+		if($("#type").val()!="1"){
+			$("#datasource").attr("disabled",true);
+		}else{
+			$("#datasource").attr("disabled",false);
+		}
+	}
+}
+
+function select(){
+	//alert(1);
+	var count=$("#type option").length;
+	//alert(count);
+	var a="1";
+	//var b= $("#type").get(0).options[1];
+	//alert(b);
+	if(!($("#type").find("option:selected").val()==a)){
+		$("#datasource").attr("disabled",true);
+	}else{
+		$("#datasource").attr("disabled",false);
+	}
+}
+
+function selected(){
+	var e = $("input[name='searchType']").val();
+	alert(e);
+	var count=$("select[name='type'] option").length;
+	for(var i=0;i<count;i++){
+		if($("#type").children("option[value='"+i+"']").val()==e){
+			$("#type").val(e);
+		}else{
+			continue;
+		}
+		break;
+	}
+	
+}
+
+function selected1(){
+	var e = $("input[name='dataSource1']").val();
+	var count=$("select[name='dataSource'] option").length;
+	//alert($("#datasource option").eq(1).val());
+	for(var i=0;i<count;i++){
+		if($("#datasource option").eq(i).val()==e){
+			//alert("又出来了");
+			$("#datasource").val(e);
+		}else{
+			continue;
+		}
+		break;
+	} 
+}
+$(document).ready(function(){  
+    var aa=document.getElementById("datasource").value;  
+    $.ajax({  
+            url : encodeURI("${ctxPath!}/pt/menulist/listDataSource"),  
+            type : 'POST',  
+            dataType : "json",  
+            success : function(data) {  
+                var bb =$(document).find("#datasource");  
+                //pub_platform.empty();  
+                for ( var i = 0; i < data.length; i++) {  
+                    bb.append("<option value='"+data[i].id+"'>"+ data[i].codeGroupName+ "</option>");  
+                } 
+                selected1();
+            }  
+        });  
+});  
+
+/* $(document).ready(function(){  
+    var aa=document.getElementById("type").value;  
+    $.ajax({  
+            url : encodeURI("pt/menulist/listType"),  
+            type : 'POST',  
+            dataType : "json",  
+            success : function(data) {  
+                var bb =$(document).find("#type");  
+                //pub_platform.empty();  
+                for ( var i = 0; i < data.length; i++) {  
+                    bb.append("<option value='"+data[i]+"'>"+ data[i]+ "</option>");  
+                }  
+                selected();
+        		//alert(count);
+            }  
+        }); 
+    
+}); */  
+
+function saveVotePlan(){
+	//window.location.href("${ctxPath}/pt/ptvoteplan/saveVotePlan");
+	var form = document.getElementById('plateform');
+	form.action="${ctxPath}/pt/menulist/saveMenu";
+	form.submit();
+	layer.close();
+}
+
+$(document).ready(function(){  
+	var a = $("input[type='checkbox']").is(':checked');
+	if(!a){
+		$("#type").attr("disabled",true);
+		$("#datasource").attr("disabled",true);
+	}
+});
+ 
+
+$(function(){
+	var bz = ${map.searchFlag!};
+	 if(bz==0){			
+		$("input[name='offineFlag']").eq(0).attr("checked",true);
+	}else{
+		$("input[name='offineFlag']").eq(0).attr("checked",false);
+	} 
+	
+});
+
+function saveVotePlan(){
+	//window.location.href("${ctxPath}/pt/ptvoteplan/saveVotePlan");
+	var form = document.getElementById('plateform');
+	form.action="${ctxPath!}/pt/menulist/saveMenuUpdate";
+	form.submit();
+	layer.close();
+}
+
+$(document).ready(function(){  
+	var a =${map.searchFlag!};
+	if(a==1){
+		$("#type").attr("disabled",true);
+		$("#datasource").attr("disabled",true);
+	}else{
+		$("#type").attr("disabled",false);
+		$("#datasource").attr("disabled",false);
+	}
+});
+
+$(document).ready(function(){  
+	var b=$("input[name='searchType']").val();
+	//alert(b);
+	if(b=="1"){
+		$("#datasource").attr("disabled",false);
+	}else{
+		$("#datasource").attr("disabled",true);
+	}
+});
+
+$(document).ready(function(){  
+	var e = $("input[name='searchType']").val();
+	var count=$("select[name='type'] option").length;
+	for(var i=0;i<count;i++){
+		if($("#type").children("option[value='"+i+"']").val()==e){
+			$("#type").val(e);
+		}else{
+			continue;
+		}
+		break;
+	}
+});
+</script>
+
+
+

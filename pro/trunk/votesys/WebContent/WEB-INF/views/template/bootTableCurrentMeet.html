@@ -1,0 +1,650 @@
+<style>
+.table-hover>tbody>tr:hover>td, .table-hover>tbody>tr:hover>th {
+	 background-color: #bfe2f5
+}
+</style>
+	<script type="text/javascript">
+		$(function(){
+	
+		$("#resList").bootstrapTable({
+			iconSize : '${bt.iconSize}',
+			@if(pageinfo.previewFlag=='1'){
+				
+			@}else{
+			url : '${pageinfo.ctxPath!}/ptsystems/${pageinfo.menu!}List?r='+Math.random(),
+			@}
+			toolbar:'#toolbar',
+			cache: false,
+			clickToSelect:true,
+			striped : true,
+			@if(bt.pagination==true){
+				pagination : ${bt.pagination!},
+				pageNumber : ${bt.pageNumber!},//首页页码
+				pageSize : ${bt.pageSize!},//页面显示条数
+				pageList : [ 2, 10, 25, 50, 100 ],
+				sidePagination : 'server',//服务器端分页
+			@}
+			columns : [
+				 	{
+					radio : true
+						}, {
+					field : "projectId",
+					title : '序号',
+					formatter : function(value, row, index) {
+						return index + 1;
+						}
+					},
+					{
+						field : "projectStateId",
+						title : '项目状态'
+						
+					 },
+				@for(clo in bt.columns){
+					{
+						field:"${clo.field}",
+						title:'${clo.title}',
+						sortable : ${clo.sortable}
+					}
+					@if(!cloLP.last){
+						,
+					@}
+				@}
+				],
+				contentType : "${bt.contentType!}",
+				queryParamsType : "limit",
+				ajaxOptions : "",
+				dataType : "${bt.dataType!}",
+				method : "${bt.method!}",
+				queryParams : function(params){
+					var obj={mettingId:'${pageinfo.mettingId!}'};
+					$.extend(params,obj);
+					var json = $("#search-form").serializeJson();
+					$.extend(params,json);
+					return params;
+				}
+		});
+		//隐藏项目状态列
+		$("#resList").bootstrapTable('hideColumn', 'projectStateId');
+	
+		//查询设置 
+		$("#ok").click(function(){
+			$("#resList").bootstrapTable('refresh');
+		})
+		//按钮控制
+		$('#resList').on('check.bs.table', function(e, arg1, arg2){
+			var rows = $('#resList').bootstrapTable('getData');
+	    	var selectRows = $('#resList').bootstrapTable("getSelections");
+	    	if(selectRows.length==0){
+	    		return;
+	    	}
+			var idx=null;
+			var tempArray=[];
+			var row = selectRows[0];
+			$.each(rows,function(index,object){
+				//得到未审数组的长度
+				if(object.projectStateId!="10200300"){
+					tempArray.push(object);
+				}
+				//得到当前所在行位置的索引
+				if(object.projectId==row.projectId){
+					idx=index;
+					//console.log(idx);
+					return false;
+				}
+			});
+		
+			 if(idx <= tempArray.length){
+				 $("#fun1413").addClass("disabled");
+				 $("#fun1414").removeClass("disabled");
+			 }else if(idx>=rows.length-1){
+				$("#fun1414").addClass("disabled");
+				 $("#fun1413").removeClass("disabled");
+			 }else{
+				 $("#fun1413").removeClass("disabled");
+				 $("#fun1414").removeClass("disabled");
+			 }
+		});
+		
+		//确定按钮信息
+		@for(btn in btninfo!){
+			var ${btn.functionCode}Obj={
+					 width:'${btn.weight!50}',
+					 height:'${btn.height!60}',
+					 title:'${btn.commtext}',
+					 functionCode:'${btn.functionCode}',
+					 tableName:'${btn.tableName!}'
+				}
+			@for(btnw in btnwind!){
+				@if(btn.functionCode==btnw.functionCode){
+						@if(btn.bindEventOrUrl=="javascript:updateWin"){
+							 //弹出窗修改
+						 	$("#${btn.functionCode}").click(function(){
+						 		updateObj(${btn.functionCode}Obj);
+						 	})
+				 		@}else if(btn.bindEventOrUrl=="javascript:addWin"){
+				 			 //弹出窗添加
+						 	$("#${btn.functionCode}").click(function(){
+						 		addObj(${btn.functionCode}Obj);
+						 	})
+				 		@}else if(btn.bindEventOrUrl=="javascript:viewWin"){
+				 			$("#${btn.functionCode}").click(function(){
+						 		viewObj(${btn.functionCode}Obj);
+						 	})
+						 	
+						 	@if(btnw.doubleClickFlag=="1"){
+						 		$('#resList').on('dbl-click-row.bs.table', function(e,row, $element, field){
+						 			var projectId=row.projectId;
+						 			var objt={"projectId":projectId};
+						 			var param=$.extend(${btn.functionCode}Obj,objt);
+						 			viewObj(param);
+						 		});
+						 	@}
+				 		@}else{
+				 			
+				 		@}
+						
+					@}
+				
+				 @}
+			//这个非弹出窗
+			@if(btn.bindEventOrUrl=="javascript:deleteAjax"){
+				$("#${btn.functionCode}").click(function(){
+					deleteObj(${btn.functionCode}Obj);
+			 	})
+			@}	
+			
+			//当前会议状态按钮事件
+			@if(btn.bindEventOrUrl=="javascript:objsAjax"){
+				$("#${btn.functionCode}").click(function(){
+					objsAjax(${btn.functionCode}Obj);
+			 	})
+			@}	
+		 @}		
+		
+			
+	});
+	
+		//通用更新弹出方法
+		function updateObj(param){
+			var rows = $('#resList').bootstrapTable("getSelections");
+			if(rows.length==0){
+				layer.msg("请选择要操作的数据");
+				return;
+		//未审项目状态，处于未审projectStateId=10200300
+			}else if(rows[0].projectStateId!='10200300'){
+				layer.msg("该议题【"+rows[0].projectTitle+"】已经审议表决完成！");
+				return;
+			}else{
+				//当前会议,审议结果
+				var params = {
+						mode : 'page',
+						width : param.width+"%",
+						height : param.height+"%",
+						url : "${pageinfo.ctxPath!}/ptsystems/toFunctionIndex",
+						title:param.title+'信息',
+						data:{functionCode:param.functionCode,projectId:rows[0].projectId,mettingId:'${pageinfo.mettingId!}'}
+				};
+				$.cuslayer(params);
+			}
+			
+		}
+	//通用添加弹出方法
+	function addObj(param){
+		var params = {
+				mode : 'page',
+				width : param.width+"%",
+				height : param.height+"%",
+				url : "${pageinfo.ctxPath!}/ptsystems/toFunctionIndex",
+				title:param.title+'信息',
+				data:{functionCode:param.functionCode,projectId:"0",mettingId:'${pageinfo.mettingId!}'}
+		};
+		$.cuslayer(params);
+	}
+	
+	//通用删除(ajax)
+	function deleteObj(param){
+		var rows = $('#resList').bootstrapTable("getSelections");
+		if(rows.length==0){
+			layer.msg("请选择要操作的数据");
+			return;
+		}else{
+			var row = rows[0];
+			var obj = {};
+				obj["confirmMsg"] = "确认要删除该条记录吗？";
+				obj["url"] = "${pageinfo.ctxPath!}/ptsystems/${pageinfo.menu!}Delete";
+				obj["data"]={projectId:row.projectId,functionCode:param.functionCode};
+				layer.confirm(obj.confirmMsg,function(index){
+					Angel.ajax(obj.url, obj.data, function(result){
+						layer.msg(result.msg,1,1);
+						if(result.code==1){
+							$("#resList").bootstrapTable('refresh');
+						}
+					});
+					layer.close(index);
+				});
+		}
+	}
+	
+	//通用查看()
+	@viewObj();
+	
+	
+	function toAjax(param){
+		var obj = {};
+		obj["confirmMsg"] = "确认【"+param.title+"】操作吗";
+		obj["url"] = "${pageinfo.ctxPath!}/ptsystems/menu5/"+param.functionCode;
+		obj["data"]={functionCode:param.functionCode,meetingId:param.mettingId};
+		 layer.confirm(obj.confirmMsg,function(index){
+		    $.ajax({    
+		        url:obj.url,// 跳转到 action    
+		        data:{    
+		            mettingId : param.mettingId    
+		        },    
+		        type:'post',    
+		        cache:false,    
+		        dataType:'text',  
+		        success:function(data){ 
+		        	//alert(data); 
+		        var url="${pageinfo.ctxPath!}/"+data;
+		        $.ajax({
+		            url : url,
+		            data:{    
+			            mettingId : param.mettingId    
+			        }, 
+		            dataType : "html",
+		            async : false,
+		            success : function(data){
+		            	$("#fill-main-content").html(data);
+		                }
+		             });
+		         } 
+		    }); 
+			layer.close(index);
+		}); 
+	}
+	
+	//通用(ajax形式) 
+	function objsAjax(param){
+		var obj={mettingId:'${pageinfo.mettingId!}'};
+		$.extend(param,obj);
+		var rows = $('#resList').bootstrapTable('getData');
+		 var selectRows = $('#resList').bootstrapTable("getSelections");
+		var status=true;
+		//委员确认
+		if(param.functionCode=='fun1401'){
+			var params = {
+					mode : 'page',
+					width : param.width+"%",
+					height : param.height+"%",
+					url : "${pageinfo.ctxPath!}/ptsystems/${pageinfo.menu!}/fun1401",
+					title:param.title+'信息',
+					data:{functionCode:param.functionCode,mettingId:param.mettingId},
+					callback:'stopRefresh()'
+			};
+			$.cuslayer(params);
+			
+		}else if(param.functionCode=='fun1403'){
+			 var selectRows = $('#resList').bootstrapTable("getSelections");
+			 if(selectRows.length==0){
+				layer.msg("请先选择议题!");
+				return;
+			}else if(selectRows[0].projectStateId!='10200301'){
+				layer.msg("当前议题尚未表决,没有表决结果!");
+				return;
+			} 
+			var params = {
+					mode : 'page',
+					width : "50%",
+					height : "100%",
+					url : "${pageinfo.ctxPath!}/ptsystems/menu5/fun1403",
+					title:param.title+'信息',
+					data:{functionCode:param.functionCode,meetingId:param.mettingId,projectId:selectRows[0].projectId}
+			};
+			$.cuslayer(params);
+	
+		}else if(param.functionCode=='fun1404'){//转为预备会议功能-处理预备会议类型
+			$.each(rows,function(index,obj){
+				//未审项目状态，处于未审projectStateId=10200300
+				if(obj.projectStateId!='10200300'){
+					layer.msg("议题【"+obj.projectTitle+"】已进行表决,不能转成预备会议！");
+					status=false;
+					return false;
+				}
+			});
+			if(status){
+				toAjax(param);
+			}
+			
+	//转为完成会议功能-已审(会议项目表中项目状态id=10200301)）时才能做此操作
+	}else if(param.functionCode=='fun1405'){
+			$.each(rows,function(index,obj){
+				if(obj.projectStateId!='10200301'){
+					layer.msg("议题【"+obj.projectTitle+"】还未进行表决,不能转成完成会议！");
+					status=false;
+					return false;
+				}
+			});
+			if(status){
+				toAjax(param);
+			}
+		//会议信息功能
+		}else if(param.functionCode=='fun1406'){
+			addObj(param);
+		//离线会议表决功能
+		}else if(param.functionCode=='fun1407'){
+			var selectRows = $('#resList').bootstrapTable("getSelections");
+			
+			if(selectRows.length==0){
+				layer.msg("请先选择要表决的议题!");
+				return;
+			}
+			
+			
+			$.each(rows,function(index,obj){
+				//未审项目状态，处于未审projectStateId=10200300
+				if(obj.projectStateId!='10200300'){
+					layer.msg("议题【"+obj.projectTitle+"】已进行表决,不能在进行离线表决！");
+					status=false;
+					return false;
+				}
+			});
+			if(status){
+				var params = {
+						mode : 'page',
+						width : param.width+"%",
+						height : param.height+"%",
+						url : "${pageinfo.ctxPath!}/ptsystems/${pageinfo.menu!}/fun1407",
+						title:param.title+'信息',
+						data:{functionCode:param.functionCode,mettingId:param.mettingId}
+				};
+				$.cuslayer(params);
+			}
+				
+		//资料查看	
+		}else if(param.functionCode=='fun1408'){
+			var params = {
+					mode : 'page',
+					width : param.width+"%",
+					height : param.height+"%",
+					url : "${pageinfo.ctxPath!}/ptsystems/toFunctionIndex",
+					title:param.title+'信息',
+					data:{functionCode:param.functionCode,projectId:selectRows[0].projectId,mettingId:'${pageinfo.mettingId!}'}
+			};
+			$.cuslayer(params);
+			//添加议题
+		}else if(param.functionCode=='fun1409'){
+			var params = {
+					mode : 'page',
+					width : param.width+"%",
+					height : param.height+"%",
+					url : "${pageinfo.ctxPath!}/ptsystems/menu4ormenu5/"+param.functionCode+"/addproject",
+					title:param.title+'信息',
+					data:{functionCode:param.functionCode,projectId:"0",mettingId:'${pageinfo.mettingId!}'}
+			};
+			$.cuslayer(params);
+			//发起表决功能-只能对当前的第一个未审议题（会议项目表中项目状态id=10200300）表决，否则不能点击	
+			//将议题的表决结果设置为"再议"
+		}else if(param.functionCode=='fun1410'||param.functionCode=='fun1411'){
+			var selectRows = $('#resList').bootstrapTable("getSelections");
+			var flag = false;
+			if(selectRows.length==0){
+				layer.msg("请先选择要表决的议题!");
+				return;
+			}else if(selectRows[0].projectStateId=='10200301'){
+				layer.msg("当前议题已表决完毕,不能重复表决!");
+				return;
+			}else{                                                                                                                                                              
+				var newArr=[];
+				for(var i =0; i < rows.length; i++){
+					if(rows[i].projectId == selectRows[0].projectId){
+						break;
+					}else if(rows[i].projectStateId!='10200301'){
+						newArr.push(rows[i]);
+					}
+				}
+				if(newArr.length == 0){
+					flag = true;
+				}else{
+					$.each(newArr,function(index,obj){
+						//第一个未审议题
+						layer.msg("议题【"+newArr[0].projectTitle+"】还未进行表决,不能对其他议题进行表决或者再议！");
+						return;
+					});
+				}
+				$.ajax({
+		            url: "${pageinfo.ctxPath!}/ptsystems/menu5/fun1401/getConfirmList?meetingId="+param.mettingId+"&memAuthorityFlagId=10100100",
+		            dataType: "json",
+		            async: false,
+		            method:"post",
+		            success: function(data) {
+		            	if(data.length == 0){
+		            		layer.msg("尚未确认表决委员!");
+		            		flag = false;
+		            	}
+		            }
+		        }); 
+				if(flag&&param.functionCode=='fun1410'){
+					var params = {
+							mode : 'page',
+							width : "100%",
+							height : "100%",
+							url : "${pageinfo.ctxPath!}/ptsystems/menu5/fun1410",
+							title:param.title+'信息',
+							data:{functionCode:param.functionCode,meetingId:param.mettingId,projectId:selectRows[0].projectId},
+							callback:'stopRefresh()'
+					};
+					$.cuslayer(params);
+				}
+				//再议
+				if(flag&&param.functionCode=='fun1411'){
+					var row = selectRows[0];
+					var obj = {};
+						obj["confirmMsg"] = "确认要对议题【"+row.projectTitle+"】进行"+param.title+"操作吗？";
+						obj["url"] = "${pageinfo.ctxPath!}/ptsystems/menu5/fun1411";
+						obj["data"]={functionCode:param.functionCode,meetingId:param.mettingId,projectId:selectRows[0].projectId};
+						layer.confirm(obj.confirmMsg,function(index){
+							Angel.ajax(obj.url, obj.data, function(result){
+								layer.msg(result.msg,1,1);
+								if(result.code==1){
+									$("#resList").bootstrapTable('refresh');
+								}
+							});
+							layer.close(index);
+						});
+				}
+			}
+
+		//将未审（会议项目表中项目状态id=10200300）的项目转出当前会议
+		}else if(param.functionCode=='fun1412'){
+			var selectRows = $('#resList').bootstrapTable("getSelections");
+			if(selectRows.length==0||selectRows[0].projectStateId!='10200300'){
+				layer.msg("请选择要操作的未审议题数据!");
+				return;
+			}else{
+				//调用ajax
+				var row = selectRows[0];
+				var obj = {};
+					obj["confirmMsg"] = "确认要对议题【"+row.projectTitle+"】进行"+param.title+"操作吗？";
+					obj["url"] = "${pageinfo.ctxPath!}/ptsystems/menu5/fun1412";
+					obj["data"]={functionCode:param.functionCode,meetingId:param.mettingId,projectId:selectRows[0].projectId};
+					layer.confirm(obj.confirmMsg,function(index){
+						Angel.ajax(obj.url, obj.data, function(result){
+							layer.msg(result.msg,1,1);
+							if(result.code==1){
+								$("#resList").bootstrapTable('refresh');
+							}
+						});
+						layer.close(index);
+					});
+			}
+			//上移功能与//下移功能
+		}else if(param.functionCode=='fun1413'||param.functionCode=='fun1414'){
+			//alert(1);
+			var selectRows = $('#resList').bootstrapTable("getSelections");
+			if(selectRows.length==0||selectRows[0].projectStateId!='10200300'){
+				layer.msg("请选择要操作的未审议题数据!");
+				return;
+			}else{
+				//调用ajax
+				var row = selectRows[0];
+				var idx=null;
+				var tempArray=[];
+				$.each(rows,function(index,object){
+					//得到未审数组的长度
+					if(object.projectStateId!="10200300"){
+						tempArray.push(object);
+					}
+					//得到当前所在行位置的索引
+					if(object.projectId==row.projectId){
+						idx=index;
+						//console.log(idx);
+						return false;
+					}
+				});
+					
+					if(idx>tempArray.length&&param.functionCode=='fun1413'){
+						 var preRow = $('#resList').bootstrapTable('getData')[idx - 1];//上一行
+						 //console.log(preRow);
+						 //console.log(row);
+						 var obj = {};
+							obj["url"] = "${pageinfo.ctxPath!}/ptsystems/menu4or5/ascordesc/fun1413";
+							obj["data"]={preRowProjectId:preRow.projectId,preProjectOrder:preRow.projectOrder,projectId:row.projectId,projectOrder:row.projectOrder,functionCode:param.functionCode,mettingId:param.mettingId};
+							 Angel.ajax(obj.url, obj.data, function(result){
+							 	if(result.code==1){
+							 		 /* var source = JSON.stringify($('#resList').bootstrapTable('getData')[idx]);
+								        var target = JSON.stringify($('#resList').bootstrapTable('getData')[idx - 1]);
+								        $('#resList').bootstrapTable('updateRow', {index:idx - 1, row: JSON.parse(source)});
+								        $('#resList').bootstrapTable('updateRow', {index:idx, row: JSON.parse(target)}); */
+								        $('#resList').bootstrapTable('refresh');
+								        idx=idx-1;
+										upDownClass(idx);
+									}else{
+									layer.msg("操作失败",2);
+								}
+							 	
+						}); 
+					 }else if(idx<rows.length&&param.functionCode=='fun1414'){
+						 var sufRow = $('#resList').bootstrapTable('getData')[idx + 1];//下一行
+						 var obj = {};
+							obj["url"] = "${pageinfo.ctxPath!}/ptsystems/menu4or5/ascordesc/fun1414";
+							obj["data"]={sufRowProjectId:sufRow.projectId,sufProjectOrder:sufRow.projectOrder,projectId:row.projectId,projectOrder:row.projectOrder,functionCode:param.functionCode,mettingId:param.mettingId};
+							 Angel.ajax(obj.url, obj.data, function(result){
+								 if(result.code==1){
+							 		 /* var source = JSON.stringify($('#resList').bootstrapTable('getData')[idx]);
+								        var target = JSON.stringify($('#resList').bootstrapTable('getData')[idx + 1]);
+								        $('#resList').bootstrapTable('updateRow', {index:idx + 1, row: JSON.parse(source)});
+								        $('#resList').bootstrapTable('updateRow', {index:idx, row: JSON.parse(target)}); */
+								        $('#resList').bootstrapTable('refresh');
+								        idx=idx+1;
+										upDownClass(idx);
+									}else{
+									layer.msg("操作失败",2);
+								}
+						}); 
+							 	
+					 }
+				
+				
+			}	
+		}else{
+			
+		}
+	
+		
+		
+	}
+	//通用(非删除ajax形式)
+	function ajaxObj(param){
+		
+	}
+	</script>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box">
+				<div class="widget-header widget-header-flat widget-header-small">
+				<h5 class="widget-title">${pageinfo.commText!}:${pageinfo.mettingName!}</h5>
+				<div class="widget-toolbar">
+					<a href="#" data-action="fullscreen" class="orange2" onclick="refreshTable('resList')"> <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+				</div>
+			    </div> 
+			  	@if(isNotEmpty(sm)){
+			  <div class="widget-container-col ui-sortable">
+						<div class="widget-box">
+					
+						<div class="widget-header widget-header-small">
+								<h6 class="widget-title">
+									<i class="ace-icon fa fa-search"></i>搜索
+								</h6>
+								<div class="widget-toolbar">
+									<a href="javascript:void(0);" data-action="collapse">
+										<i class="ace-icon fa bigger-125 fa-chevron-down"></i>
+									</a>
+								</div>
+							</div>
+					
+							
+						
+				<div class="widget-body">
+						<div class="widget-main margin-8" >
+							<form action="" method="post" id="search-form"
+								target="list-page" class="clearfix">
+								<div class="form-inline" role="form">
+								@for(divipt in sm!){
+									<!-- 0表示普通文本框 -->
+									@if(divipt.searchType=='0'){
+										<div class="form-group">
+										<span>${divipt.cn}:</span>
+										<input name="${divipt.en}" class="form-control w150" type="text">
+										</div>
+									<!-- 1下拉框-->
+										@}else if(divipt.searchType=='1'){
+										<div class="form-group">
+										<span>${divipt.cn}:</span>
+										<select name="${divipt.en}Name">
+												<option value="" >
+					                    			----请选择----
+					                    		</option>
+					                   		 @for(selp in divipt.selgroups!){
+					                    		<option value="${selp.id}">
+					                    			${selp.mapName}
+					                    		</option>
+					                    	@}
+				                    	</select>
+										</div>
+									<!-- 2日期框-->
+										@}else if(divipt.searchType=='2'){
+										<div class="form-group">
+										<span>${divipt.cn}:</span>
+										<input name="${divipt.en}Start" class="form-control w150" type="text" onFocus="WdatePicker()">
+										-
+										<input name="${divipt.en}End" class="form-control w150" type="text" onFocus="WdatePicker()">
+										</div>
+										@}else{
+										
+									@}
+								@}
+							    	@if(isNotEmpty(sm)){
+									  <div class="form-group width-100 ">
+										<button id="ok" type="button" class="btn btn-primary btn-xs">查&nbsp;&nbsp;询</button>
+										<button id="reset" type="reset" class="btn btn-primary btn-xs">取&nbsp;&nbsp;消</button>
+									  </div>
+									@}
+									
+									</div>
+								</form>
+							
+					</div>
+					</div>
+				</div>
+			</div>	
+						@}
+				
+			<#btnGroup btninfo="${btninfo!}"/>
+			
+	</div>
+	</div>
+</div>
+
+

@@ -1,0 +1,169 @@
+﻿<script type="text/javascript">
+var timer;
+var setting = {
+		view:{
+			expandSpeed:100,
+			selectedMulti : false,
+			fontCss:function(treeId, treeNode) {
+				return (!!treeNode.highlight) ? {"font-weight":"bold","color":"red","font-size": "20px","text-decoration":"none"} : 
+						{"font-weight":"bold","color":"red","font-size": "20px","text-decoration":"none"};
+			},
+			showIcon: false,
+			showLine: false
+
+		},
+		data : {
+			simpleData : {
+				enable : true,
+				idKey : 'id',
+				pIdKey :'pid',
+			},
+			key:{
+				name:"name"
+			}
+		}
+	};
+	
+	
+	function loadData(){
+		$.ajax({
+			url: "${ctxPath}/ptsystems/menu5/fun1401/getAbsentDeptList",
+			dataType: "json",
+			async: false,
+			success: function(data) {
+				$.fn.zTree.init($("#ztree"), setting,data);
+			}
+		});
+	}
+	
+	
+$(function(){
+	$("#confirmTable").bootstrapTable({
+		iconSize : 'sm',
+		url : '${ctxPath!}/ptsystems/menu5/fun1401/getConfirmList?meetingId=${mettingId!}',
+		cache: false,
+		striped : true,
+		columns : [{
+					checkbox : true,
+					formatter:formatCheck,
+				},{
+					field : "id",
+					title : '编号',
+					formatter : function(value, row, index) {
+						return index + 1;
+					}
+				},{
+					field : "memUserName",
+					title : '委员姓名',
+					sortable : true
+					
+				 },{
+					field:"memPostName",
+					title:'职务',
+					sortable : true
+				},{
+					field:"memRoleName",
+					title:'部门',
+					sortable : true
+				},{
+					title: '退出会议',
+			        field: 'id',
+			        width: 80,
+			        align: 'center',
+			        formatter:function(value,row,index){
+			        	return '<a class="red" href="javascript:void(0);"' +
+							' data-mode="del" data-title="退出会议"' +
+							' data-url="${ctxPath}/ptsystems/menu5/fun1401/deleteMem"' +
+							'data-msg="你确定使该委员退出会议表决吗?(慎重操作)"'+
+							'data-data="{pkid:&apos;' + row.id + '&apos;}" ' +
+							'data-callback="refresh()" >'+
+			                '<i class="ace-icon fa fa-trash-o midder-130"></i>' +
+							'</a>';
+			        }
+					
+				}
+			],
+		onCheck:function(row,obj){
+			$.ajax({
+	            url: "${ctxPath}/ptsystems/menu5/fun1401/empower?id="+row.id+"&memAuthorityFlagId=10100100",
+	            dataType: "json",
+	            async: false,
+	            method:"post",
+	            success: function(data) {
+	            }
+	        }); 
+		},
+		onUncheck:function(row,obj){
+			$.ajax({
+				url: "${ctxPath}/ptsystems/menu5/fun1401/empower?id="+row.id+"&memAuthorityFlagId=10100101",
+	            dataType: "json",
+	            async: false,
+	            method:"post",
+	            success: function(data) {
+	            }
+	        }); 
+		}
+		
+	});
+	timer = setInterval('refresh()',10000);
+	loadData();
+	$("input[name='btSelectAll']").hide();
+	
+})
+	function refresh(){
+		$('#confirmTable').bootstrapTable('refresh');
+		loadData();
+	}
+	
+	function stopRefresh(){
+		clearInterval(timer);//取消
+	}
+	
+	function formatCheck(value,row,index) {
+		if(row.memAuthorityFlagId == "10100100"){
+			return {checked : true};
+		}
+	}; 
+</script>
+
+<div class="layer">
+	<div class="row">
+		<div class="col-xs-9">
+			<div class="widget-box">
+				<div class="widget-header widget-header-flat widget-header-small">
+					<h6 class="widget-title">已到委员列表</h6>
+					<div class="widget-toolbar">
+						<a class="btn btn-primary btn-xs" onclick="refresh()" href="javascript:void(0);">&nbsp;&nbsp;<i class="fa fa-refresh"></i>&nbsp;刷新&nbsp;&nbsp;</a>
+					</div>
+				</div>
+				<div class="widget-body">
+					 <table id="confirmTable" class="table table-hover table-striped">
+			</table>
+		  </div>
+	</div>
+		</div>
+		<div class="col-xs-3">
+			<div class="row">
+				<div class="col-xs-14">
+					<div class="widget-box">
+						<div class="widget-header widget-header-flat widget-header-small">
+							<h6 class="widget-title">未到部门列表</h6>
+						</div>
+						<div class="widget-body">
+							<div class="widget-main padding-8">
+								<ul id="ztree" class="ztree" style="min-height: 480px;"></ul>
+							</div>
+						</div>	
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+      
+
+
+    </div>
+
+

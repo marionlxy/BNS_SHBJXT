@@ -1,0 +1,120 @@
+<div class="layer">
+  <form id="plateformId" class="plateform" method="post" action="${ctxPath!}/pt/relate/saveUpdateOutCommission">
+    <input type="hidden" value="${map.id!}" name="id" />
+    <input type="hidden" value="${map.code}" name="hidCode"/>
+    <table class="EditTable" width="100%"  >
+    		<tbody>
+    		<tr class="FormData">   			
+    						
+			</tr>
+    		<tr class="FormData">   			
+    			<td class="CaptionTD" colspan="4" style="text-align: left;background-color: #d5e2f3"><h4 class="panel-title">基本信息</h4></td>			
+			</tr>
+    		<tr class="FormData">
+				<td class="CaptionTD">委员会名称:</td>
+				<td class="" height="30"  colspan="3">
+				<select class="voteFlag" name="code" style="font-size:12px;width:300px;" readonly disabled="disabled">
+						@for(commission in list!){
+							<option value="${commission.code!}"
+							@if(commission.code==map.code){
+								selected="selected"
+							@}
+							>
+							  ${commission.sysTitle!}
+							</option>
+						@}
+	              </select>
+	        </tr>
+			<tr class="FormData">
+				<td class="CaptionTD">关联系统编码:</td>
+				<td class="DataTD"><input type="text" name="relationCode" class="inputxt"  value="${map.relationCode!}" readonly></td>
+			</tr>
+			<tr class="FormData">
+				<td class="CaptionTD">关联系统简称:</td>
+				<td class="DataTD"><input type="text" name="relationName"  value="${map.relationName!}" style="width:100%;" datatype="*" nullmsg="必须填写！" ></td>
+			</tr>
+	        <tr class="FormData">
+				<td class="CaptionTD">通知Servlet地址:</td>
+				<td class="DataTD"><input type="text" name="notifyAddr" datatype="*" nullmsg="通知Servlet地址！"  value="${map.notifyAddr!}" style="width:100%;"></td>
+			</tr>
+			<tr>
+				<td> 
+					<div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+						<input type="submit" class="btn btn-primary btn-sm bigger-110"  id="model-save-form" value="确定"/>&nbsp;&nbsp;
+						<input type="reset" class="btn btn-primary btn-sm bigger-110" id="model-save-cancel" value="取消"/>
+					</div>
+				</td>
+			</tr>
+		</tbody>
+    </table>
+  </form>   
+</div>
+<script type="text/javascript">
+
+$(function(){
+	
+	var index = layer.index;
+     $("#voteFlag").click(function(){	
+     		var rows=$("input[name='voteFlag']:checked");
+           	if(rows.length>0){
+                  //$('#btnAddMoney').addClass('disabled'); // Disables visually
+               	$('.voteFlag').prop('disabled', false); 
+                }else{
+                	// $('#btnAddMoney').addClass('disabled'); // Disables visually
+                	$('.voteFlag').prop('disabled', true); // Disables visually + functionally	
+ 
+                }
+
+     	  });     
+    
+   $("#plateformId").Validform({
+	    postonce:true,
+		ajaxPost:true,
+        beforeSubmit:function(curform){
+            var loadi = layer.load(5,2);
+            $("#plateformId").data('loadi',loadi);
+            curform.ajaxSubmit({
+            	dataType:'json',
+            	type:'post',
+            	url:'${ctxPath!}/pt/relate/saveUpdateOutCommission',
+            	success:function(data){
+            		var obj={};
+            		if(document.all){
+            			obj = eval('(' + data + ')');
+            		}else{
+            			obj=data;
+            		}
+            		if(obj.code==1){
+        				layer.msg(obj.msg, 1, 1);
+        				layer.closeAll('page'); 
+        				$("#tableysxm").bootstrapTable('refresh');
+        			}else{
+        				layer.msg(obj.msg,3,1);
+        			}
+            	},
+            	error:function(){
+            		layer.msg("更新失败，可能发生网络异常！",3,1);
+            	}
+            });
+            return false;
+        },
+        tiptype : function(msg, o, cssctl) {
+            if (!o.obj.is("form")) {
+                if (o.type != 2) {
+                    tip.errorTip(msg,o.obj);
+                }
+            }
+        },
+        tipSweep : true
+    });
+
+         
+ 
+    // var index=layer.index;
+    $("#model-save-cancel").click(function(){
+        layer.close(index);
+    });
+});
+
+</script>
+

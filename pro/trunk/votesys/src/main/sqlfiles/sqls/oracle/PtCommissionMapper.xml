@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.commission.dao.PtCommissionMapper">
+
+	<sql id="BaseColumnList">
+		INFO,TOTAL_NUM,ID,CODE,SYS_TITLE,SIMPLE_TITLE,LOGO,VOTE_FLAG,VOTE_PLAN_ID,VOTE_PLAN_NAME,TEMPLATE_ID,SUGGEST_FLAG,ONE_MIND_FLAG,
+		MEMBER_IDS,MEMBER_NAMES,OFFINE_FLAG ,HUMAN_SIGN_FLAG ,PRO_CODE_TYPE,
+		STATE,SORT,DEL_FLAG,to_char(CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') as
+		CREATE_TIME,CREATE_BY,to_char(UPDATE_TIME,'YYYY-MM-DD HH24:MI:SS') as
+		UPDATE_TIME,UPDATE_BY,PDSID,PDS_SAMPLE_NAME
+	</sql>
+
+	<sql id="BaseColumnValueList">
+		#{info},#{totalNum},#{id},#{code},#{sysTitle},#{simpleTitle},#{logo},
+		#{voteFlag},#{votePlanId},#{votePlanName},#{templateId},#{suggestFlag},
+		#{oneMindFlag},#{pdsid},#{pdsSampleName},#{proCodeType},
+		#{memberIds},#{memberNames},#{offineFlag},#{humanSignFlags},#{state},
+		#{sor},#{delFlag},#{createTime},#{createBy},#{updateTime},#{updateBy}
+	</sql>
+	<select id="selectAll" resultType="java.util.Map">
+		select
+		<include refid="BaseColumnList" />
+		from PT_COMMISSION
+		<where>
+			DEL_FLAG = 0
+		</where>
+	</select>
+	<delete id="comDeleteID">
+		DELETE FROM PT_COMMISSION WHERE ID=#{id}
+	</delete>
+	<!-- 此处暂时去掉删除标记 -->
+	<select id="selectVotesCode" resultType="java.lang.Integer">
+		select
+		count(1)
+		from PT_COMMISSION
+		<where>
+		     1=1
+			and code=#{code}
+		</where>
+	</select>
+
+	<select id="existTable" parameterType="String" resultType="Integer">
+		select count(1)
+		from sys.systables
+		where LCASE(tablename)=#{tableName}
+	</select>
+
+
+	<select id="selectBasTable" parameterType="java.util.Map"
+		resultType="java.util.Map">
+		select
+		table_name,tablespace_name
+		from USER_TABLES
+		<where>
+			USER_TABLES.table_name like 'BAS%'
+		</where>
+	</select>
+
+	<update id="dropTable">
+		drop table ${newTable}
+	</update>
+
+	<update id="createNewTable" parameterType="String">
+		create table ${newTable} as select * from ${basTable}
+	</update>
+
+	<update id="createNewTablePrimaryKeyId" parameterType="String">
+		alter table ${newTable} add constraint ${pkid}_PKID primary key(<![CDATA["${prmaryKeyId}"]]>)
+	</update>
+
+	<insert id="savePtCommission"
+		parameterType="com.krm.voteplateform.web.commission.model.PtCommission">
+		insert into pt_commission
+		(ID,CODE,SYS_TITLE,SIMPLE_TITLE,LOGO,VOTE_FLAG,VOTE_PLAN_ID,VOTE_PLAN_NAME,TEMPLATE_ID,SUGGEST_FLAG,ONE_MIND_FLAG,MEMBER_IDS,MEMBER_NAMES,OFFINE_FLAG,HUMAN_SIGN_FLAG,STATE,SORT,DEL_FLAG,CREATE_TIME,CREATE_BY,UPDATE_TIME,UPDATE_BY,INFO,TOTAL_NUM
+		,PDSID,PDS_SAMPLE_NAME,PRO_CODE_TYPE
+		)
+		values (
+		#{id,jdbcType=VARCHAR},#{code,jdbcType=VARCHAR},#{sysTitle,jdbcType=VARCHAR},
+		#{simpleTitle,jdbcType=VARCHAR},#{logo,jdbcType=VARCHAR},
+		#{voteFlag,jdbcType=NUMERIC},
+		#{votePlanId,jdbcType=VARCHAR},
+		#{votePlanName,jdbcType=VARCHAR},
+		#{templateId,jdbcType=VARCHAR},
+		#{suggestFlag,jdbcType=VARCHAR},
+		#{oneMindFlag,jdbcType=NUMERIC},
+		#{memberIds,jdbcType=VARCHAR},
+		#{memberNames,jdbcType=VARCHAR},
+		#{offineFlag,jdbcType=NUMERIC},
+		#{humanSignFlag,jdbcType=NUMERIC},
+		#{state,jdbcType=NUMERIC},
+		#{sort,jdbcType=NUMERIC},
+		#{delFlag,jdbcType=VARCHAR},
+		#{createTime},
+		#{createBy,jdbcType=VARCHAR},
+		#{updateTime},
+		#{updateBy,jdbcType=VARCHAR},
+		#{info,jdbcType=VARCHAR},
+		#{totalNum,jdbcType=VARCHAR},
+		#{pdsid,jdbcType=VARCHAR},
+		#{pdsSampleName,jdbcType=VARCHAR},
+		#{proCodeType,jdbcType=VARCHAR}
+		)
+	</insert>
+	<update id="updateVote"
+		parameterType="com.krm.voteplateform.web.commission.model.PtCommission">
+		UPDATE PT_COMMISSION
+		<set>
+			CODE=#{code},SYS_TITLE=#{sysTitle},SIMPLE_TITLE=#{simpleTitle}
+		</set>
+		<where>
+			DEL_FLAG = 0 AND ID = #{id}
+		</where>
+	</update>
+
+	<update id="saveUpdate"
+		parameterType="com.krm.voteplateform.web.commission.model.PtCommission">
+		update pt_commission
+		set
+		INFO=#{info,jdbcType=VARCHAR},TOTAL_NUM=#{totalNum,jdbcType=VARCHAR},SYS_TITLE=#{sysTitle,jdbcType=VARCHAR},SUGGEST_FLAG=#{suggestFlag,jdbcType=VARCHAR},
+		SIMPLE_TITLE=#{simpleTitle,jdbcType=VARCHAR},STATE=#{state,jdbcType=NUMERIC},PDSID=#{pdsid,jdbcType=VARCHAR},PDS_SAMPLE_NAME=#{pdsSampleName,jdbcType=VARCHAR},
+		VOTE_FLAG=#{voteFlag,jdbcType=NUMERIC},VOTE_PLAN_NAME=#{votePlanName,jdbcType=VARCHAR},
+		ONE_MIND_FLAG=#{oneMindFlag,jdbcType=NUMERIC},VOTE_PLAN_ID=#{votePlanId,jdbcType=VARCHAR},
+		PRO_CODE_TYPE=#{proCodeType,jdbcType=VARCHAR},
+		<if test="memberIds!=null">
+			MEMBER_IDS=#{memberIds,jdbcType=VARCHAR},
+		</if>
+		<if test="memberNames!=null">
+			MEMBER_NAMES=#{memberNames,jdbcType=VARCHAR},
+		</if>
+		<if test="logo!=null">
+			LOGO=#{logo},
+		</if>
+		OFFINE_FLAG=#{offineFlag,jdbcType=NUMERIC},
+		HUMAN_SIGN_FLAG=#{humanSignFlag,jdbcType=NUMERIC},
+		UPDATE_TIME=#{updateTime},UPDATE_BY=#{updateBy}
+		<where>
+			id = #{id}
+		</where>
+	</update>
+
+
+	<select id="findvote" parameterType="String" resultType="java.util.Map">
+		SELECT
+			T1.ID,T1.CODE,T1.SYS_TITLE,T1.SIMPLE_TITLE,T1.LOGO,T1.VOTE_PLAN_ID,T1.PRO_CODE_TYPE,
+			T1.VOTE_FLAG,T1.VOTE_PLAN_NAME,T1.TEMPLATE_ID,T1.PDSID,T1.PDS_SAMPLE_NAME,
+			T1.ONE_MIND_FLAG,T1.MEMBER_IDS,T1.MEMBER_NAMES,T1.OFFINE_FLAG,
+			T1.SUGGEST_FLAG,T1.HUMAN_SIGN_FLAG,T1.STATE,T1.DEL_FLAG,T1.TOTAL_NUM,T1.INFO,
+			T2.SUGG_SHOW_FLAG,T2.DEPT_SHOW_FLAG,T2.SIGN_SHOW_FLAG
+		FROM
+			PT_COMMISSION T1,
+			PT_VOTE_RES_TMPL T2
+		WHERE
+			T1.CODE=T2.CODE
+			AND T1.DEL_FLAG=0
+			AND T1.ID = #{ID}
+	</select>
+
+	<select id="getVote" resultType="java.util.Map">
+		select VOTE_PLAN_NAME,ID from PT_VOTE_PLAN
+		where state=0 and del_flag='0'
+	</select>
+	<select id="selectPullDate" resultType="java.util.Map">
+		select SAMPLE_NAME,ID from PT_DYNAMIC_SOURCE
+	</select>
+	
+	<!-- 根据委员会Code取得委员会信息 -->
+	<select id="getCommisssionByCode" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT 
+			<include refid="BaseColumnList"/>
+		FROM PT_COMMISSION WHERE CODE = #{code}
+		AND DEL_FLAG = 0
+	</select>
+	<select id="selectVotePlanByCode" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+           		T2.VOTE_PLAN_ID,T2.ID,T2.CODE,T1.VOTE_PLAN_SUMMARY,T2.VOTE_PLAN_NAME 
+        FROM 
+        		 PT_COMMISSION T2, PT_VOTE_PLAN T1
+         <where>
+         		 T1.ID= T2.VOTE_PLAN_ID  AND  T1.VOTE_PLAN_NAME=T2.VOTE_PLAN_NAME AND T1.STATE='0' 
+         		 and t2.CODE = #{code}
+		 </where>
+		
+	</select>
+	<select id="selectPull" resultType="java.util.Map" parameterType="java.util.Map">
+		SELECT
+           		ID,VOTE_PLAN_NAME
+        FROM 
+        		 PT_VOTE_PLAN 
+         <where>
+         		 STATE = '0'
+		 </where>
+		
+	</select>
+	<select id="selectMemberIds"  parameterType="java.util.Map" resultType="java.util.Map">
+			   SELECT 
+			<include refid="BaseColumnList"/> 
+			   	FROM PT_COMMISSION 
+			 <where>
+         		CODE = #{code,jdbcType=VARCHAR}
+			</where>
+	</select>
+	<!-- 查询委员会成员是否有一票否决权 a c d e-->
+	<select id="selectComissionMembers" resultType="java.util.Map" parameterType="java.util.Map">
+		select a.PUID, b.REAL_NAME,e.ORGNAME,'0' AS FLAG from PT_COMMISSION_USER a 
+	    left join PT_PLATEFORM_USER b on a.PUID=b.ID 
+	    left join PT_COMMISSION_USER_ROLE c on a.PUID=c.PUID 
+	    left join pt_commission_role d on c.CRID=d.CRID  
+	    left join PT_COMMISSION_ORG e on b.PORG_ID=e.PORGID 
+	    left join PT_COMMISSION f on f.code = e.code  
+	    where d.ROLE_CATEGORY='02' and a.code= #{code}
+	          and e.code=#{code} AND ONE_MIND_FLAG='0'
+	    <if test="memberIds!=null">
+	    and  a.PUID NOT IN (${memberIds})
+	union all
+	select a.PUID, b.REAL_NAME,e.ORGNAME,'1' AS FLAG from PT_COMMISSION_USER a 
+	    left join PT_PLATEFORM_USER b on a.PUID=b.ID 
+	    left join PT_COMMISSION_USER_ROLE c on a.PUID=c.PUID  AND a.code=c.code
+	    left join pt_commission_role d on c.CRID=d.CRID AND c.code=d.code
+	    left join PT_COMMISSION_ORG e on b.PORG_ID=e.PORGID
+	    left join PT_COMMISSION f on f.code = e.code  
+	    where d.ROLE_CATEGORY='02' and a.code= #{code} and e.code=#{code} AND ONE_MIND_FLAG='0'
+	     and a.PUID IN (${memberIds}) 
+	     </if>
+	</select>
+	<select id="selectState" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT
+           		    T1.PUID,T2.ID,T2.MEMBER_IDS
+        FROM 
+       			    PT_COMMISSION_USER T1
+        			LEFT JOIN PT_COMMISSION T2 ON T1.CODE=T2.CODE
+		
+	</select>
+	 <update id="SavevotePlanName" parameterType="com.krm.voteplateform.web.commission.model.PtCommission">
+			UPDATE PT_COMMISSION
+		<set>
+			VOTE_PLAN_NAME=#{votePlanName,jdbcType=VARCHAR},
+			VOTE_PLAN_ID = #{votePlanId,jdbcType=VARCHAR}
+		</set>
+		<where>
+			ID = #{id}
+		</where>
+	</update> 
+	<select id="selectlot" resultType="java.util.Map" parameterType="java.util.Map">
+		select 	
+		  		ONE_MIND_FLAG,ID
+		from   PT_COMMISSION
+		<where>
+				code = #{code}
+		</where>
+	</select>
+	
+	<select id="getOneCommissionByCode" resultType="com.krm.voteplateform.web.commission.model.PtCommission" parameterType="java.util.Map">
+		 SELECT * FROM PT_COMMISSION
+         <where>
+         	CODE = '${tableName}'
+		 </where>
+		
+	</select>
+	 <update id="RemoveMemberIds"  parameterType="java.util.Map">
+			UPDATE PT_COMMISSION
+		<set>
+			MEMBER_IDS = #{iString,jdbcType=VARCHAR}
+		</set>
+		<where>
+			CODE = #{code,jdbcType=VARCHAR}
+		</where>
+	</update>
+	 <update id="UpdatememberIds" parameterType="java.util.Map" >
+			UPDATE PT_COMMISSION
+		<set>
+			MEMBER_IDS = #{newmemberIds,jdbcType=VARCHAR}
+		</set>
+		<where>
+			CODE = #{code,jdbcType=VARCHAR}
+		</where>
+	</update>
+	
+</mapper>

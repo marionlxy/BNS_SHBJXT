@@ -1,0 +1,156 @@
+<div class="col-xs-12" >
+				<div class="widget-main padding-8" >
+						<div class="widget-header widget-header-small" style="">
+							<h5 class="widget-title">
+								<i class="ace-icon fa fa-search"></i>搜索
+							</h5>
+						</div>
+						<div class="widget-main margin-8" >
+							<form  action="" method="post" id="search-form"
+								target="list-page" class="clearfix" action="">
+								<div class="form-inline" role="form">
+									<div class="form-group">
+										<span >选择要查询的部门：</span>
+										<select name="organId" id="organId"  style="width:120px;height: 28px">
+				                    		<option value="" >
+					                    		----请选择----
+					                    	</option>
+					                    	@for(organ in list!){
+				                    		<option value="${organ.id!}" >
+					                    		${organ.orgname!}
+					                    	</option>
+					                    	@}
+				                    	</select>
+									</div>
+									<div class="form-group">
+										<span>要查询的姓名：</span>
+										<input type="text" style="width:100px;height: 28px" id="userName" name="userName" class="form-control w150" id="select1">
+									</div>
+     								<div class="form-group">
+    									<input type="button" id="findUser" class="btn btn-primary btn-xs" onclick="findByNameAndOrg()" name="" value="查询">
+    								</div>
+    							</div>   
+							</form>
+						</div>
+						<table id="qdtable"></table>
+			</div>
+	</div>
+<div class="clearfix tag-save-btn" style="bottom: 0px;left: 35%;position:absolute;">
+	<span class="btn btn-primary btn-sm bigger-110"  id="submitForm" onclick="addUsers()">确定</span>&nbsp;&nbsp;
+	<span class="btn btn-primary btn-sm bigger-110" id="model-save-cancel">取消</span>
+</div>
+
+
+<script type="text/javascript">
+$('textarea[class*=autosize]').autosize({append: "\n"});
+$(function(){
+	var ajaxS = $("#dic-save input[ajaxurl]");
+	$.each(ajaxS,function(i,obj){
+		$(obj).focus();
+	})
+	/* var validId = $("#submitForm").Validform({
+		ajaxPost : true,
+		beforeSubmit:function(curform){
+			var loadi = layer.load(5,2);
+			$("#submitForm").data('loadi',loadi);
+		},
+		callback:function(data){
+			{
+				layer.msg('操作成功', 1, 1,function(){
+					layer.closeAll();
+				});
+			}
+		},
+		tiptype : function(msg, o, cssctl) {
+			if (!o.obj.is("form")) {
+				if (o.type != 2) {
+					tip.errorTip(msg,o.obj);
+				}
+			}
+		},
+		tipSweep : true
+	}); */
+	
+	$("#model-save-cancel").click(function(){
+		layer.closeAll();
+		return false;
+	});
+
+	$("#dic-save input,#dic-save textarea").blur(function(){
+		layer.closeTips();
+		return false;
+	})
+
+});
+$(function(){
+	var url="${ctxPath!}/pt/plateformuser/toPtUserList";
+	$("#qdtable").ready(function(){
+		intiTable(url);
+	});
+});
+
+function intiTable(url){
+	$("#qdtable").bootstrapTable({
+		inconSize : 'sm',
+		height:300,
+		url : url,
+		striped : true,
+		columns : [ 
+		{	field:"chk", 
+			checkbox : true
+		},{ field : "id",
+			title : '序号',
+			formatter : function(value, row, index) {
+			return index + 1;
+		}},{
+			field : "realName",
+			title : '姓名',
+			sortable : true
+		},{
+			field : "userName",
+			title : '用户名',
+			visible:false,
+			sortable : true
+		},{
+			field : "post",
+			title : '职务',
+			sortable : true,
+		},{
+			field : "orgname",
+			title : '所在部门',
+		}]
+	});
+}
+
+$("#findUser").click(function(){
+	var organId=$("#organId").val();
+	var userName=$("#userName").val();
+	url="${ctxPath!}/pt/plateformuser/toPtUserListByCondition?organId="+organId+"&userName="+userName;
+	$('#qdtable').bootstrapTable('refresh',{'url':url});
+});
+
+function addUsers(){
+	 var checks = $("#qdtable").bootstrapTable('getSelections');
+		if(checks==""){
+			layer.alert("请先选择要添加的用户！");
+		}else{
+			var ids=[];
+			var userNames=[];
+			for(var i=0;i<checks.length;i++){
+				var row = checks[i];
+				ids.push(row.id);
+				userNames.push(row.userName);
+			}
+	 			$.post("${ctxPath!}/pt/PtBasUserList/addUsers",{'ids':ids.toString(),'userNames':userNames.toString()},function(result){
+		 		if(result.code==1){
+			 		layer.msg("添加成功",1,1);
+			 		layer.closeAll('page');
+			 		$("#tableysxm").bootstrapTable('refresh');
+				}else{
+					layer.msg("添加失败",2);
+					//layer.closeAll('page');
+				}
+	 		},"json");
+		}
+	}
+</script>

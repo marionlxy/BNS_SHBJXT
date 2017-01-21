@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sqls>
+	<!-- 添加表索引 -->
+	<sql id="BASMETTING_IDX0">
+		<![CDATA[
+				 create index #dynamic_index_name# on #bas_metting# (SPEC_METTING_CODE,SPEC_METTING_TITLE)
+			]]>
+	</sql>
+	<sql id="BASPROJECT_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #BAS_PROJECT# (CONFERENCE_ID)
+			]]>
+	</sql>
+	<sql id="METTINGMEM_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #BAS_METTING_MEM# (CONFERENCE_ID)
+			]]>
+	</sql>
+	<sql id="BASCODE_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #BAS_CODE# (CG_ID)
+			]]>
+	</sql>
+	<sql id="MENUWINCONF_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #BAS_MENU_WIN_CONF# (FUNCTION_CODE,GROUPID,NAME)
+			]]>
+	</sql>
+		<sql id="MENULISTCONF_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #BAS_MENU_LIST_CONF# (RESID,DICID)
+			]]>
+	</sql>
+	<sql id="BASCUSCONF_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #BAS_FUN_CONF# (MLCID,FUNCTION_CODE)
+			]]>
+	</sql>
+	<sql id="MEN_WIN_GROU_CONF_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #BAS_MEN_WIN_GROU_CONF# (BMWC_ID,BXG_ID,BRED_ID)
+			]]>
+	</sql>
+	<sql id="BAS_PRO_ATTCH_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #BAS_PRO_ATTCH# (PROJECT_ID)
+			]]>
+	</sql>
+	<sql id="BAS_PRO_EX_DETAIL_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #BAS_PRO_EX_DETAIL# (EXTEND_GROUP_ID,PROJECT_ID)
+			]]>
+	</sql>
+	<sql id="PT_COMMISSION_ORG_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #PT_COMMISSION_ORG# (PORGID,ORGNAME)
+			]]>
+	</sql>
+	<sql id="BAS_RESOURCE_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #BAS_RESOURCE# (TEMP_ID)
+			]]>
+	</sql>
+	<sql id="PT_PLATEFORM_USER_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #PT_PLATEFORM_USER# (PORG_ID)
+			]]>
+	</sql>
+	<sql id="PT_COMMISSION_USER_IDX0">
+		<![CDATA[
+				  create index #dynamic_index_name# on #PT_COMMISSION_USER# (PUID)
+			]]>
+	</sql>
+	<sql id="PT_COMMISSION_USER_ROLE_IDX0">
+	<![CDATA[
+				  create index #dynamic_index_name# on #PT_COMMISSION_USER_ROLE# (PUID,CRID)
+			]]>
+	</sql>
+	<sql id="PT_COMMISSION_FUNCTION_IDX0">
+	<![CDATA[
+				  create index #dynamic_index_name# on #PT_COMMISSION_FUNCTION# (CRID,RESID)
+			]]>
+	</sql>
+	<sql id="PT_AUTHORITY_ROLE_IDX0">
+	<![CDATA[
+				  create index #dynamic_index_name# on #PT_AUTHORITY_ROLE# (CRID,AUTH_ID)
+			]]>
+	</sql>
+</sqls>

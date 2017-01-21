@@ -1,0 +1,26 @@
+<public:component lightweight="true">
+<public:attach  event="onmouseover" onevent="searchButtonHover()"/> 
+<public:attach  event="onmousedown" onevent="searchButtonDown()"/> 
+<public:attach  event="onmouseup" onevent="searchButtonUp()"/> 
+<public:attach  event="onmouseout" onevent="searchButtonOut()"/> 
+
+
+
+<script language="Javascript"> 
+function searchButtonHover(){ 
+	this.className="ezSearchButtonHover" ;
+} 
+
+function searchButtonDown(){ 
+	this.className="ezSearchButtonDown" ;
+} 
+
+function searchButtonUp(){ 
+	this.className="ezSearchButtonHover" ;
+} 
+
+function searchButtonOut(){ 
+	this.className="ezSearchButton" ;
+} 
+</script> 
+</public:component>

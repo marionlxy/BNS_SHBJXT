@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.basProject.dao.BasMettingMapper">
+
+	<!-- 会议表 -->
+	<sql id="BasMettingColumnList">
+		ID, SPEC_METTING_CODE, SPEC_METTING_TITLE, TOPICS, ADDRESS,
+		HOST_ID, HOTE_NAME, SCHEDULED_START_TIME, SCHEDULED_END_TIME,
+		START_TIME, END_TIME, APPLY_BANK_ID, APPLY_BANK_NAME, JOIN_DEPT_ID,
+		JOIN_DEPT_NAME, RESTRICTIONS,
+		DESCRIPTION, STATE_ID, STATE_NAME,OFFINE_FLAG_ID, OFFINE_FLAG_NAME,DEL_FLAG,
+		to_char(CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') as CREATE_TIME,
+		CREATE_BY, CREATE_NAME,
+		CREATE_IP, to_char(UPDATE_TIME,'YYYY-MM-DD HH24:MI:SS') as UPDATE_TIME,
+		UPDATE_BY, UPDATE_NAME, UPDATE_IP,SPEC_APPROVEORG
+
+	</sql>
+	<!--会议表 -->
+	<sql id="BasMettingColumnValueList">
+
+		#{id},#{specMettingCode},#{specMettingTitle},#{topics},#{address},#{hostId},#{hoteName},#{scheduledStartTime},
+		#{scheduledEndTime},#{startTime},#{endTime},#{applyBankId},#{applyBankName},#{joinDeptId},#{joinDeptName},#{restrictions},
+		#{description},#{stateId},#{stateName},#{offineFlagId},#{offineFlagName},#{delFlag},#{createTime},#{createBy},
+		#{createName},#{createIp},#{updateTime},#{updateBy},#{updateName},#{updateIp},#{specApproveorg}
+
+	</sql>
+
+	<!-- 查询所有当前会议信息 -->
+	<select id="findCurrentMeeting" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		select
+		<include refid="BasMettingColumnList" />
+		from #{tableName}_BAS_METTING
+		<where>
+			STATE_ID='10000101'
+			and DEL_FLAG='0'
+		</where>
+
+	</select>
+
+	<!-- 查询完成会议信息 -->
+	<select id="findCompletMetting" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		select
+		<include refid="BasMettingColumnList" />
+		from #{tableName}_BAS_METTING
+		<where>
+			STATE_ID='10000102'
+			<if test="specMettingCode !=null and specMettingCode!='' ">
+				and SPEC_METTING_CODE like '%' || #{specMettingCode} ||'%'
+			</if>
+			and DEL_FLAG='0'
+
+		</where>
+
+	</select>
+
+
+	<select id="findPrepatOrMeeting" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		select
+		<include refid="BasMettingColumnList" />
+		from #{tableName}_BAS_METTING
+		<where>
+			STATE_ID='10000100'
+			and DEL_FLAG='0'
+		</where>
+
+	</select>
+
+	<!-- 反显详细 -->
+	<select id="selectBasMettingDetil"
+		resultType="com.krm.voteplateform.web.basProject.model.BasMetting"
+		parameterType="java.util.Map">
+		select
+		<include refid="BasMettingColumnList" />
+		from #{tableName}_BAS_METTING
+		<where>
+			DEL_FLAG='0' and
+			ID=#{mettingId}
+		</where>
+
+	</select>
+
+	<!-- 通过过项目di 判断会议的状态 -->
+	<select id="findOrComplement" resultType="java.util.Map"
+		parameterType="java.util.Map">
+
+		select
+		m.*
+		from #{tableName}_BAS_METTING m,#{tableName}_BAS_PROJECT p
+		<where>
+			m.ID=p.CONFERENCE_ID and
+			p.project_id=#{projectId} and
+			p.DEL_FLAG='0'
+
+		</where>
+	</select>
+
+	<!-- 显示完成会议的详细 -->
+	<select id="selectCompleMetting"
+		resultType="com.krm.voteplateform.web.basProject.model.BasMetting"
+		parameterType="java.util.Map">
+		select
+		<include refid="BasMettingColumnList" />
+		from #{tableName}_BAS_METTING
+		<where>
+			DEL_FLAG='0' and
+			ID=#{mettingId}
+		</where>
+
+	</select>
+
+	<!-- 获取到会委员列表 -->
+	<select id="getConfirmList" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		SELECT ID, MEM_USER_CODE, MEM_USER_NAME, MEM_ORG_ID, MEM_ORG_NAME,
+		MEM_POST_ID, MEM_ROLE_ID, MEM_ROLE_NAME, MEM_USER_IP,
+		MEM_AUTHORITY_FLAG_ID, MEM_ORDER_CODE, MEM_AUTHORITY_FLAG_NAME,
+		MEM_POST_NAME
+		FROM #{tableName}_BAS_METTING_MEM
+		<where>
+			CONFERENCE_ID = #{meetingId}
+			<if test="memAuthorityFlagId != null and memAuthorityFlagId != ''">
+				and MEM_AUTHORITY_FLAG_ID = #{memAuthorityFlagId}
+			</if>
+			<if test="memOrgId != null and memOrgId != ''">
+				and MEM_ORG_ID = #{memOrgId}
+			</if>
+			<if test="memUserName != null and memUserName != ''">
+				and MEM_USER_NAME  like '%' || #{memUserName} ||'%'
+				
+			</if>
+		</where>
+
+	</select>
+
+	<!-- 获取到会委员列表 -->
+	<select id="getAbsentDeptList" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		select ORGNAME as name,PORGID as id, '0' as pid from PT_COMMISSION_ORG
+		<where>
+			CODE = '${tableName}' and PORGID not in(select MEM_ORG_ID from
+			#{tableName}_bas_metting_mem group by MEM_ORG_ID)
+		</where>
+
+	</select>
+
+	<!-- 统计投票情况 -->
+	<select id="countVote" resultType="java.util.Map" parameterType="java.util.Map">
+		select vote_result,count(vote_result) as count from
+		#{tableName}_bas_pro_come_mem
+		<where>
+			project_id = #{projectId}
+			<if test="resultType != null and resultType != ''">
+				and vote_result = #{resultType}
+			</if>
+		</where>
+		group by vote_result
+	</select>
+
+	<!-- 查询已经投票的委员 -->
+	<select id="selectVoted" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		select user_name,user_code,vote_result from #{tableName}_bas_pro_come_mem
+		<where>
+			project_id = #{projectId}
+		</where>
+	</select>
+
+	<!-- 查询已经投票的委员 -->
+	<select id="selectFomula" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		select p.ADOPT_FORMULA,P.AGAIN_FORMULA,c.ONE_MIND_FLAG,c.MEMBER_IDS
+		from PT_COMMISSION c,PT_VOTE_PLAN p
+		<where>
+			c.VOTE_PLAN_ID = p.ID and c.VOTE_PLAN_NAME = p.VOTE_PLAN_NAME
+			and p.STATE = 0 and c.CODE = '${tableName}'
+		</where>
+	</select>
+
+	<!-- 查询已经投票的委员 -->
+	<select id="countOneMind" resultType="java.util.Map"
+		parameterType="java.util.Map">
+		select count(1) as count from #{tableName}_BAS_PRO_COME_MEM
+		<where>
+			project_id = #{projectId} and VOTE_RESULT = #{resultType} and
+			USER_CODE in (${memberIds})
+		</where>
+	</select>
+	
+
+	<!-- 获取最大的委员会编号 -->
+	<select id="findSpecMetting" resultType="java.util.Map" parameterType="java.util.Map">
+		select
+			MAX(m.SPEC_METTING_CODE) AS SPEC_METTING_CODE
+		from
+			#{tableName}_BAS_METTING m
+	</select>
+
+	
+	<!-- 根据类型查询系统配置表 -->
+	<select id="findOneSysConfByType" resultType="java.util.Map" parameterType="java.lang.String">
+		SELECT ID,TYPE,SYS_VAL FROM PT_SYS_CONFIGURE WHERE TYPE=#{type}
+	</select>
+
+
+	<!-- 查询最近六条会议记录 -->
+	<select id="selectRecentlyMettingList" resultType="java.util.Map" parameterType="java.util.Map">
+		select * from (SELECT
+		<include refid="BasMettingColumnList" />
+		FROM ${tableName}_BAS_METTING ORDER BY START_TIME)
+		${tableName}_BAS_METTING
+			<![CDATA[ where rownum <=6]]>
+	</select>
+	
+	<!-- 表决结果委员投票详情 -->
+	<select id="selectVotedDetails" resultType="java.util.Map" parameterType="java.util.Map">
+		select m.user_name,m.user_code,m.SUGGESTION,p.COMMITTEE_TEXT from #{tableName}_bas_pro_come_mem m,PT_VOTE_MATTER_CONF p 
+		<where>
+			m.VOTE_RESULT = p.VAL and p.TYPE = '01' and p.CODE = '${tableName}' and m.PROJECT_ID = #{projectId}
+		</where>
+	</select>
+
+
+	<select id="findParamsMetting" parameterType="java.util.Map" resultType="com.krm.voteplateform.web.basProject.model.BasMetting">
+		select
+		<include refid="BasMettingColumnList" />
+		FROM #{tableName}_BAS_METTING 
+		<where>
+			ID=#{id}
+		</where>
+	
+	</select>
+	
+	
+	
+</mapper>

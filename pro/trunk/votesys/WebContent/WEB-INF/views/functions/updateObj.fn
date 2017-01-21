@@ -1,0 +1,22 @@
+//common update
+function updateObj(param){
+			var rows = $('#resList').bootstrapTable("getSelections");
+			if(rows.length==0){
+				layer.msg("请选择要修改的数据");
+				return;
+			}else{
+				var row = rows[0];
+				var obj = {};
+				//当前会议,审议结果
+				var params = {
+						mode : 'page',
+						width : param.width+"%",
+						height : param.height+"%",
+						url : "${pageinfo.ctxPath!}/ptsystems/toFunctionIndex",
+						title:param.title+'信息',
+						data:{functionCode:param.functionCode,projectId:rows[0].projectId,mettingId:rows[0].id}
+				};
+				$.cuslayer(params);
+			}
+			
+		}

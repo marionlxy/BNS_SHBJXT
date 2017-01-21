@@ -1,0 +1,194 @@
+<div class="layer">
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box">
+				<div class="widget-main padding-8" >
+					<table  id="offlinetable">
+							
+						<div class="widget-header widget-header-small">
+							<h5 class="widget-title">
+								<i class="ace-icon fa fa-search"></i>添加与会委员
+							</h5>
+						</div>
+					<div class="widget-main margin-8" >
+							<form action="" method="post" id="search_form_info"
+								target="list-page" class="clearfix">
+								<div class="form-inline" role="form">
+									<div class="form-group">
+										<span>选择要查询的部门：</span>
+										<select name="porgid">
+				                    		<option value="" >
+					                    		----请选择----
+					                    	</option>
+					                    	 @for(org in orgList!){
+						   						<option value="${org.porgid}" >
+					                    			<span>${org.orgname}</span>
+					                    		</option>
+												 @}
+				                    	</select>
+									</div>
+									<div class="form-group">
+										&nbsp;&nbsp;<span>要查询的姓名：</span>
+										<input name="realName" class="form-control w150" type="text">
+									</div>
+     								<div class="form-group" style="position: relative; float:right;width:200px;">
+    									<span id="ok"  class="btn btn-primary btn-xs" name="ButtonAibang" >查询</span>
+    								</div>   
+							      </div>  
+								</form>
+						</div>
+			
+			</table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+	
+	<a class="btn btn-primary btn-sm bigger-110" id="submitForm" href="javascript:void(0);" 
+										
+										>
+										确定
+									</a>
+	<span class="btn btn-primary btn-sm bigger-110" id="model-save-cancel">取消</span>
+</div>
+
+</div>
+
+<script type="text/javascript">
+$('textarea[class*=autosize]').autosize({append: "\n"});
+$(function(){
+	var ajaxS = $("#dic-save input[ajaxurl]");
+	$.each(ajaxS,function(i,obj){
+		$(obj).focus();
+	})
+
+
+	//离线表决
+	$("#submitForm").click(function(){
+		var selectRows = $('#offlinetable').bootstrapTable("getSelections");
+		if(selectRows.length==0){
+			layer.alert("请先选择要进行离线表决的委员!");
+			return;
+		}else{
+			layer.closeAll();
+			var params = {
+					mode : 'page',
+					width : "50%",
+					height : "60%",
+					url : "${ctxPath!}/ptsystems/menu5/fun1407/suggestion",
+					title:'确认信息',
+					data:{selectRows:JSON.stringify(selectRows),meetingId:'${params.meetingId!}'}
+			};
+			$.cuslayer(params);
+		}
+		return false;
+	});
+	
+	$("#model-save-cancel").click(function(){
+		layer.closeAll();
+		return false;
+	});
+
+	$("#dic-save input,#dic-save textarea").blur(function(){
+		layer.closeTips();
+		return false;
+	})
+
+});
+//离线会议
+$(function(){
+	
+	$('#offlinetable').bootstrapTable({
+		iconSize : 'sm',
+		url : '${ctxPath!}/ptsystems/menu5/fun1407/showList',
+		toolbar:'',
+		cache: false,
+		striped : true,
+		columns : [
+		           {
+		        	   checkbox:true,
+		        	   formatter :formaterchk
+		           },
+				{
+					field : "puid",
+					title : '编号',
+					formatter : function(value, row, index) {
+						return index + 1;
+					}
+				},{
+					field : "realName",
+					title : '委员姓名',
+					sortable : true
+					
+				 },{
+					field:"post",
+					title:'职务',
+					sortable : true
+				},{
+					field:"orgname",
+					title:'部门',
+					sortable : true
+				}
+			],
+			onPostBody:activePreMember,
+			contentType: "application/x-www-form-urlencoded",//复制
+			queryParamsType: "",//复制
+			dataType: "json",//复制
+			method: "post",//复制
+			queryParams : function(params){
+				var obj={meetingId:'${params.meetingId!}'};
+				$.extend(params,obj);
+				var json={
+						porgid:$("select[name='porgid']").val(),
+						realName:$("input[name='realName']").val()
+				}
+				
+				//var json = $("#search_form_info").serializeJson();
+				$.extend(params,json);
+				console.log(params);
+				return params;
+			}
+		
+	});
+	
+	var data=[];
+	
+	function activePreMember(){
+		var obj = {};
+		obj["url"] = "${ctxPath!}/ptsystems/menu5/fun1401/getConfirmList";
+		obj["data"]={meetingId:'${params.meetingId!}'};
+		Angel.ajax(obj.url, obj.data, function(result){
+				//console.log(result);
+				data=result;
+			});
+		
+	}
+	
+	//默认勾选上次已经进行离线表决的委员
+	function formaterchk(value,row,index){
+		var flag=false;
+		$.each(data,function(index,obj){
+			if(obj.memUserCode==row.puid){
+				flag=true;
+				return false;
+			}
+		})
+		if(flag){
+			 return {checked:true};
+		}
+	}
+
+	
+	//查询设置 
+	$("#ok").click(function(){
+		$("#offlinetable").bootstrapTable('refresh');
+	})
+})
+
+
+
+
+
+</script>

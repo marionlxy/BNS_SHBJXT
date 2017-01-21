@@ -1,0 +1,199 @@
+<base target="_parent" />
+<div class="layer">
+  <form id="groupform" class="groupform" method="post" action="">
+    <input type="hidden" value="${functionCode}" name="functionCode" />
+    <table class="EditTable" width="100%">
+    		<tbody>
+    		<tr class="FormData"> 
+    		<td></td>  			
+			</tr>
+    		
+			<tr class="FormData">
+				<td class="CaptionTD">类型:</td>
+				<td class="DataTD"><span>分组</span><input type="hidden" value="0" name="type" />
+				</td>
+			</tr>
+			<tr class="FormData">
+				<td class="CaptionTD">名称:</td>
+				<td class="" ><input  style="width:300px" type="text" name="name" datatype="*" nullmsg="请输入名称！" ajaxurl="${ctxPath!}/pt/menuwinconf/valiGroupName?functionCode=${functionCode!}&type=0" value="" />
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">是否使用:</td>
+				<td class="">
+				<input id="useFlag"  name="useFlag" type="checkbox" value="0" checked/>使用
+				</td>
+			</tr>
+			
+			<tr class="FormData">
+				<td class="CaptionTD">序号:</td>
+				<td class="DataTD">
+				<input id="orderCode" name="orderCode" type="text" readonly value="${groupOrder!}" style="font-size:12px;width:200px;"/>
+				</td>
+			</tr>
+			<tr class="FormData">
+				<td class="CaptionTD">基本项标志:</td>
+				<td class="">
+				<input id="basicFlag"  name="basicFlag" type="checkbox" value="0"  checked/>是否为基本项
+				</td>
+			</tr>
+			<tr>
+				<td> 
+					<div class="clearfix" tag-save-btn style="bottom: 0px;left: 35%;position:absolute;">
+						<button type="button" class="btn btn-primary btn-sm bigger-110"  id="model-save-form">保存</button>&nbsp;&nbsp;
+						<button type="reset" class="btn btn-primary btn-sm bigger-110" id="model-save-cancel">关闭</button>
+					</div>
+				</td>
+			</tr>
+			</tbody>
+		
+    </table>
+   
+  </form>   
+</div>
+
+
+<script type="text/javascript">
+
+$(function(){
+	
+	var index = layer.index;
+
+   $("#groupform").Validform({
+	   postonce:true,
+	   btnSubmit:"#model-save-form", 
+	   ajaxPost:true,
+       tiptype : function(msg, o, cssctl) {
+            if (!o.obj.is("form")) {
+                if (o.type != 2) {
+                    tip.errorTip(msg,o.obj);
+                }
+            }
+        },
+        beforeSubmit:function(curform){
+            var loadi = layer.load(5,2);
+            $("#groupform").data('loadi',loadi);
+            var html='';
+            var obj = {};
+  		  	obj["url"] = "${ctxPath!}/pt/menuwinconf/valiGroupBasicFlag?functionCode=${functionCode!}&type=0";
+            var flag=false;
+        	curform.ajaxSubmit({
+            	dataType:'json',
+            	type:'post',
+            	url:obj.url,
+            	success:function(data){
+            	
+            		var result={};
+            		//if(document.all){
+            		//	result = JSON.stringify(data);
+            		//}else{
+            			result=data;
+            		//}
+
+            		 html="<font style='color:red'>"+result.msg+"</font>"
+               		//console.log(result);
+            		 function toAjaxSubmit(basicFlag){
+            			 curform.ajaxSubmit({
+                           	dataType:'json',
+                           	type:'post',
+                           	url:'${ctxPath!}/pt/menuwinconf/saveBasMenuWinConf?trueBasicFlag='+basicFlag,
+                           	success:function(data){
+                           		var obj={};
+                           		//if(document.all){
+                           		//	obj = JSON.stringify(data);
+                           		//}else{
+                           			obj=data;
+                           		//}
+                           		if(obj.code==1){
+                       				layer.msg(obj.msg, 1, 1,function(){
+                       					//query();
+                       					//var treeNodes = [{"id":1, "pId":0, "name":"test1"}];
+                       				});
+                       				layer.closeAll();
+                       				$("#alertInfo").bootstrapTable('refresh');
+                       				//location.reload();
+                       			}else{
+                       				layer.msg(obj.msg);
+                       				//layer.closeAll('page');
+                       			}
+                           	},
+                           	error:function(){
+                           		layer.msg("新增失败！");
+                           		//layer.closeAll('page');
+                           	}
+                           });
+            		 }
+            		 
+            		 
+            		  var basicFlag='1';//默认没有选中
+            		//第二种如果有基本项，并且选中	
+            	     if(result.code==1&&$("#basicFlag").is(":checked")){
+            	    	 layer.confirm(html,function(index){
+            	    		basicFlag="0";//确定视为基本项
+            	    		 layer.close(index);
+            	    		 toAjaxSubmit(basicFlag);
+            	    		 
+            	    	 },function(index){
+            	    		 basicFlag="1";
+            	    		 layer.close(index);
+            	    		 toAjaxSubmit(basicFlag);
+            	    	 })
+            	    //第二种如果有基本项，并且没选中
+            	     }else if(result.code==1&&(!$("#basicFlag").is(":checked"))){
+            	    	 basicFlag='1';
+            	    	 toAjaxSubmit(basicFlag);
+                    //第一种没有基本项,复选框，选中
+                     }else if(result.code==0&&($("#basicFlag").is(":checked"))){
+                    	 basicFlag='0';
+                    	 toAjaxSubmit(basicFlag);
+                    //第一种没有基本项,复选框，没选中 	 
+                     }else if(result.code==0&&(!$("#basicFlag").is(":checked"))){
+                    	 layer.confirm(html,function(index){
+                    		  basicFlag="0";//确定视为基本项
+            	    		 layer.close(index);
+            	    		 toAjaxSubmit(basicFlag);
+            	    		 
+            	    	 },function(index){
+            	    		 basicFlag="1";
+            	    		 layer.close(index);
+            	    		 toAjaxSubmit(basicFlag);
+            	    	 })
+                     }
+            	}
+        	})
+       
+            
+            return false;
+        },
+        tipSweep : true,
+        callback:function(data){
+			layer.close($("#groupform").data('loadi'));
+			//alert(data);
+			//var obj = eval('(' + data + ')');
+			if(data.code==1){
+				layer.msg(data.msg, 1, 1,function(){
+					//query();
+					//var treeNodes = [{"id":1, "pId":0, "name":"test1"}];
+				});
+				layer.closeAll('page'); 
+				$("#alertInfo").bootstrapTable('refresh');
+				//location.reload();
+			}else{
+				layer.msg(data.msg,3,1);
+				//layer.closeAll('page');
+			}
+		}
+    });
+
+         
+ 
+    // var index=layer.index;
+    $("#model-save-cancel").click(function(){
+        layer.close(index);
+        layer.closeAll('tips');	
+    });
+});
+
+</script>
+

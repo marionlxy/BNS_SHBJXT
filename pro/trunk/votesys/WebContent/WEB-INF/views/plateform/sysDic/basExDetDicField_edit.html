@@ -1,0 +1,87 @@
+<div class="layer">
+<div class="widget-box">
+	    <div class="form-inline" role="form">
+	    	<div class="form-group">
+			&nbsp;&nbsp;<span>映射名称:</span>
+			<input name="mapCnName" value="${beg.mapCnName!}" Style="width:250px;" type="text" id="mapCnName" >
+			</div>
+		<div class="clearfix"  style="bottom: 0px;left: 35%;position:absolute;">
+			<span class="btn btn-primary btn-sm bigger-110"  id="saveResult" >确定</span>&nbsp;&nbsp;
+			<span class="btn btn-primary btn-sm bigger-110" id="sys_dic_cancel">
+				取消
+			</span>
+		</div>
+	</div>
+</div>
+</div>
+<input type="hidden" value="${beg.id}" id="id"/>
+<input type="hidden" value=${beg.groupId} id="groupId"/>
+
+<script type="text/javascript">
+$("#saveResult").click(function(){
+	var mapCnName = $("#mapCnName").val();
+	var groupId = $("#groupId").val();
+	var id= $("#id").val();
+	var msg="是否确认修改数据";
+	$.ajax({    
+	    url:'${ctxPath!}/pt/dicExp/editDicGroupFild',// 跳转到 action    
+	    data:{    
+	    	id : id,    
+	    	mapCnName : mapCnName,
+	    	groupId:groupId
+	    },    
+	    type:'post',    
+	    cache:false,    
+	    dataType:'json',    
+	    success:function(data) {    
+	    	layer.msg(data.msg,1,1);
+	    	if(data.code==1){
+	    		refreshTable('DicExpTable');
+	    		$("#DicExpTable").bootstrapTable('refresh');
+	    		layer.close(lastIndex);
+	    	}
+	     },    
+	     error : function() {    
+	          alert("异常！");    
+	     }    
+	});
+	
+});
+
+
+
+ $("#ok").click(function(){
+	var mapCnName = $("#mapCnName").val();
+	var groupId = $("#groupId").val();
+	var id= $("#id").val();
+	var msg="是否确认修改数据";
+	$.ajax({    
+	    url:'${ctxPath!}/pt/dicExp/editDicGroupFild',// 跳转到 action    
+	    data:{    
+	    	id : id,    
+	    	mapCnName : mapCnName,
+	    	groupId:groupId
+	    },    
+	    type:'post',    
+	    cache:false,    
+	    dataType:'json',    
+	    success:function(data) {    
+	    	layer.msg(data.msg);
+	    	if(data.code==1){
+	    		refreshTable('DicExpTable');
+	    		layer.close(lastIndex);
+	    	}
+	     },    
+	     error : function() {    
+	          alert("异常！");    
+	     }    
+	}); 
+});
+ 
+$("#sys_dic_cancel").click(function () {
+	layer.close(lastIndex);
+	return false;
+});
+
+
+</script>

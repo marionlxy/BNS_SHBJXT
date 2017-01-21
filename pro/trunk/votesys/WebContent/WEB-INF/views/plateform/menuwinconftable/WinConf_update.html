@@ -1,0 +1,51 @@
+<div class="layer">
+	    <div class="form-inline" role="form">
+	    	<div class="form-group">
+			&nbsp;&nbsp;<span>功能名称:</span>
+			<input name="name" style="background-color: white"  value="${basMenuWinConf.name}" class="form-control w150"
+							 type="text" id="name" >
+			</div>
+		<div class="clearfix"  style="bottom: 0px;left: 25%;position:absolute;">
+			<span class="btn btn-primary btn-sm bigger-110"  id="ok">确定</span>&nbsp;&nbsp;
+			<span class="btn btn-primary btn-sm bigger-110" id="sys_dic_cancel">取消</span>
+		</div>
+	</div>
+</div>
+
+<input type="hidden" value="${basMenuWinConf.name!}" id="name"/>
+<input type="hidden" value="${basMenuWinConf.id!}" id="id"/>
+<script type="text/javascript">
+$("#ok").click(function(){
+	var name = $("#name").val();
+	var id= $("#id").val();
+	$.ajax( {    
+	    url:'${ctxPath!}/pt/menuwinconftable/lastsave',   
+	    data:{    
+	    	id : id,    
+	    	name  : name
+	    },    
+	    type:'post',    
+	    cache:false,    
+	    dataType:'json',    
+	    success:function(data) {    
+	    	layer.msg(data.msg,1,1);
+	    	if(data.code==1){
+	    		var sys = parent.document.getElementById("tableysxm");
+	    		var $sys = $(sys);
+	    		$sys.bootstrapTable('refresh');
+	    		layer.close(lastIndex);
+	    		
+	    	}
+	     },    
+	     error : function() {    
+	          alert("异常！");    
+	     }    
+	}); 
+});
+$("#sys_dic_cancel").click(function () {
+	layer.closeAll();
+	return false;
+}); 
+
+
+</script>

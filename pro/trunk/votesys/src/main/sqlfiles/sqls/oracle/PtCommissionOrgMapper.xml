@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.ptcommissionorg.dao.PtCommissionOrgMapper">
+
+	<sql id="BaseColumnList">
+		CODE,PORGID,ORGNAME,ORGTYPE,ORGORDER,ORGREMARK,STATE
+	</sql>
+
+	<sql id="BaseColumnValueList">
+		#{code},#{porgid},#{orgname},#{orgtype},#{orgorder},
+		#{orgremark},#{state}
+	</sql>
+	
+	<select id="toOrgList" resultType="java.util.Map" parameterType="java.util.Map">
+		select <include refid="BaseColumnList"/> from PT_COMMISSION_ORG
+		where 
+		CODE=#{code} 
+		order by ORGORDER asc
+	</select>
+	
+	<select id="getCodeListOrg" resultType="java.util.Map" parameterType="java.util.Map">
+		select CODE,PORGID as ID,PORGID as ECODE,ORGNAME as MAP_NAME,ORGTYPE,ORGORDER,ORGREMARK,STATE from PT_COMMISSION_ORG
+		 <where>
+		CODE=#{code} 
+		<if test="state!=null and state!='' ">
+			 and state != #{state,jdbcType=VARCHAR}
+		</if>
+		order by ORGORDER asc
+		</where>
+	</select>
+	
+	<select id="getOrg" resultType="java.util.Map" parameterType="java.lang.String">
+		select <include refid="BaseColumnList"/> from PT_COMMISSION_ORG where
+		CODE=#{code,jdbcType=VARCHAR} and PORGID=#{porgid,jdbcType=VARCHAR}
+	</select>
+	
+	<update id="saveOrgUpdate" parameterType="com.krm.voteplateform.web.ptcommissionorg.model.PtCommissionOrg">
+		update PT_COMMISSION_ORG set ORGNAME=#{orgname,jdbcType=VARCHAR},STATE=#{state,jdbcType=VARCHAR},ORGREMARK=#{orgremark,jdbcType=VARCHAR}
+		where CODE=#{code} and PORGID=#{porgid}
+	</update>
+	
+	<delete id="deleteOrg" parameterType="com.krm.voteplateform.web.ptcommissionorg.model.PtCommissionOrg">
+		delete from PT_COMMISSION_ORG where CODE=#{code} and PORGID=#{porgid}
+	</delete>
+	
+	<select id="findMaxOrfer" parameterType="java.util.Map" resultType="com.krm.voteplateform.web.ptcommissionorg.model.PtCommissionOrg">
+		select <include refid="BaseColumnList"/> from PT_COMMISSION_ORG where ORGORDER=
+		(
+			select max(ORGORDER) from PT_COMMISSION_ORG where CODE='${code}' AND ORGORDER  &lt; ${order}
+		) and CODE='${code}'
+	</select>
+	
+	<select id="findMinOrder" parameterType="java.util.Map" resultType="com.krm.voteplateform.web.ptcommissionorg.model.PtCommissionOrg">
+		select <include refid="BaseColumnList"/> from PT_COMMISSION_ORG where ORGORDER=
+		(
+			select MIN(ORGORDER) from PT_COMMISSION_ORG where CODE='${code}' AND ORGORDER  &gt; ${order}
+		) and CODE='${code}'
+	</select>
+	
+	<update id="updateOrder" parameterType="com.krm.voteplateform.web.ptcommissionorg.model.PtCommissionOrg">
+		update PT_COMMISSION_ORG set ORGORDER=${orgorder}
+		where CODE=#{code} and PORGID=#{porgid}
+	</update>
+	
+	<select id="getMaxOrgOrder" parameterType="java.lang.String" resultType="java.lang.Integer">
+		select NVL(max(ORGORDER),0) from PT_COMMISSION_ORG where CODE=#{code}
+	</select>
+</mapper>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.krm.voteplateform.web.menulistconf.dao.MenuListConfMapper">
+
+	<sql id="BaseColumnList">
+		ID,RESID,DICID,SEARCH_FLAG,SEARCH_TYPE,DATASOURCE,USE_FLAG,DEL_FLAG,
+		CREATE_TIME,CREATE_BY,UPDATE_TIME,UPDATE_BY
+	</sql>
+
+	<sql id="BaseColumnValueList">
+		#{id},#{resid},#{dicid},#{searchFlag},#{searchType},
+		#{datasource},#{useFlag},#{delFlag},#{createTime},#{createBy},
+		#{updateTime}, #{updateBy}
+	</sql>
+	
+  <select id="getMenuAll" resultType="java.util.Map" parameterType="java.util.Map">
+		select m.ID,m.DICID,m.RESID,m.SEARCH_FLAG,m.SEARCH_TYPE,m.DATASOURCE,
+			   t.EN_NAME,t.CN_NAME,t.ID
+		from #{tableName}_bas_menu_list_conf m , #{tableName}_bas_dict t
+		where m.DEL_FLAG = 0 and m.DICID = t.ID and m.RESID=#{resid}
+		
+	</select>
+	
+	
+		<select id="getMenuUseFulAll" resultType="java.util.Map" parameterType="java.util.Map">
+		select m.ID,m.DICID,m.RESID,m.SEARCH_FLAG,m.SEARCH_TYPE,m.DATASOURCE,m.USE_FLAG,m.DEL_FLAG,
+			   t.EN_NAME,t.CN_NAME,t.DATA_TYPE,t.DATA_LENGTH,t.PRECISION,t.MAP_CN_NAME,t.MAP_PRECISION,t.NULL_FLAG,t.CATEGORY,t.PLATE_FLAG,t.SORT
+		from #{tableName}_bas_menu_list_conf m , #{tableName}_bas_dict t
+		<where>
+		m.USE_FLAG = 1 and
+		m.DEL_FLAG = 0 and m.DICID = t.ID 
+		<if test="resid !=null and resid !='' and resid !='null'">
+  				and m.RESID=#{resid,jdbcType=VARCHAR}
+  		</if>
+		</where> 
+		
+		
+	</select>
+	
+	<select id="listField" resultType="java.util.Map" parameterType="java.util.Map">
+		select ID,CN_NAME from #{tableName}_bas_dict 
+		where CATEGORY = 02 and STATE = 0
+	</select>
+	
+	<select id="getTypeList" resultType="java.lang.String">
+		select DISTINCT SEARCH_TYPE from bas_menu_list_conf 
+		
+	</select>
+	
+	<select id="getDataSource" resultType="java.util.Map" parameterType="java.util.Map">
+		select  ID, CODE_GROUP_NAME from #{tableName}_bas_code_group
+		where STATE=0 and DEL_FLAG=0
+	</select>
+	
+	<select id="getMenuById" resultType="java.util.Map" parameterType="java.util.Map">
+		select m.ID,m.DICID,m.RESID,m.SEARCH_FLAG,m.SEARCH_TYPE,m.DATASOURCE,
+			   t.EN_NAME,t.CN_NAME,t.ID
+		from #{tableName}_bas_dict t, #{tableName}_bas_menu_list_conf m
+		where m.DEL_FLAG = 0 and t.ID=m.DICID and m.ID=#{id}
+	</select>
+	
+	<update id="updateTemplateById" parameterType="java.util.Map">
+		update ${tableName}_bas_menu_list_conf 
+		set SEARCH_FLAG=#{basMenuListConf.searchFlag,jdbcType=VARCHAR},SEARCH_TYPE=#{basMenuListConf.searchType,jdbcType=VARCHAR},DATASOURCE=#{basMenuListConf.datasource,jdbcType=VARCHAR}
+		where ID=#{basMenuListConf.id}
+	</update>
+	
+	<select id="getMenuByRepid" resultType="java.util.Map" parameterType="java.util.Map">
+		select DICID from #{tableName}_bas_menu_list_conf where DICID=#{repid} and RESID=#{resid}
+	</select>
+	
+	<select id="findMenuListConf" resultType="java.util.Map" parameterType="java.util.Map">
+		select distinct  d.ID,d.EN_NAME,d.CN_NAME,d.DATA_TYPE,d.DATA_LENGTH,d.PRECISION,d.MAP_CN_NAME,d.MAP_PRECISION,d.NULL_FLAG,d.CATEGORY,PLATE_FLAG,d.SORT,
+		d.DEL_FLAG,to_char(d.CREATE_TIME,'YYYY-MM-DD HH24:MI:SS') as CREATE_TIME,
+		d.CREATE_BY,to_char(d.UPDATE_TIME,'YYYY-MM-DD HH24:MI:SS') as UPDATE_TIME,d.UPDATE_BY,d.STATE
+		from #{tableName}_BAS_DICT d,#{tableName}_BAS_MENU_LIST_CONF f
+		<where>
+			d.ID= f.DICID AND
+			f.DEL_FLAG = '0' and 
+  			f.USE_FLAG='1' and 
+  			f.RESID=#{resid}
+            
+		</where>
+		
+	</select>
+	
+	<select id="getDataSourceNameById" resultType="java.lang.String" parameterType="java.util.Map">
+		select  CODE_GROUP_NAME from #{tableName}_bas_code_group
+		where ID='${datasource}'
+	</select>
+	
+</mapper>

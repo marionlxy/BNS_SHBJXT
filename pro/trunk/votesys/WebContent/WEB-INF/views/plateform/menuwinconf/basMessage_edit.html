@@ -1,0 +1,53 @@
+<div class="layer">
+<div class="widget-box">
+	    <div class="form-inline" role="form">
+	    	<div class="form-group">
+			&nbsp;&nbsp;<span>委员会文本:</span>
+			<input name="mapCnName"  value="${basMessage.commText}" Style="width:250px;" type="text" id="commText" >
+			</div>
+		<div class="clearfix"  style="bottom: 0px;left: 35%;position:absolute;">
+			<span class="btn btn-primary btn-sm bigger-110"  id="ok" >确定</span>&nbsp;&nbsp;
+			<span class="btn btn-primary btn-sm bigger-110" id="sys_dic_cancel">
+				取消
+			</span>
+	</div>
+	</div>
+</div>
+</div>
+<input type="hidden" value="${basMessage.id}" id="id"/>
+<script type="text/javascript">
+$("#ok").click(function(){
+	var commText = $("#commText").val();
+	//var mapPrecision = $("#mapPrecision").val();
+	var id= $("#id").val();
+	var msg="是否确认修改数据";
+	$.ajax( {    
+	    url:'${ctxPath!}/pt/basMessage/savUpBasMessage',// 跳转到 action    
+	    data:{    
+	    	id : id,    
+	    	commText : commText   
+	    },    
+	    type:'post',    
+	    cache:false,    
+	    dataType:'json',    
+	    success:function(data) {    
+	    	if(data.code==1){
+	    		layer.msg(data.msg,2,1);
+	    		layer.close(lastIndex);
+	    		refreshTable('basMessageTable');
+	    	}else{
+	    		layer.msg(data.msg,2,8);
+	    	}
+	     },    
+	     error : function() {    
+	          layer.alert("修改数据失败！");    
+	     }    
+	}); 
+});
+$("#sys_dic_cancel").click(function () {
+	layer.closeAll();
+	return false;
+});
+
+
+</script>

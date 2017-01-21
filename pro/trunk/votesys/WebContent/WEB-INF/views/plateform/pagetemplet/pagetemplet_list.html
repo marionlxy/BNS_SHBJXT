@@ -1,0 +1,123 @@
+<script type="text/javascript">
+	$(function() {
+		$("#tableysxm").bootstrapTable({
+			inconSize : 'sm',
+			url : '${ctxPath!}/pt/votePageTemplet/listPageTemplet',
+			height:300,
+			striped : true,
+			columns : [ /* {
+				formatter:formaCheck,  
+				field:"chk", 
+				checkbox : true
+			}, */{
+				field : "id",
+				title : '序号',
+				formatter : function(value, row, index) {
+				return index + 1;
+				}},{
+				field : "name",
+				title : '模板名称',
+				sortable : true
+			},{
+				field : "fileName",
+				title : '模板文件名',
+				sortable : true
+			},{
+				field : "explain",
+				title : '模板说明',
+				sortable : true
+			},{
+				field : "type",
+				title : '模板类型',
+				sortable : true,
+				formatter:function(value,row,index){
+					if(value=="01"){
+						return "列表页面模板";
+					}else if(value=="02"){
+						return "窗体页面模板";
+					}
+				}
+			}, {
+				field : "id",
+				title : '操作',
+				formatter:function(value,row,index){
+			        	var edit='<a  href="javascript:void(0);"' +
+							' data-mode="detail" data-title="修改页面模板"' +
+							' data-url="${ctxPath!}/pt/votePageTemplet/toAddPageTemplet"' +
+							' data-width="50%"' +
+							' data-height="60%"'+
+							' data-data="{id:&apos;' + row.id + '&apos;}" >' +
+			                ' <i class="ace-icon fa fa-pencil midder-130"></i>' +
+							' </a>';
+			        		 return edit;
+			        }
+			}]
+		});
+		function formaCheck(value,row,index) {
+			if (row.useFlag == 0||row.useFlag== '0') {
+				return {checked:true};
+			}else{
+				return {checked:false};
+			}
+		};
+		
+	});
+	$('#saveUpdate').click(function(){
+		var rows = $("#tableysxm").bootstrapTable('getData');
+		var rowsTemp = new Array();
+		for(var i=0;i<rows.length;i++){
+			var row = rows[i];			
+				var ids = {};
+				ids["id"]=row.id;
+				if(row.chk){
+					ids["useFlag"]="0";
+				}else{
+					ids["useFlag"]="1";
+				}
+				rowsTemp.push(ids);
+		}
+		var basdict = JSON.stringify(rowsTemp);
+	$.post("${ctxPath!}/pt/menuwinconftable/saveUpdate",
+				{'basdict':basdict},
+		function(result){
+		if(result.code==1){
+				layer.msg("保存成功!","1","1");
+				$("#tableysxm").bootstrapTable('refresh');
+			}else{
+				layer.msg("保存失败!");
+			}
+		},"json"
+			);
+			});
+</script>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="widget-box">
+		<div class="widget-header widget-header-flat widget-header-small" style="margin-top:0px">
+			<div class="widget-toolbar"  style="margin-top:2px">
+					<a href="#" data-action="fullscreen" class="orange2" onclick="refreshTable('tableysxm')">  <i
+							class="ace-icon fa fa-expand"></i>
+					</a>
+			</div>
+				<div class="form-inline" role="form">
+					<div class="form-group">
+					<a href="javascript:void(0);"   class="btn btn-purple btn-xs"
+										data-mode="page" data-title="增加页面模板"
+										data-url="${ctxPath!}/pt/votePageTemplet/toAddPageTemplet"
+										data-data="{id:'{row.id}'}"
+										data-width="50%"
+										data-height="60%"
+										haschild="false" data-formatter="createhy">
+							<span class="menu-text"  style="vertical-align: middle;font-size:12px;margin-left: 5px;height: 34px;"> 
+								<i class="fa  fa-plus-circle"></i>&nbsp;&nbsp;新增
+							</span>
+						</a>	
+					</div>
+				</div>
+		</div>
+		<form action="" method="post" id="form1">
+					<table id="tableysxm"></table>
+					<input type="hidden" id="HdrowCode"/>
+				</form>
+	</div>
+</div>
